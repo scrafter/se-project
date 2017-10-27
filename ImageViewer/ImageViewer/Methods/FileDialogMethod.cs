@@ -46,7 +46,8 @@ namespace ImageViewer.Methods
             Path.GetFullPath(path);
             var siema = Path.GetExtension(path);
             if (string.Equals(Path.GetExtension(path), ".jpg", StringComparison.CurrentCultureIgnoreCase)
-                || string.Equals(Path.GetExtension(path), ".tiff", StringComparison.CurrentCultureIgnoreCase) || string.Equals(Path.GetExtension(path), ".png", StringComparison.CurrentCultureIgnoreCase)
+                || string.Equals(Path.GetExtension(path), ".tiff", StringComparison.CurrentCultureIgnoreCase) 
+                || string.Equals(Path.GetExtension(path), ".png", StringComparison.CurrentCultureIgnoreCase)
                 || string.Equals(Path.GetExtension(path), ".bmp", StringComparison.CurrentCultureIgnoreCase))
                 correctExtension = true;
 
