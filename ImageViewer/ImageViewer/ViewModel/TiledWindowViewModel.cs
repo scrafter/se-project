@@ -37,7 +37,6 @@ namespace ImageViewer.ViewModel
 
         private void ClearAll()
         {
-            ImageList.Clear();
             foreach (var item in ImageList)
                 ImageList.Remove(item);
         }
