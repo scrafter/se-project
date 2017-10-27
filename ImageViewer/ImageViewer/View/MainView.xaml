@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="ImageViewer.View.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ImageViewer.View"
+             xmlns:model="clr-namespace:ImageViewer.ViewModel"  
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.1*"/>
+                <ColumnDefinition Width="4*"/>
+                <!--<ColumnDefinition Width="0.1*"/>-->
+                <ColumnDefinition Width="15*"/>
+                <ColumnDefinition Width="0.1*"/>
+            </Grid.ColumnDefinitions>
+            
+            <local:FileExplorerView Grid.Column="1"/>
+            
+            <local:TiledWindowView Grid.Column="2"/>
+            <GridSplitter Background="#616161" Grid.Column="1" Width="3"/>
+        </Grid>
+        <local:MainMenuView Grid.Row="0"/>
+        <local:FooterView Grid.Row="2"/>
+    </Grid>
+</UserControl>
