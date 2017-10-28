@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              
              xmlns:local="clr-namespace:ImageViewer.View"
-             xmlns:helpers="clr-namespace:ImageViewer.Helpers"
              xmlns:model="clr-namespace:ImageViewer.Model" 
              xmlns:viewModel="clr-namespace:ImageViewer.ViewModel"  
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"

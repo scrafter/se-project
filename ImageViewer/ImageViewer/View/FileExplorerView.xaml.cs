@@ -41,10 +41,8 @@ namespace ImageViewer.View
 
                 item.Items.Add(null);
                 item.Expanded += Folder_Expanded;
-
                 FolderTreeView.Items.Add(item);
             }
-            
         }
 
         private void Folder_Expanded(object sender, RoutedEventArgs e)
@@ -57,7 +55,6 @@ namespace ImageViewer.View
 
             treeViewItem.Items.Clear();
             string folderName = (string)treeViewItem.Tag;
-
             var directories = new List<string>();
 
             try
@@ -70,7 +67,6 @@ namespace ImageViewer.View
             }
             catch (Exception)
             {
-
                 throw;
             }
 
@@ -86,11 +82,8 @@ namespace ImageViewer.View
                 subItem.Expanded += Folder_Expanded;
 
                 treeViewItem.AddItem(subItem);
-
             });
-
             GetFiles(treeViewItem);
-
         }
 
         public static string GetPath(string path)
@@ -105,7 +98,6 @@ namespace ImageViewer.View
             {
                 return path;
             }
-
             return path.Substring(index + 1);
         }
 
@@ -123,7 +115,6 @@ namespace ImageViewer.View
             }
             catch (Exception)
             {
-
                 throw;
             }
 
@@ -134,7 +125,6 @@ namespace ImageViewer.View
                     Header = GetPath(directoryPath),
                     Tag = directoryPath,
                 };
-
                 item.AddItem(subItem);
             });
         }
