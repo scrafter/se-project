@@ -5,18 +5,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              
              xmlns:local="clr-namespace:ImageViewer.View"
-             xmlns:model="clr-namespace:ImageViewer.ViewModel"  
+             xmlns:helpers="clr-namespace:ImageViewer.Helpers"
+             xmlns:model="clr-namespace:ImageViewer.Model" 
+             xmlns:viewModel="clr-namespace:ImageViewer.ViewModel"  
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             Loaded="FileExplorer_Loaded"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.DataContext>
-        <model:FileExplorerViewModel/>
+        <viewModel:FileExplorerViewModel/>
     </UserControl.DataContext>
 
  
 
     <Grid Background="#E0E0E0">
-        
+        <TreeView x:Name="FolderTreeView">
+            <TreeView.Resources>
+                <Style TargetType="{x:Type model:TreeViewItemImage}">
+                    <Setter Property="HeaderTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="20" Margin="3" Source="{Binding 
+                                                                            RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type model:TreeViewItemImage}},
+                                                                            Path=ImageSource
+                                                                            }"/>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TreeView.Resources>
+        </TreeView>
     </Grid>
 </UserControl>
