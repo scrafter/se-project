@@ -31,23 +31,7 @@ namespace ImageViewer.View
             InitializeComponent();
         }
 
-        private void FileExplorer_Loaded(object sender, RoutedEventArgs e)
-        {
-            foreach (var drive in Directory.GetLogicalDrives())
-            {
-                var item = new TreeViewItemImage()
-                {
-                    Header = drive,
-                    Tag = drive,
-                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/DriveIcon.png", UriKind.Absolute))
-                };
-
-                item.Items.Add(null);
-                item.Expanded += Folder_Expanded;
-                FolderTreeView.Items.Add(item);
-            }
-        }
-
+#region Methods
         private void Folder_Expanded(object sender, RoutedEventArgs e)
         {
             TreeViewItemImage treeViewItem = (TreeViewItemImage)sender;
@@ -62,8 +46,14 @@ namespace ImageViewer.View
 
             try
             {
-                var dirs = Directory.GetDirectories(folderName);
-                if(dirs.Length > 0)
+                List<string> dirs = Directory.GetDirectories(folderName).Where(x =>
+                {
+                    DirectoryInfo di = new DirectoryInfo(x);
+                    return !di.Attributes.HasFlag(FileAttributes.ReparsePoint) && !di.Attributes.HasFlag(FileAttributes.Hidden);
+                }
+                ).ToList();
+ 
+                if(dirs.Count > 0)
                 {
                     directories.AddRange(dirs);
                 }
@@ -81,9 +71,15 @@ namespace ImageViewer.View
                     Tag = directoryPath
                 };
 
-                subItem.Items.Add(null);
-                subItem.Expanded += Folder_Expanded;
+                if (Path.GetExtension(subItem.Tag.ToString()) == "")
+                {
+                    if (!CheckIfEmpty(subItem.Tag.ToString()))
+                    {
+                        subItem.Items.Add(null);
+                    }
+                }
 
+                subItem.Expanded += Folder_Expanded;
                 treeViewItem.AddItem(subItem);
             });
             GetFiles(treeViewItem);
@@ -104,6 +100,13 @@ namespace ImageViewer.View
             return path.Substring(index + 1);
         }
 
+        private static List<string> GetImages(string path)
+        {
+            return Directory.GetFiles(path).Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
+                   || Path.GetExtension(x) == ".bmp" || Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".PNG"
+                    || Path.GetExtension(x) == ".tiff" || Path.GetExtension(x) == ".TIFF").ToList();
+        }
+
         private static void GetFiles(TreeViewItemImage item)
         {
             List<string> files = new List<string>();
@@ -111,9 +114,7 @@ namespace ImageViewer.View
             try
             {
                 var dirs = Directory.GetFiles(folderName);
-                var images = dirs.Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
-                   || Path.GetExtension(x) == ".bmp" || Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".PNG"
-                    || Path.GetExtension(x) == ".tiff" || Path.GetExtension(x) == ".TIFF").ToList();
+                var images = GetImages(folderName);
 
                 if (images.Count > 0)
                 {
@@ -136,37 +137,88 @@ namespace ImageViewer.View
             });
         }
 
-        public void TreeView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private static bool CheckIfEmpty(string folderPath)
         {
-            var clickedItem = TryGetClickedItem(e);
-            if (clickedItem == null)
-                return;
-
-            e.Handled = true; // to cancel expanded/collapsed toggle
-            Model.Image image = new Model.Image();
             try
             {
-                image.FileName = clickedItem.Header.ToString();
-                image.FilePath = clickedItem.Tag.ToString();
-                image.Extension = Path.GetExtension(image.FilePath);
-                if(image.Extension!="")
-                    _aggregator.GetEvent<SendImage>().Publish(image);
+                var files = Directory.EnumerateFileSystemEntries(folderPath).ToArray();
+                if (files.Where(x => Path.GetExtension(x) == "").Any())
+                {
+                    return false;
+                }
             }
             catch (Exception)
             {
-
-                throw;
+                return true;
             }
-            
+
+            var dirs = Directory.GetFiles(folderPath);
+            var images = GetImages(folderPath);
+
+            return images.Count == 0 ? true : false;
         }
 
-        TreeViewItem TryGetClickedItem(MouseButtonEventArgs e)
+        private static List<string> GetSpecialFolders()
+        {
+            
+            return null;
+        }
+#endregion
+
+#region Events
+        private void FileExplorer_Loaded(object sender, RoutedEventArgs e)
+        {
+            DriveInfo[] logicalDrives = DriveInfo.GetDrives().Where(x => x.DriveType != DriveType.CDRom).ToArray();
+            foreach (var drive in Directory.GetLogicalDrives().Where(x => logicalDrives.Any(d => d.Name == x)))
+            {
+                var item = new TreeViewItemImage()
+                {
+                    Header = drive,
+                    Tag = drive,
+                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/DriveIcon.png", UriKind.Absolute))
+                };
+
+                if (!CheckIfEmpty(item.Tag.ToString()))
+                {
+                    item.Items.Add(null);
+                }
+                item.Expanded += Folder_Expanded;
+                FolderTreeView.Items.Add(item);
+            }
+        }
+        public void TreeView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var clickedItem = TryGetClickedItem(e);
+            if (clickedItem == null || Path.GetExtension(clickedItem.Header.ToString()) == "")
+                return;
+
+            if ((e.Source as TreeViewItemImage).IsSelected)
+            {
+                e.Handled = true; // to cancel expanded/collapsed toggle
+                Model.Image image = new Model.Image();
+                try
+                {
+                    image.FileName = clickedItem.Header.ToString();
+                    image.FilePath = clickedItem.Tag.ToString();
+                    image.Extension = Path.GetExtension(image.FilePath);
+                    if (image.Extension != "" && image.Extension != ".tmp")
+                        _aggregator.GetEvent<SendImage>().Publish(image);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+        }
+        TreeViewItemImage TryGetClickedItem(MouseButtonEventArgs e)
         {
             var hit = e.OriginalSource as DependencyObject;
-            while (hit != null && !(hit is TreeViewItem))
+            while (hit != null && !(hit is TreeViewItemImage))
                 hit = VisualTreeHelper.GetParent(hit);
 
-            return hit as TreeViewItem;
+            return hit as TreeViewItemImage;
         }
+#endregion
     }
 }
