@@ -104,6 +104,7 @@
     <Compile Include="Model\Event\ClearEvent.cs" />
     <Compile Include="Model\Event\FileDialogEvent.cs" />
     <Compile Include="Model\Event\GlobalEvent.cs" />
+    <Compile Include="Model\Event\SendImage.cs" />
     <Compile Include="Model\Image.cs" />
     <Compile Include="Model\TreeViewItemImage.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />

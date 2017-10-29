@@ -20,7 +20,13 @@
 
     <Grid Background="#E0E0E0">
         <TreeView x:Name="FolderTreeView">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <EventSetter Event="MouseDoubleClick" Handler="TreeView_PreviewMouseDoubleClick"/>
+                </Style>
+            </TreeView.ItemContainerStyle>
             <TreeView.Resources>
+                
                 <Style TargetType="{x:Type model:TreeViewItemImage}">
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
@@ -30,7 +36,7 @@
                                                                             RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type model:TreeViewItemImage}},
                                                                             Path=ImageSource
                                                                             }"/>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding}"/>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding}" />
                                 </StackPanel>
                             </DataTemplate>
                         </Setter.Value>

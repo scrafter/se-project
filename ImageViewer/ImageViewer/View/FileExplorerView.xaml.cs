@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.IO;
 using System.Drawing;
 using ImageViewer.Model;
+using ImageViewer.Model.Event;
+using Prism.Events;
 
 namespace ImageViewer.View
 {
@@ -22,6 +24,7 @@ namespace ImageViewer.View
     /// </summary>
     public partial class FileExplorerView : UserControl
     {
+        private IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
 
         public FileExplorerView()
         {
@@ -108,9 +111,13 @@ namespace ImageViewer.View
             try
             {
                 var dirs = Directory.GetFiles(folderName);
-                if (dirs.Length > 0)
+                var images = dirs.Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
+                   || Path.GetExtension(x) == ".bmp" || Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".PNG"
+                    || Path.GetExtension(x) == ".tiff" || Path.GetExtension(x) == ".TIFF").ToList();
+
+                if (images.Count > 0)
                 {
-                    files.AddRange(dirs);
+                    files.AddRange(images);
                 }
             }
             catch (Exception)
@@ -127,6 +134,39 @@ namespace ImageViewer.View
                 };
                 item.AddItem(subItem);
             });
+        }
+
+        public void TreeView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var clickedItem = TryGetClickedItem(e);
+            if (clickedItem == null)
+                return;
+
+            e.Handled = true; // to cancel expanded/collapsed toggle
+            Model.Image image = new Model.Image();
+            try
+            {
+                image.FileName = clickedItem.Header.ToString();
+                image.FilePath = clickedItem.Tag.ToString();
+                image.Extension = Path.GetExtension(image.FilePath);
+                if(image.Extension!="")
+                    _aggregator.GetEvent<SendImage>().Publish(image);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+        }
+
+        TreeViewItem TryGetClickedItem(MouseButtonEventArgs e)
+        {
+            var hit = e.OriginalSource as DependencyObject;
+            while (hit != null && !(hit is TreeViewItem))
+                hit = VisualTreeHelper.GetParent(hit);
+
+            return hit as TreeViewItem;
         }
     }
 }

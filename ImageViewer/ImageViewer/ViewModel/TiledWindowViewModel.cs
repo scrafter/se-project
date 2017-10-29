@@ -28,6 +28,10 @@ namespace ImageViewer.ViewModel
             ImageList = new ObservableCollection<Image>();
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
             _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => { ImageList = item; });
+            _aggregator.GetEvent<SendImage>().Subscribe(item => {
+                if (ImageList.Contains(item) == false)
+                    ImageList.Add(item);
+            });
         }
 
         public void Clear()
