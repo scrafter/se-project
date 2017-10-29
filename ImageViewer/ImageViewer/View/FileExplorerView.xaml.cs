@@ -31,27 +31,7 @@ namespace ImageViewer.View
             InitializeComponent();
         }
 
-        private void FileExplorer_Loaded(object sender, RoutedEventArgs e)
-        {
-            DriveInfo[] logicalDrives = DriveInfo.GetDrives().Where(x => x.DriveType != DriveType.CDRom).ToArray();
-            foreach (var drive in Directory.GetLogicalDrives().Where(x => logicalDrives.Any(d => d.Name == x)))
-            {
-                var item = new TreeViewItemImage()
-                {
-                    Header = drive,
-                    Tag = drive,
-                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/DriveIcon.png", UriKind.Absolute))
-                };
-
-                if (!CheckIfEmpty(item.Tag.ToString()))
-                {
-                    item.Items.Add(null);
-                }
-                item.Expanded += Folder_Expanded;
-                FolderTreeView.Items.Add(item);
-            }
-        }
-
+#region Methods
         private void Folder_Expanded(object sender, RoutedEventArgs e)
         {
             TreeViewItemImage treeViewItem = (TreeViewItemImage)sender;
@@ -66,8 +46,14 @@ namespace ImageViewer.View
 
             try
             {
-                var dirs = Directory.GetDirectories(folderName);
-                if(dirs.Length > 0)
+                List<string> dirs = Directory.GetDirectories(folderName).Where(x =>
+                {
+                    DirectoryInfo di = new DirectoryInfo(x);
+                    return !di.Attributes.HasFlag(FileAttributes.ReparsePoint) && !di.Attributes.HasFlag(FileAttributes.Hidden);
+                }
+                ).ToList();
+ 
+                if(dirs.Count > 0)
                 {
                     directories.AddRange(dirs);
                 }
@@ -114,27 +100,6 @@ namespace ImageViewer.View
             return path.Substring(index + 1);
         }
 
-        private static bool CheckIfEmpty(string folderPath)
-        {
-            try
-            {
-                var files = Directory.EnumerateFileSystemEntries(folderPath).ToArray();
-                if (files.Where(x => Path.GetExtension(x) == "").Any())
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            var dirs = Directory.GetFiles(folderPath);
-            var images = GetImages(folderPath);
-
-            return images.Count == 0 ? true : false;
-        }
-
         private static List<string> GetImages(string path)
         {
             return Directory.GetFiles(path).Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
@@ -172,6 +137,55 @@ namespace ImageViewer.View
             });
         }
 
+        private static bool CheckIfEmpty(string folderPath)
+        {
+            try
+            {
+                var files = Directory.EnumerateFileSystemEntries(folderPath).ToArray();
+                if (files.Where(x => Path.GetExtension(x) == "").Any())
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+
+            var dirs = Directory.GetFiles(folderPath);
+            var images = GetImages(folderPath);
+
+            return images.Count == 0 ? true : false;
+        }
+
+        private static List<string> GetSpecialFolders()
+        {
+            
+            return null;
+        }
+#endregion
+
+#region Events
+        private void FileExplorer_Loaded(object sender, RoutedEventArgs e)
+        {
+            DriveInfo[] logicalDrives = DriveInfo.GetDrives().Where(x => x.DriveType != DriveType.CDRom).ToArray();
+            foreach (var drive in Directory.GetLogicalDrives().Where(x => logicalDrives.Any(d => d.Name == x)))
+            {
+                var item = new TreeViewItemImage()
+                {
+                    Header = drive,
+                    Tag = drive,
+                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/DriveIcon.png", UriKind.Absolute))
+                };
+
+                if (!CheckIfEmpty(item.Tag.ToString()))
+                {
+                    item.Items.Add(null);
+                }
+                item.Expanded += Folder_Expanded;
+                FolderTreeView.Items.Add(item);
+            }
+        }
         public void TreeView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var clickedItem = TryGetClickedItem(e);
@@ -195,7 +209,6 @@ namespace ImageViewer.View
             }
             
         }
-
         TreeViewItem TryGetClickedItem(MouseButtonEventArgs e)
         {
             var hit = e.OriginalSource as DependencyObject;
@@ -204,5 +217,6 @@ namespace ImageViewer.View
 
             return hit as TreeViewItem;
         }
+#endregion
     }
 }
