@@ -20,14 +20,16 @@
 
     <Grid Background="#E0E0E0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Margin="5" Width="25" Height="20" FontSize="8" HorizontalAlignment="Right">
-            <EventSetter Event="MouceDoubleClick"/>
-            <Image Source="pack://application:,,,/Resources/Images/CollapseIcon.png"/>
+        <Button Margin="5" Width="50" Height="50" FontSize="8" HorizontalAlignment="Right">
+            <StackPanel>
+                <Image Source="pack://application:,,,/Resources/Images/CollapseIcon.png" />
+            </StackPanel>
         </Button>
+        
         <TreeView x:Name="FolderTreeView" Grid.Row="2">
             <!--<TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type model:TreeViewItemImage}">

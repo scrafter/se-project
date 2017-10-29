@@ -207,10 +207,13 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\DriveIcon.png" />
+    <EmbeddedResource Include="Resources\Images\FolderIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\FolderIcon.png" />
+    <Resource Include="Resources\Images\CollapseIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\DriveIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
