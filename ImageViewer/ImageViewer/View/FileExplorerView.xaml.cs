@@ -33,7 +33,8 @@ namespace ImageViewer.View
 
         private void FileExplorer_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach (var drive in Directory.GetLogicalDrives())
+            DriveInfo[] logicalDrives = DriveInfo.GetDrives().Where(x => x.DriveType != DriveType.CDRom).ToArray();
+            foreach (var drive in Directory.GetLogicalDrives().Where(x => logicalDrives.Any(d => d.Name == x)))
             {
                 var item = new TreeViewItemImage()
                 {
@@ -42,7 +43,10 @@ namespace ImageViewer.View
                     ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/DriveIcon.png", UriKind.Absolute))
                 };
 
-                item.Items.Add(null);
+                if (!CheckIfEmpty(item.Tag.ToString()))
+                {
+                    item.Items.Add(null);
+                }
                 item.Expanded += Folder_Expanded;
                 FolderTreeView.Items.Add(item);
             }
@@ -81,9 +85,15 @@ namespace ImageViewer.View
                     Tag = directoryPath
                 };
 
-                subItem.Items.Add(null);
-                subItem.Expanded += Folder_Expanded;
+                if (Path.GetExtension(subItem.Tag.ToString()) == "")
+                {
+                    if (!CheckIfEmpty(subItem.Tag.ToString()))
+                    {
+                        subItem.Items.Add(null);
+                    }
+                }
 
+                subItem.Expanded += Folder_Expanded;
                 treeViewItem.AddItem(subItem);
             });
             GetFiles(treeViewItem);
@@ -104,6 +114,34 @@ namespace ImageViewer.View
             return path.Substring(index + 1);
         }
 
+        private static bool CheckIfEmpty(string folderPath)
+        {
+            try
+            {
+                var files = Directory.EnumerateFileSystemEntries(folderPath).ToArray();
+                if (files.Where(x => Path.GetExtension(x) == "").Any())
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            var dirs = Directory.GetFiles(folderPath);
+            var images = GetImages(folderPath);
+
+            return images.Count == 0 ? true : false;
+        }
+
+        private static List<string> GetImages(string path)
+        {
+            return Directory.GetFiles(path).Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
+                   || Path.GetExtension(x) == ".bmp" || Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".PNG"
+                    || Path.GetExtension(x) == ".tiff" || Path.GetExtension(x) == ".TIFF").ToList();
+        }
+
         private static void GetFiles(TreeViewItemImage item)
         {
             List<string> files = new List<string>();
@@ -111,9 +149,7 @@ namespace ImageViewer.View
             try
             {
                 var dirs = Directory.GetFiles(folderName);
-                var images = dirs.Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
-                   || Path.GetExtension(x) == ".bmp" || Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".PNG"
-                    || Path.GetExtension(x) == ".tiff" || Path.GetExtension(x) == ".TIFF").ToList();
+                var images = GetImages(folderName);
 
                 if (images.Count > 0)
                 {
