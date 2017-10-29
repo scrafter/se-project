@@ -39,7 +39,7 @@ namespace ImageViewer.View
                 {
                     Header = drive,
                     Tag = drive,
-                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/FolderIcon.png", UriKind.Absolute))
+                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/DriveIcon.png", UriKind.Absolute))
                 };
 
                 item.Items.Add(null);

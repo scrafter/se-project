@@ -206,7 +206,9 @@
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\DriveIcon.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\FolderIcon.png" />
   </ItemGroup>
