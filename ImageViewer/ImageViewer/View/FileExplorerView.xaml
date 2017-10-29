@@ -16,10 +16,19 @@
         <viewModel:FileExplorerViewModel/>
     </UserControl.DataContext>
 
- 
+
 
     <Grid Background="#E0E0E0">
-        <TreeView x:Name="FolderTreeView">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Button Margin="5" Width="25" Height="20" FontSize="8" HorizontalAlignment="Right">
+            <EventSetter Event="MouceDoubleClick"/>
+            <Image Source="pack://application:,,,/Resources/Images/CollapseIcon.png"/>
+        </Button>
+        <TreeView x:Name="FolderTreeView" Grid.Row="2">
             <!--<TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type model:TreeViewItemImage}">
                     <EventSetter Event="MouseDoubleClick" Handler="TreeView_PreviewMouseDoubleClick"/>
