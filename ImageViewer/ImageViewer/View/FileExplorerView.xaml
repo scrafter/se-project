@@ -20,14 +20,14 @@
 
     <Grid Background="#E0E0E0">
         <TreeView x:Name="FolderTreeView">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
+            <!--<TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type model:TreeViewItemImage}">
                     <EventSetter Event="MouseDoubleClick" Handler="TreeView_PreviewMouseDoubleClick"/>
                 </Style>
-            </TreeView.ItemContainerStyle>
+            </TreeView.ItemContainerStyle>-->
             <TreeView.Resources>
-                
                 <Style TargetType="{x:Type model:TreeViewItemImage}">
+                    <EventSetter Event="MouseDoubleClick" Handler="TreeView_PreviewMouseDoubleClick"/>
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>

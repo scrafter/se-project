@@ -189,33 +189,35 @@ namespace ImageViewer.View
         public void TreeView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var clickedItem = TryGetClickedItem(e);
-            if (clickedItem == null)
+            if (clickedItem == null || Path.GetExtension(clickedItem.Header.ToString()) == "")
                 return;
 
-            e.Handled = true; // to cancel expanded/collapsed toggle
-            Model.Image image = new Model.Image();
-            try
+            if ((e.Source as TreeViewItemImage).IsSelected)
             {
-                image.FileName = clickedItem.Header.ToString();
-                image.FilePath = clickedItem.Tag.ToString();
-                image.Extension = Path.GetExtension(image.FilePath);
-                if(image.Extension!="")
-                    _aggregator.GetEvent<SendImage>().Publish(image);
-            }
-            catch (Exception)
-            {
+                e.Handled = true; // to cancel expanded/collapsed toggle
+                Model.Image image = new Model.Image();
+                try
+                {
+                    image.FileName = clickedItem.Header.ToString();
+                    image.FilePath = clickedItem.Tag.ToString();
+                    image.Extension = Path.GetExtension(image.FilePath);
+                    if (image.Extension != "" && image.Extension != ".tmp")
+                        _aggregator.GetEvent<SendImage>().Publish(image);
+                }
+                catch (Exception)
+                {
 
-                throw;
+                    throw;
+                }
             }
-            
         }
-        TreeViewItem TryGetClickedItem(MouseButtonEventArgs e)
+        TreeViewItemImage TryGetClickedItem(MouseButtonEventArgs e)
         {
             var hit = e.OriginalSource as DependencyObject;
-            while (hit != null && !(hit is TreeViewItem))
+            while (hit != null && !(hit is TreeViewItemImage))
                 hit = VisualTreeHelper.GetParent(hit);
 
-            return hit as TreeViewItem;
+            return hit as TreeViewItemImage;
         }
 #endregion
     }
