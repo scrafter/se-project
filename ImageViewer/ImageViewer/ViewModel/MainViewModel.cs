@@ -11,9 +11,10 @@ namespace ImageViewer.ViewModel
     public class MainViewModel : BaseViewModel
     {
         public Visibility FileExplorerVisibility { get; set; }
-        protected MainViewModel()
+
+        public MainViewModel()
         {
-            _aggregator.GetEvent<ClearEvent>().Subscribe(Collapse);
+            _aggregator.GetEvent<CollapseEvent>().Subscribe(Collapse);
         }
 
         private void Collapse()
