@@ -9,7 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
     <UserControl.DataContext>
-        <model:TiledWindowViewModel/>
+        <model:MainViewModel/>
     </UserControl.DataContext>
 
     <Grid>

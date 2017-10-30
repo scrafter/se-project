@@ -1,4 +1,5 @@
 ﻿using ImageViewer.Model.Event;
+using ImageViewer.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,27 @@ namespace ImageViewer.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        public Visibility FileExplorerVisibility { get; set; }
-        protected MainViewModel()
+        private Visibility fileExplorerVisibility;
+        public Visibility FileExplorerVisibility {
+            get => fileExplorerVisibility;
+            set
+            {
+                fileExplorerVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public MainViewModel()
         {
-            _aggregator.GetEvent<ClearEvent>().Subscribe(Collapse);
+            _aggregator.GetEvent<CollapseEvent>().Subscribe(Collapse);
         }
 
-        private void Collapse()
+        public void Collapse()
         {
-            FileExplorerVisibility = Visibility.Collapsed;
+            App.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                FileExplorerVisibility = Visibility.Collapsed;
+            }));
+            
         }
 
     }
