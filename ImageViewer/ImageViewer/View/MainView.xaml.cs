@@ -22,30 +22,9 @@ namespace ImageViewer.View
     /// </summary>
     public partial class MainView : UserControl
     {
-        public bool FileExplorerVisibility {
-            get
-            {
-                return this.fileExplorerView.Visibility == Visibility.Hidden ? true : false;
-            }
-             set
-            {
-
-            }
-            }
-        private IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
         public MainView()
         {
             InitializeComponent();
-            _aggregator.GetEvent<CollapseEvent>().Subscribe(Collapse);
-        }
-
-        private void Collapse()
-        {
-            App.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                this.GridSplitter.Visibility = Visibility.Collapsed;
-                this.fileExplorerView.Visibility = Visibility.Hidden;
-            }));
         }
     }
 }

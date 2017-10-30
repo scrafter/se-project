@@ -8,6 +8,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
+    <UserControl.DataContext>
+        <model:TiledWindowViewModel/>
+    </UserControl.DataContext>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -24,7 +28,19 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <local:FileExplorerView x:Name="fileExplorerView" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0.333"/>
+            <local:FileExplorerView x:Name="fileExplorerView" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,0.333">
+                <local:FileExplorerView.Style>
+                    <Style TargetType="{x:Type local:FileExplorerView}">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding FileExplorerVisibility}" Value="Collapsed">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </local:FileExplorerView.Style>
+            </local:FileExplorerView>
+            
 
             <local:TiledWindowView Grid.ColumnSpan="3" Margin="0,0,1,0.333">
                 <local:TiledWindowView.Style>
@@ -32,7 +48,7 @@
                         <Setter Property="Grid.ColumnSpan" Value="1"/>
                         <Setter Property="Grid.Column" Value="2"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding FileExplorerVisibility}" Value="false">
+                            <DataTrigger Binding="{Binding FileExplorerVisibility}" Value="Collapsed">
                                 <Setter Property="Grid.ColumnSpan" Value="4"/>
                                 <Setter Property="Grid.Column" Value="0"/>
                             </DataTrigger>
