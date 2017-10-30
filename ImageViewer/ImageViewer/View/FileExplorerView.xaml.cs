@@ -29,8 +29,8 @@ namespace ImageViewer.View
         public FileExplorerView()
         {
             InitializeComponent();
-        }
 
+        }
 #region Methods
         private void Folder_Expanded(object sender, RoutedEventArgs e)
         {

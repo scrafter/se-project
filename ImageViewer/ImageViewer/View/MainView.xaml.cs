@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ImageViewer.Model.Event;
+using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,19 @@ namespace ImageViewer.View
     /// </summary>
     public partial class MainView : UserControl
     {
+        private IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
         public MainView()
         {
             InitializeComponent();
+            _aggregator.GetEvent<CollapseEvent>().Subscribe(Collapse);
+        }
+
+        private void Collapse()
+        {
+            App.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                this.fileExplorerView.Visibility = Visibility.Hidden;
+            }));
         }
     }
 }

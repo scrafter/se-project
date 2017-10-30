@@ -17,20 +17,25 @@
     </UserControl.DataContext>
 
 
-
     <Grid Background="#E0E0E0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <Button Margin="5" Width="50" Height="50" FontSize="8" HorizontalAlignment="Right">
+        <Button Name="btnCollapse" Command="{Binding CollapseCommand}" Margin="2, 1" Width="30" Height="30" FontSize="8" HorizontalAlignment="Right" BorderThickness="0" Focusable="False">
             <StackPanel>
-                <Image Source="pack://application:,,,/Resources/Images/CollapseIcon.png" />
+                <Image Source="pack://application:,,,/Resources/Images/CollapseIcon.png" Margin="1" />
             </StackPanel>
         </Button>
-        
-        <TreeView x:Name="FolderTreeView" Grid.Row="2">
+
+        <GridSplitter Background="#616161" Grid.Row="0" Height="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"/>
+        <GridSplitter Background="#616161" Grid.Column="0" Width="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Grid.RowSpan="3"/>
+
+        <TreeView x:Name="FolderTreeView" Grid.Row="1" Margin="1,0.333,0,1">
             <!--<TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type model:TreeViewItemImage}">
                     <EventSetter Event="MouseDoubleClick" Handler="TreeView_PreviewMouseDoubleClick"/>

@@ -102,6 +102,7 @@
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
     <Compile Include="Model\Event\ClearEvent.cs" />
+    <Compile Include="Model\Event\CollapseEvent.cs" />
     <Compile Include="Model\Event\FileDialogEvent.cs" />
     <Compile Include="Model\Event\GlobalEvent.cs" />
     <Compile Include="Model\Event\SendImage.cs" />
@@ -207,13 +208,19 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Images\FolderIcon.png" />
+    <Content Include="Resources\Images\FolderIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\CollapseIcon.png" />
+    <Content Include="Resources\Images\CollapseIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\DriveIcon.png" />
+    <Content Include="Resources\Images\DriveIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
