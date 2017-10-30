@@ -1,5 +1,6 @@
 ﻿using ImageViewer.Model;
 using ImageViewer.Model.Event;
+using ImageViewer.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -41,8 +42,11 @@ namespace ImageViewer.ViewModel
 
         private void ClearAll()
         {
-            foreach (var item in ImageList)
-                ImageList.Remove(item);
+            App.Current.Dispatcher.Invoke(new Action(()=>
+            {
+                foreach (var item in ImageList)
+                    ImageList.Remove(item);
+            }));
         }
     }
 }
