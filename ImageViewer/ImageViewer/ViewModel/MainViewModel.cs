@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace ImageViewer.ViewModel
 {
-    class MainViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel
     {
         public Visibility FileExplorerVisibility { get; set; }
         protected MainViewModel()
