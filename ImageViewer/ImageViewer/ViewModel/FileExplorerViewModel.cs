@@ -23,11 +23,6 @@ namespace ImageViewer.ViewModel
             //Task.Run(() => CollapseMethod());
         }
 
-        private void CollapseMethod()
-        {
-            _aggregator.GetEvent<CollapseEvent>().Publish();
-        }
-
         private bool CollapseCanExecute(object obj)
         {
             return true;
