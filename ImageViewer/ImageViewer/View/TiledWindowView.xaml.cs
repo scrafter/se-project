@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -23,6 +24,11 @@ namespace ImageViewer.View
         public TiledWindowView()
         {
             InitializeComponent();
+        }
+
+        private void imageList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var s = sender; 
         }
     }
 }

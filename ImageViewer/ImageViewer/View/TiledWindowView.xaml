@@ -14,16 +14,36 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <DataTemplate x:Key="ItemTemplate">
+        <!--<DataTemplate x:Key="ItemTemplate">
             <StackPanel Orientation="Horizontal">
                 <Image Width="100" Height="100" Stretch="Fill" Source="{Binding FilePath}"/>
                 <Label Content="{Binding FileName}" />
             </StackPanel>
-        </DataTemplate>
+        </DataTemplate>-->
     </UserControl.Resources>
     <Grid Background="#E0E0E0">
-
-        <ListView ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding ImageList,UpdateSourceTrigger=PropertyChanged}"/>
+        <ItemsControl Name="imageList" ItemsSource="{Binding Path=ImageList}" MouseDoubleClick="imageList_MouseDoubleClick">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Margin="10">
+                    </UniformGrid>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="0.3*"/>
+                        </Grid.RowDefinitions>
+                        <Image Source="{Binding Path=FilePath}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Path=FileName}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!--<ListView ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding ImageList,UpdateSourceTrigger=PropertyChanged}"/>-->
         <!--<ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
