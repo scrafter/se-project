@@ -102,14 +102,17 @@
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
     <Compile Include="Model\Event\ClearEvent.cs" />
+    <Compile Include="Model\Event\CollapseEvent.cs" />
     <Compile Include="Model\Event\FileDialogEvent.cs" />
     <Compile Include="Model\Event\GlobalEvent.cs" />
     <Compile Include="Model\Event\SendImage.cs" />
+    <Compile Include="Model\Event\ShowExplorerCommand.cs" />
     <Compile Include="Model\Image.cs" />
     <Compile Include="Model\TreeViewItemImage.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FileExplorerViewModel.cs" />
     <Compile Include="ViewModel\MainMenuViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\TiledWindowViewModel.cs" />
     <Compile Include="View\FooterView.xaml.cs">
@@ -207,10 +210,19 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\DriveIcon.png" />
+    <Content Include="Resources\Images\FolderIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\FolderIcon.png" />
+    <Content Include="Resources\Images\CollapseIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Images\DriveIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
