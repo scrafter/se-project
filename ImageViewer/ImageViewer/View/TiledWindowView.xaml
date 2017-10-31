@@ -23,7 +23,7 @@
     </UserControl.Resources>
     <Grid Background="#E0E0E0">
 
-        <ListView ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding ImageList,UpdateSourceTrigger=PropertyChanged}"/>
+        <ListView ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding ImageList,UpdateSourceTrigger=PropertyChanged}" BorderThickness="0"/>
         <!--<ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">

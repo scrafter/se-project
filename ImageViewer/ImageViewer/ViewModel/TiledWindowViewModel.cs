@@ -1,5 +1,6 @@
 ﻿using ImageViewer.Model;
 using ImageViewer.Model.Event;
+using ImageViewer.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,6 +29,10 @@ namespace ImageViewer.ViewModel
             ImageList = new ObservableCollection<Image>();
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
             _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => { ImageList = item; });
+            _aggregator.GetEvent<SendImage>().Subscribe(item => {
+                if (ImageList.Contains(item) == false)
+                    ImageList.Add(item);
+            });
         }
 
         public void Clear()
@@ -37,8 +42,11 @@ namespace ImageViewer.ViewModel
 
         private void ClearAll()
         {
-            foreach (var item in ImageList)
-                ImageList.Remove(item);
+            App.Current.Dispatcher.Invoke(new Action(()=>
+            {
+                foreach (var item in ImageList)
+                    ImageList.Remove(item);
+            }));
         }
     }
 }
