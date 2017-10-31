@@ -1,4 +1,5 @@
-﻿using ImageViewer.Model.Event;
+﻿using ImageViewer.Methods;
+using ImageViewer.Model.Event;
 using ImageViewer.View;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace ImageViewer.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
+        public RelayCommand ShowExplorerCommand { get; set; }
         private Visibility fileExplorerVisibility;
         public Visibility FileExplorerVisibility {
             get => fileExplorerVisibility;
@@ -22,16 +24,24 @@ namespace ImageViewer.ViewModel
         }
         public MainViewModel()
         {
+            ShowExplorerCommand = new RelayCommand(ShowExplorer);
             _aggregator.GetEvent<CollapseEvent>().Subscribe(Collapse);
         }
 
-        public void Collapse()
+        private void Collapse()
         {
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
                 FileExplorerVisibility = Visibility.Collapsed;
             }));
-            
+        }
+
+        private void ShowExplorer(object obj)
+        {
+            App.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                FileExplorerVisibility = Visibility.Visible;
+            }));
         }
 
     }
