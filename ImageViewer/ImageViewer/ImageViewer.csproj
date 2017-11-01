@@ -102,6 +102,7 @@
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
     <Compile Include="Model\Event\ClearEvent.cs" />
+    <Compile Include="Model\Event\CollapseAllEvent.cs" />
     <Compile Include="Model\Event\CollapseEvent.cs" />
     <Compile Include="Model\Event\FileDialogEvent.cs" />
     <Compile Include="Model\Event\GlobalEvent.cs" />
@@ -211,11 +212,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Images\FolderIcon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\Images\CollapseIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

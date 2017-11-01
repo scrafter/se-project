@@ -43,6 +43,5 @@ namespace ImageViewer.ViewModel
                 FileExplorerVisibility = Visibility.Visible;
             }));
         }
-
     }
 }
