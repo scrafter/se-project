@@ -11,12 +11,17 @@ namespace ImageViewer.ViewModel
 {
     public class FileExplorerViewModel : BaseViewModel
     {
+        public RelayCommand CollapseAllCommand { get; set; }
         public RelayCommand CollapseCommand { get; set; }
         public FileExplorerViewModel()
         {
             CollapseCommand = new RelayCommand(CollapseExecute, CollapseCanExecute);
+            CollapseAllCommand = new RelayCommand(CollapseAll);
         }
-
+        private void CollapseAll(object obj)
+        {
+            _aggregator.GetEvent<CollapseAllEvent>().Publish();
+        }
         private void CollapseExecute(object obj)
         {
             _aggregator.GetEvent<CollapseEvent>().Publish();

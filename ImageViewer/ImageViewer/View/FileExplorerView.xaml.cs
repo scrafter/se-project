@@ -28,14 +28,15 @@ namespace ImageViewer.View
 
         public FileExplorerView()
         {
+            _aggregator.GetEvent<CollapseAllEvent>().Subscribe(CollapseAll);
             InitializeComponent();
 
         }
 #region Methods
-        private void Folder_Expanded(object sender, RoutedEventArgs e)
+        private void Expand(object sender)
         {
             TreeViewItemImage treeViewItem = (TreeViewItemImage)sender;
-            if(treeViewItem.Items.Count != 1 || treeViewItem.Items[0] != null)
+            if (treeViewItem.Items.Count != 1 || treeViewItem.Items[0] != null)
             {
                 return;
             }
@@ -52,8 +53,8 @@ namespace ImageViewer.View
                     return !di.Attributes.HasFlag(FileAttributes.ReparsePoint) && !di.Attributes.HasFlag(FileAttributes.Hidden);
                 }
                 ).ToList();
- 
-                if(dirs.Count > 0)
+
+                if (dirs.Count > 0)
                 {
                     directories.AddRange(dirs);
                 }
@@ -163,9 +164,20 @@ namespace ImageViewer.View
             
             return null;
         }
-#endregion
+        #endregion
 
 #region Events
+        private void Folder_Expanded(object sender, RoutedEventArgs e)
+        {
+            App.Current.Dispatcher.Invoke(() => Expand(sender)
+            );
+        }
+        private void CollapseAll()
+        {
+            FolderTreeView.Items.Clear();
+            FileExplorer_Loaded(null, null);
+        }
+
         private void FileExplorer_Loaded(object sender, RoutedEventArgs e)
         {
             DriveInfo[] logicalDrives = DriveInfo.GetDrives().Where(x => x.DriveType != DriveType.CDRom).ToArray();
