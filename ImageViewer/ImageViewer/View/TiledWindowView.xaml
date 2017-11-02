@@ -19,38 +19,40 @@
     
     <Grid Background="#E0E0E0">
 
-        <ItemsControl Name="imageList" ItemsSource="{Binding Path=ImageList}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Margin="10">
-                    </UniformGrid>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="10*"/>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="0.3*"/>
-                        </Grid.RowDefinitions>
-                        <Image Name="image" Source="{Binding Path=FilePath}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <Image.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Remove Image" Command="{Binding Path=DataContext.RemoveImageCommand, Source={x:Reference Name=imageList}}" CommandParameter="{Binding}"/>
-                                </ContextMenu>
-                            </Image.ContextMenu>
-                            <Image.InputBindings>
-                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding  DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
-                            </Image.InputBindings>
-                        </Image>
-                        <TextBlock Text="{Binding Path=FileName}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1"/>
-                    </Grid>
-                </DataTemplate>
-                
-            </ItemsControl.ItemTemplate>
-            
-        </ItemsControl>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl Name="imageList" ItemsSource="{Binding Path=ImageList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Margin="10" Columns="5" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                        </UniformGrid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="10*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="0.3*"/>
+                            </Grid.RowDefinitions>
+                            <Image Name="image" Source="{Binding Path=FilePath}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Image.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Remove Image" Command="{Binding Path=DataContext.RemoveImageCommand, Source={x:Reference Name=imageList}}" CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                                </Image.ContextMenu>
+                                <Image.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding  DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                                </Image.InputBindings>
+                            </Image>
+                            <TextBlock Text="{Binding Path=FileName}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="WrapWithOverflow"/>
+                        </Grid>
+                    </DataTemplate>
+
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+        </ScrollViewer>
         <!--<ListView ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding ImageList,UpdateSourceTrigger=PropertyChanged}"/>-->
         <!--<ListView.ItemTemplate>
                 <DataTemplate>
