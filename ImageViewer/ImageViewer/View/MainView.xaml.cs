@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ImageViewer.Model.Event;
+using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
