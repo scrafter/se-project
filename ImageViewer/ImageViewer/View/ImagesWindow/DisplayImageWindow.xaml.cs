@@ -20,9 +20,30 @@ namespace ImageViewer.View.ImagesWindow
     /// </summary>
     public partial class DisplayImageWindow : MetroWindow
     {
-        public DisplayImageWindow()
+
+        private static DisplayImageWindow _instance;
+
+        private DisplayImageWindow()
         {
             InitializeComponent();
+            Closed += new System.EventHandler(MyWindow_Closed);
+        }
+
+        public static DisplayImageWindow Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new DisplayImageWindow();
+                }
+                return _instance;
+            }
+        }
+
+        void MyWindow_Closed(object sender, System.EventArgs e)
+        {
+            _instance = null;
         }
     }
 }

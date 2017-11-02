@@ -17,7 +17,6 @@ namespace ImageViewer.ViewModel
     public class TiledWindowViewModel : BaseViewModel
     {
         private ObservableCollection<Image> _imageList;
-
         public RelayCommand DoubleClickCommand { get; set; }
         public RelayCommand RemoveImageCommand { get; set; }
         public ObservableCollection<Image> ImageList
@@ -65,8 +64,7 @@ namespace ImageViewer.ViewModel
             var image = (Image)obj;
             if(image !=null)
             {
-                //if(_displayImageWindow == null)
-                DisplayImageWindow displayImageWindow = new DisplayImageWindow();
+                DisplayImageWindow displayImageWindow = DisplayImageWindow.Instance;
                 displayImageWindow.Show();
                 _aggregator.GetEvent<DisplayImage>().Publish(image);
             }
