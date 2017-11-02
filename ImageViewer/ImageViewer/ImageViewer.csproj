@@ -104,6 +104,7 @@
     <Compile Include="Model\Event\ClearEvent.cs" />
     <Compile Include="Model\Event\CollapseAllEvent.cs" />
     <Compile Include="Model\Event\CollapseEvent.cs" />
+    <Compile Include="Model\Event\DisplayImage.cs" />
     <Compile Include="Model\Event\FileDialogEvent.cs" />
     <Compile Include="Model\Event\GlobalEvent.cs" />
     <Compile Include="Model\Event\SendImage.cs" />
@@ -112,12 +113,23 @@
     <Compile Include="Model\TreeViewItemImage.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FileExplorerViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\ImagePresenterViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\ToolBarViewModel.cs" />
     <Compile Include="ViewModel\MainMenuViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\TiledWindowViewModel.cs" />
     <Compile Include="View\FooterView.xaml.cs">
       <DependentUpon>FooterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\DisplayImageWindow.xaml.cs">
+      <DependentUpon>DisplayImageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\ImagePresenterView.xaml.cs">
+      <DependentUpon>ImagePresenterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\ToolBarView.xaml.cs">
+      <DependentUpon>ToolBarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainMenuView.xaml.cs">
       <DependentUpon>MainMenuView.xaml</DependentUpon>
@@ -138,6 +150,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\FooterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\DisplayImageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\ImagePresenterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\ToolBarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
