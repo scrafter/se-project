@@ -14,13 +14,18 @@
         WindowTitleBrush="#8BC34A"
         HorizontalAlignment="Stretch"
         WindowStartupLocation="CenterScreen"
+        MinHeight="500"
+        MinWidth="800"
         >
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="12*"/>
+            <RowDefinition Height="1*" MinHeight="200"/>
+            <RowDefinition Height="8*"/>
         </Grid.RowDefinitions>
         <local:ToolBarView Grid.Row="0"/>
-        <local:ImagePresenterView Grid.Row="1"/>
+        <!--<UniformGrid Columns="3" Rows="3" Grid.Row="1">-->
+        <UniformGrid Grid.Row="1">
+            <local:ImagePresenterView/>
+        </UniformGrid>
     </Grid>
 </Controls:MetroWindow>
