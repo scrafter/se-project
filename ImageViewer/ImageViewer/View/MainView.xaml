@@ -37,7 +37,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="ShowExplorer" Command="{Binding ShowExplorerCommand}" Margin="0, 0, 12, 0" Grid.Column="0" Background="#FF8BC34A" Foreground="White">
+            <Button x:Name="ShowExplorer" Command="{Binding ShowExplorerCommand}" Margin="0, 0, 12, 0" Grid.Column="0" Foreground="White">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -48,6 +48,7 @@
                 </StackPanel>
                 <Button.Style>
                     <Style TargetType="Button">
+                        <Setter Property="Background" Value="#FF8BC34A"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
@@ -62,6 +63,9 @@
                             <DataTrigger Binding="{Binding FileExplorerVisibility}" Value="Collapsed">
                                 <Setter Property="Visibility" Value="Visible"/>
                             </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF97C661"/>
+                            </Trigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>

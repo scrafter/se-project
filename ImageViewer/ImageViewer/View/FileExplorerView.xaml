@@ -37,11 +37,11 @@
         <Grid FlowDirection="RightToLeft">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Name="btnCollapse" Command="{Binding CollapseCommand}" Margin="3, 0" Width="30" Height="30" FontSize="8" HorizontalAlignment="Center" BorderThickness="0" Focusable="False" Foreground="#FF8BC34A" Grid.Column="0">
+            <Button Name="btnCollapse" Command="{Binding CollapseCommand}" Style="{StaticResource WhiteGreenButton}" Grid.Column="0">
                 <StackPanel>
                     <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -51,7 +51,7 @@
                     </Rectangle>
                 </StackPanel>
             </Button>
-            <Button Command="{Binding CollapseAllCommand}" Margin="3, 0" Width="30" Height="30" FontSize="8" HorizontalAlignment="Left" BorderThickness="0" Focusable="False" Foreground="#FF8BC34A" Grid.Column="1">
+            <Button Command="{Binding CollapseAllCommand}" Style="{StaticResource WhiteGreenButton}" Grid.Column="1">
                 <StackPanel>
                     <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
