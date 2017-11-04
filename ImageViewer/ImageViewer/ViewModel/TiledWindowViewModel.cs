@@ -36,7 +36,10 @@ namespace ImageViewer.ViewModel
             DragEnterCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.DragEventArgs>(FileDragFromWindows);
             ImageList = new ObservableCollection<Image>();
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
-            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => { ImageList = item; });
+            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => {
+                ImageList = item;
+                SynchronizeImageExplorer();
+            });
             _aggregator.GetEvent<SendImage>().Subscribe(item => {
                 if (ImageList.Contains(item) == false)
                     ImageList.Add(item);
@@ -68,10 +71,14 @@ namespace ImageViewer.ViewModel
                 DisplayImageWindow displayImageWindow = DisplayImageWindow.Instance;
                 displayImageWindow.Show();
                 _aggregator.GetEvent<DisplayImage>().Publish(image);
+                SynchronizeImageExplorer();
             }
             
         }
-
+        private void SynchronizeImageExplorer()
+        {
+            _aggregator.GetEvent<SendImageList>().Publish(_imageList);
+        }
         private bool DoubleClickCanExecute(object obj)
         {
             return true;

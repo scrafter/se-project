@@ -16,9 +16,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImageExplorerViewModel : BaseViewModel
     {
+        private const int displayedImages = 6;
         private ObservableCollection<Image> _imageList;
         public RelayCommand DoubleClickCommand { get; set; }
         public RelayCommand RemoveImageCommand { get; set; }
+        public RelayCommand DialogCommand { get; set; }
         public ObservableCollection<Image> ImageList
         {
             get => _imageList;
@@ -26,6 +28,17 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 _imageList = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("ImageListCount");
+            }
+        }
+
+        public int ImageListCount {
+            get
+            {
+                return _imageList.Count > displayedImages ? _imageList.Count : displayedImages;
+            }
+            set
+            {
             }
         }
 
@@ -33,10 +46,29 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             DoubleClickCommand = new RelayCommand(DoubleClickExecute, DoubleClickCanExecute);
             RemoveImageCommand = new RelayCommand(RemoveImageExecute, RemoveImageCanExecute);
+            DialogCommand = new RelayCommand(DialogExecute);
             ImageList = new ObservableCollection<Image>();
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
             _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => { ImageList = item; });
+            _aggregator.GetEvent<SendImage>().Subscribe(item => {
+                if (ImageList.Contains(item) == false)
+                    ImageList.Add(item);
+            });
+            _aggregator.GetEvent<SendImageList>().Subscribe( item => { ImageList = item;  });
         }
+
+        private void DialogExecute(object obj)
+        {
+            Task.Run(() => DialogMethod());
+        }
+
+        public void DialogMethod()
+        {
+            FileDialogMethod fdm = new FileDialogMethod();
+            fdm.ReturnFilesFromDialog(ImageList);
+            _aggregator.GetEvent<FileDialogEvent>().Publish(ImageList);
+        }
+
 
         private void RemoveImageExecute(object obj)
         {
