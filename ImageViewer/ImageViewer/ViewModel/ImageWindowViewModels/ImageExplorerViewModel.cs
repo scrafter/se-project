@@ -1,24 +1,26 @@
-using ImageViewer.Methods;
-using GalaSoft.MvvmLight.Command;
+﻿using ImageViewer.Methods;
 using ImageViewer.Model;
 using ImageViewer.Model.Event;
 using ImageViewer.View;
 using ImageViewer.View.ImagesWindow;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.IO;
 
-namespace ImageViewer.ViewModel
+namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
-    public class TiledWindowViewModel : BaseViewModel
+    public class ImageExplorerViewModel : BaseViewModel
     {
+        private const int displayedImages = 6;
         private ObservableCollection<Image> _imageList;
-        public Methods.RelayCommand DoubleClickCommand { get; set; }
-        public Methods.RelayCommand RemoveImageCommand { get; set; }
-        public RelayCommand<System.Windows.DragEventArgs> DragEnterCommand { get; set; }
-
+        public RelayCommand DoubleClickCommand { get; set; }
+        public RelayCommand RemoveImageCommand { get; set; }
+        public RelayCommand DialogCommand { get; set; }
         public ObservableCollection<Image> ImageList
         {
             get => _imageList;
@@ -26,25 +28,47 @@ namespace ImageViewer.ViewModel
             {
                 _imageList = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("ImageListCount");
             }
         }
 
-        public TiledWindowViewModel()
+        public int ImageListCount {
+            get
+            {
+                return _imageList.Count > displayedImages ? _imageList.Count : displayedImages;
+            }
+            set
+            {
+            }
+        }
+
+        public ImageExplorerViewModel()
         {
-            DoubleClickCommand = new Methods.RelayCommand(DoubleClickExecute, DoubleClickCanExecute);
-            RemoveImageCommand = new Methods.RelayCommand(RemoveImageExecute, RemoveImageCanExecute);
-            DragEnterCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.DragEventArgs>(FileDragFromWindows);
+            DoubleClickCommand = new RelayCommand(DoubleClickExecute, DoubleClickCanExecute);
+            RemoveImageCommand = new RelayCommand(RemoveImageExecute, RemoveImageCanExecute);
+            DialogCommand = new RelayCommand(DialogExecute);
             ImageList = new ObservableCollection<Image>();
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
-            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => {
-                ImageList = item;
-                SynchronizeImageExplorer();
-            });
+            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => { ImageList = item; });
             _aggregator.GetEvent<SendImage>().Subscribe(item => {
                 if (ImageList.Contains(item) == false)
                     ImageList.Add(item);
             });
+            _aggregator.GetEvent<SendImageList>().Subscribe( item => { ImageList = item;  });
         }
+
+        private void DialogExecute(object obj)
+        {
+            Task.Run(() => DialogMethod());
+        }
+
+        public void DialogMethod()
+        {
+            FileDialogMethod fdm = new FileDialogMethod();
+            fdm.ReturnFilesFromDialog(ImageList);
+            _aggregator.GetEvent<FileDialogEvent>().Publish(ImageList);
+        }
+
 
         private void RemoveImageExecute(object obj)
         {
@@ -66,42 +90,18 @@ namespace ImageViewer.ViewModel
         private void DoubleClickExecute(object obj)
         {
             var image = (Image)obj;
-            if(image !=null)
+            if (image != null)
             {
                 DisplayImageWindow displayImageWindow = DisplayImageWindow.Instance;
                 displayImageWindow.Show();
                 _aggregator.GetEvent<DisplayImage>().Publish(image);
-                SynchronizeImageExplorer();
             }
-            
+
         }
-        private void SynchronizeImageExplorer()
-        {
-            _aggregator.GetEvent<SendImageList>().Publish(_imageList);
-        }
+
         private bool DoubleClickCanExecute(object obj)
         {
             return true;
-        }
-
-        private void FileDragFromWindows(DragEventArgs obj)
-            {
-           
-            string[] files = (string[])obj.Data.GetData(System.Windows.DataFormats.FileDrop);
-            Model.Image image = new Model.Image();
-            foreach (string path in files)
-                try
-                {
-                    image.FilePath = path;
-                    image.Extension = Path.GetExtension(path);
-                    if (image.Extension != "" && image.Extension != ".tmp")
-                        _aggregator.GetEvent<SendImage>().Publish(image);
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
         }
 
         public void Clear()
@@ -111,7 +111,7 @@ namespace ImageViewer.ViewModel
 
         private void ClearAll()
         {
-            App.Current.Dispatcher.Invoke(new Action(()=>
+            App.Current.Dispatcher.Invoke(new Action(() =>
             {
                 foreach (var item in ImageList)
                     ImageList.Remove(item);

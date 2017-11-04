@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="ImageViewer.View.ImagesWindow.ImageExplorerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ImageViewer.View.ImagesWindow"
+             xmlns:model="clr-namespace:ImageViewer.ViewModel.ImageWindowViewModels"  
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="500">
+
+    <UserControl.DataContext>
+        <model:ImageExplorerViewModel></model:ImageExplorerViewModel>
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+
+    </UserControl.Resources>
+
+    <Grid Background="#E0E0E0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="7*"/>
+        </Grid.ColumnDefinitions>
+        <Button  Command="{Binding DialogCommand}" Style="{StaticResource WhiteGreenButton}" Margin="0" ToolTip="Region selection" Width="50" Height="50">
+            <StackPanel>
+                <Rectangle Width="16" Height="16"
+                                            Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_add}"/>
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </StackPanel>
+        </Button>
+        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Grid.Column="1">
+            <ItemsControl Name="imageList" ItemsSource="{Binding Path=ImageList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Margin="10" Rows="1"  ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                            <UniformGrid.Style>
+                                <Style TargetType="UniformGrid">
+                                    <Setter Property ="Columns" Value="{Binding ImageListCount}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ImageListCount}">
+                                            <Setter Property ="Columns" Value="{Binding ImageListCount}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </UniformGrid.Style>
+                        </UniformGrid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="10*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="0.3*"/>
+                            </Grid.RowDefinitions>
+                            <Image Name="image" Source="{Binding Path=FilePath}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Image.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Remove Image" Command="{Binding Path=DataContext.RemoveImageCommand, Source={x:Reference Name=imageList}}" CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                                </Image.ContextMenu>
+                                <Image.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding  DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                                </Image.InputBindings>
+                            </Image>
+                            <TextBlock Text="{Binding Path=FileName}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="WrapWithOverflow"/>
+                        </Grid>
+                    </DataTemplate>
+
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

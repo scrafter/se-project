@@ -77,13 +77,9 @@
                 <TabItem.Header>
                     <TextBlock Text="Images" Foreground="#FF8BC34A" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </TabItem.Header>
-                <Label>
-                    <Label.Content>
-                        <Rectangle>
-
-                        </Rectangle>
-                    </Label.Content>
-                </Label>
+                <Grid>
+                    <local:ImageExplorerView ClipToBounds="True"/>
+                </Grid>
                 <TabItem.Style>
                     <Style TargetType="TabItem">
                         <Setter Property="Background" Value="White"/>
