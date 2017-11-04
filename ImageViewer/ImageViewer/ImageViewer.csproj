@@ -113,6 +113,7 @@
     <Compile Include="Model\TreeViewItemImage.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FileExplorerViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\ImageExplorerViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\ImagePresenterViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\ToolBarViewModel.cs" />
     <Compile Include="ViewModel\MainMenuViewModel.cs" />
@@ -124,6 +125,9 @@
     </Compile>
     <Compile Include="View\ImagesWindow\DisplayImageWindow.xaml.cs">
       <DependentUpon>DisplayImageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\ImageExplorerView.xaml.cs">
+      <DependentUpon>ImageExplorerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ImagesWindow\ImagePresenterView.xaml.cs">
       <DependentUpon>ImagePresenterView.xaml</DependentUpon>
@@ -154,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ImagesWindow\DisplayImageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\ImageExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
