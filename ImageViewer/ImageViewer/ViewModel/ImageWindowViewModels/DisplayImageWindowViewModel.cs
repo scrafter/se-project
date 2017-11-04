@@ -14,7 +14,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     {
         public RelayCommand ShowToolbarCommand { get; set; }
         private Visibility toolBarVisibility;
-        public Visibility ToolBarVisibility
+        public Visibility ToolbarVisibility
         {
             get => toolBarVisibility;
             set
@@ -26,23 +26,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public DisplayImageWindowViewModel()
         {
             ShowToolbarCommand = new RelayCommand(ShowToolbar);
-            _aggregator.GetEvent<HideToolbarEvent>().Subscribe(Collapse);
+            _aggregator.GetEvent<HideToolbarEvent>().Subscribe(HideToolbar);
         }
 
-        private void Collapse()
+        private void HideToolbar()
         {
-            App.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                ToolBarVisibility = Visibility.Collapsed;
-            }));
+            ToolbarVisibility = Visibility.Collapsed;
         }
-
         private void ShowToolbar(object obj)
         {
-            App.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                ToolBarVisibility = Visibility.Visible;
-            }));
+            ToolbarVisibility = Visibility.Visible;
         }
     }
 }

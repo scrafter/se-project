@@ -22,48 +22,74 @@
     <Window.DataContext>
         <model:DisplayImageWindowViewModel/>
     </Window.DataContext>
-    
-    <Grid>
+
+    <Grid Margin="0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="1*" MinHeight="200"/>
             <RowDefinition Height="8*"/>
         </Grid.RowDefinitions>
-        <Button x:Name="ShowExplorer" Command="{Binding ShowToolbarCommand}" Margin="0, 0, 0, 0" Grid.Row="0" Foreground="White">
-            <StackPanel Orientation="Horizontal">
-                <Rectangle Width="16" Height="16"
+        <Grid Grid.Row="0" Margin="0">
+            <Button x:Name="ShowExplorer" Command="{Binding ShowToolbarCommand}" Margin="0, 0, 0, 5" Foreground="White">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Center">
-                    <Rectangle.OpacityMask>
-                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_down}"/>
-                    </Rectangle.OpacityMask>
-                </Rectangle>
-            </StackPanel>
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Background" Value="#FF8BC34A"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border CornerRadius="0, 0, 15, 15" Background="{TemplateBinding Background}" BorderThickness="1">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="Visibility" Value="Collapsed"/>
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_down}"/>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </StackPanel>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#616161"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border CornerRadius="0, 0, 15, 15" Background="{TemplateBinding Background}" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ToolbarVisibility}" Value="Collapsed">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFA6A6A6"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+        <UniformGrid Grid.Row="0" Grid.RowSpan="2">
+            <UniformGrid.Style>
+                <Style TargetType="UniformGrid">
+                    <Setter Property="Visibility" Value="Visible"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding FileExplorerVisibility}" Value="Collapsed">
-                            <Setter Property="Visibility" Value="Visible"/>
+                        <DataTrigger Binding="{Binding ToolbarVisibility}" Value="Collapsed">
+                            <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#FF97C661"/>
-                        </Trigger>
                     </Style.Triggers>
                 </Style>
-            </Button.Style>
-        </Button>
-        <local:ToolBarView Grid.Row="0" Grid.RowSpan="2"/>
-        <UniformGrid Grid.Row="2">
+            </UniformGrid.Style>
+            <local:ToolBarView/>
+        </UniformGrid>
+        <UniformGrid>
+            <UniformGrid.Style>
+                <Style TargetType="UniformGrid">
+                    <Setter Property="Grid.Row" Value="2"/>
+                    <Setter Property="Grid.RowSpan" Value="1"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ToolbarVisibility}" Value="Collapsed">
+                            <Setter Property="Grid.Row" Value="1"/>
+                            <Setter Property="Grid.RowSpan" Value="2"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </UniformGrid.Style>
             <local:ImagePresenterView/>
         </UniformGrid>
     </Grid>
