@@ -20,9 +20,9 @@
     <Grid Background="#E0E0E0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
-        <Button  Command="{Binding DialogCommand}" Style="{StaticResource WhiteGreenButton}" Margin="0" ToolTip="Region selection" Width="50" Height="50">
+        <Button  Command="{Binding DialogCommand}" Style="{StaticResource WhiteGreenButton}" Margin="0" ToolTip="Add images" Width="50" Height="50">
             <StackPanel>
                 <Rectangle Width="16" Height="16"
                                             Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -36,7 +36,7 @@
             <ItemsControl Name="imageList" ItemsSource="{Binding Path=ImageList}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Margin="10" Rows="1"  ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                        <UniformGrid Margin="0" Rows="1"  ScrollViewer.HorizontalScrollBarVisibility="Auto">
                             <UniformGrid.Style>
                                 <Style TargetType="UniformGrid">
                                     <Setter Property ="Columns" Value="{Binding ImageListCount}"/>
