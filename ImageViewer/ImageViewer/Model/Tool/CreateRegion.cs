@@ -9,7 +9,7 @@ namespace ImageViewer.Model
 {
     class CreateRegion : ITool
     {
-        public void AffectImage(BitmapSource bitmapSource, object obj)
+        public void AffectImage(BitmapSource bitmapSource, object obj, int mouseX, int mouseY)
         {
             throw new NotImplementedException();
         }

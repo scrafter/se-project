@@ -16,7 +16,7 @@ namespace ImageViewer.Model
            
         }
 
-        public void AffectImage(BitmapSource bitmapSource, object obj)
+        public void AffectImage(BitmapSource bitmapSource, object obj, int mouseX, int mouseY)
         {
 
         }

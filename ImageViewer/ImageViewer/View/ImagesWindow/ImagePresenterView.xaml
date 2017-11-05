@@ -6,28 +6,33 @@
              xmlns:local="clr-namespace:ImageViewer.View.ImagesWindow"
              xmlns:models="clr-namespace:ImageViewer.ViewModel.ImageWindowViewModels"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
              xmlns:mouse="clr-namespace:ImageViewer.Model.MouseBehaviour"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.DataContext>
         <models:ImagePresenterViewModel/>
     </UserControl.DataContext>
+
     <Grid>
         <DockPanel>
             <StackPanel>
                 <Image Source="{Binding ImageSource}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDown">
+                            <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </Image>
-            </StackPanel>
-            <Canvas DockPanel.Dock="Bottom" >
                 <i:Interaction.Behaviors>
                     <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
                 </i:Interaction.Behaviors>
-            </Canvas>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="PreviewMouseDown">
-                    <i:InvokeCommandAction Command="{Binding ImageClickCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+            </StackPanel>
+            <!--<Canvas DockPanel.Dock="Bottom" >
+                <i:Interaction.Behaviors>
+                    <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
+                </i:Interaction.Behaviors>
+            </Canvas>-->
         </DockPanel>
     </Grid>
 </UserControl>

@@ -166,5 +166,17 @@
                 </Style>
             </Button.Style>
         </Button>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Background" Value="Yellow"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RGBA}">
+                            <Setter Property="Background" Value="{Binding RGBA}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+        </Grid>
     </Grid>
 </UserControl>

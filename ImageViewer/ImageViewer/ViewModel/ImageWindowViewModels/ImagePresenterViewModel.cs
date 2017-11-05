@@ -19,7 +19,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private int _mouseY;
         private Image _displayedImage;
         private BitmapSource _imageSource;
-        public RelayCommand ImageClickCommand;
+        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         private static ITool tool = null;
         public static ITool Tool
         {
@@ -84,15 +84,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public ImagePresenterViewModel()
         {
             _aggregator.GetEvent<DisplayImage>().Subscribe(item => { DisplayedImage = item; });
-            ImageClickCommand = new RelayCommand(ImageClickExecute);
+            //ImageClickCommand = new RelayCommand(ImageClickExecute);
+            ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
         }
 
-        private void ImageClickExecute(object obj)
+        private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
-            App.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                tool.AffectImage(ImageSource, obj);
-            }));
+            object obj = new object();
+            if(tool != null)
+                App.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    tool.AffectImage(ImageSource, obj, _mouseX, _mouseY);
+                }));
         }
     }
 }
