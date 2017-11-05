@@ -111,6 +111,9 @@
     </ApplicationDefinition>
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
+    <Compile Include="Model\Tool\AfffectsImage.cs" />
+    <Compile Include="Model\Tool\CreateRegion.cs" />
+    <Compile Include="Model\Tool\EditRegion.cs" />
     <Compile Include="Model\Event\ClearEvent.cs" />
     <Compile Include="Model\Event\CollapseAllEvent.cs" />
     <Compile Include="Model\Event\CollapseEvent.cs" />
@@ -122,6 +125,8 @@
     <Compile Include="Model\Event\SendImageList.cs" />
     <Compile Include="Model\Event\ShowExplorerCommand.cs" />
     <Compile Include="Model\Image.cs" />
+    <Compile Include="Model\Tool\MagnifyingGlass.cs" />
+    <Compile Include="Model\Tool\PixelPicker.cs" />
     <Compile Include="Model\TreeViewItemImage.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FileExplorerViewModel.cs" />

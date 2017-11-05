@@ -16,9 +16,26 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private Image _displayedImage;
         private ImageSource _imageSource;
 
+        public static AfffectsImage tool;
+
+        public AfffectsImage Tool
+        {
+            get
+            {
+                return tool;
+            }
+            set
+            {
+                tool = value;
+            }
+        }
+        
         public Image DisplayedImage
         {
-            get => _displayedImage;
+            get
+            {
+                return _displayedImage;
+            }
             set
             {
                 _displayedImage = value;
@@ -30,7 +47,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         public ImageSource ImageSource
         {
-            get => _imageSource;
+            get
+            {
+                return _imageSource;
+            }
             set
             { 
                 _imageSource = value;
@@ -41,6 +61,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public ImagePresenterViewModel()
         {
             _aggregator.GetEvent<DisplayImage>().Subscribe(item => { DisplayedImage = item; });
+
         }
+
+
+
+
+
     }
 }
