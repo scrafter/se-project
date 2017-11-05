@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ImageViewer.Methods;
 using ImageViewer.Model.Event;
+using ImageViewer.Model;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -36,22 +37,22 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void CreateMagnifyingGlassTool(object obj)
         {
-
+            ImagePresenterViewModel.Tool = new MagnifyingGlass();
         }
 
         private void CreateEditRegionTool(object obj)
         {
-
+            ImagePresenterViewModel.Tool = new EditRegion();
         }
 
         private void CreateRegionTool(object obj)
         {
-
+            ImagePresenterViewModel.Tool = new CreateRegion();
         }
 
         private void CreatePixelPickerTool(object obj)
         {
-
+            ImagePresenterViewModel.Tool = new PixelPicker();
         }
 
     }

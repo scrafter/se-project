@@ -13,12 +13,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
+
         private Image _displayedImage;
         private ImageSource _imageSource;
 
-        public static AfffectsImage tool;
+        private static ITool tool;
 
-        public AfffectsImage Tool
+        public static ITool Tool
         {
             get
             {

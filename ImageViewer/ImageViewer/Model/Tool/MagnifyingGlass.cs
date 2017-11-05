@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace ImageViewer.Model
 {
-    class MagnifyingGlass : AfffectsImage
+    class MagnifyingGlass : ITool
     {
 
         public MagnifyingGlass()

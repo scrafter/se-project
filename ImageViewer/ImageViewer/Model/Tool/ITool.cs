@@ -7,12 +7,8 @@ using System.Windows.Input;
 
 namespace ImageViewer.Model
 {
-    public interface AfffectsImage
+    public interface ITool
     {
-
         void AffectImage();
-
-
-
     }
 }

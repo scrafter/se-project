@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model
 {
-    class PixelPicker : AfffectsImage
+    class PixelPicker : ITool
     {
+        public PixelPicker()
+        {
+
+        }
         public void AffectImage()
         {
             throw new NotImplementedException();

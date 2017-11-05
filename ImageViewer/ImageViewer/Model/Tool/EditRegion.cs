@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model
 {
-    class EditRegion : AfffectsImage
+    class EditRegion : ITool
     {
         public void AffectImage()
         {
