@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace ImageViewer.Model
 {
@@ -12,12 +13,10 @@ namespace ImageViewer.Model
 
         public MagnifyingGlass()
         {
-            Cursor cur = new Cursor("./Resources/CursorImages/magnifying-glass.cur");
-
-            
+           
         }
 
-        public void AffectImage()
+        public void AffectImage(BitmapSource bitmapSource, object obj)
         {
 
         }

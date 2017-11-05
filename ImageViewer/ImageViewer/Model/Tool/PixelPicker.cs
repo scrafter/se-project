@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace ImageViewer.Model
 {
@@ -12,9 +15,12 @@ namespace ImageViewer.Model
         {
 
         }
-        public void AffectImage()
+        public void AffectImage(BitmapSource bitmapSource, object obj)
         {
-            throw new NotImplementedException();
+            int stride = bitmapSource.PixelWidth * 4;
+            int size = bitmapSource.PixelHeight * stride;
+            byte[] pixels = new byte[size];
+            bitmapSource.CopyPixels(pixels, stride, 0);
         }
     }
 }

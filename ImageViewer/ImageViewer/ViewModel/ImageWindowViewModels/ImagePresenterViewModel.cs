@@ -8,17 +8,19 @@ using Prism.Events;
 using ImageViewer.Model.Event;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ImageViewer.Methods;
+using ImageViewer.View;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
-
+        private int _mouseX;
+        private int _mouseY;
         private Image _displayedImage;
-        private ImageSource _imageSource;
-
-        private static ITool tool;
-
+        private BitmapSource _imageSource;
+        public RelayCommand ImageClickCommand;
+        private static ITool tool = null;
         public static ITool Tool
         {
             get
@@ -30,7 +32,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 tool = value;
             }
         }
-        
         public Image DisplayedImage
         {
             get
@@ -45,8 +46,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     ImageSource = new BitmapImage(new Uri(_displayedImage.FilePath));
             }
         }
-
-        public ImageSource ImageSource
+        public BitmapSource ImageSource
         {
             get
             {
@@ -59,15 +59,40 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
         }
 
+        public int MouseX { get{ return _mouseX; }
+            set
+            {
+                if (_mouseX == value)
+                    return;
+                _mouseX = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int MouseY
+        {
+            get { return _mouseY; }
+            set
+            {
+                if (_mouseY == value)
+                    return;
+                _mouseY = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public ImagePresenterViewModel()
         {
             _aggregator.GetEvent<DisplayImage>().Subscribe(item => { DisplayedImage = item; });
-
+            ImageClickCommand = new RelayCommand(ImageClickExecute);
         }
 
-
-
-
-
+        private void ImageClickExecute(object obj)
+        {
+            App.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                tool.AffectImage(ImageSource, obj);
+            }));
+        }
     }
 }

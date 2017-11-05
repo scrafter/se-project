@@ -111,6 +111,7 @@
     </ApplicationDefinition>
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
+    <Compile Include="Model\MouseManagement.cs" />
     <Compile Include="Model\Tool\ITool.cs" />
     <Compile Include="Model\Tool\CreateRegion.cs" />
     <Compile Include="Model\Tool\EditRegion.cs" />
