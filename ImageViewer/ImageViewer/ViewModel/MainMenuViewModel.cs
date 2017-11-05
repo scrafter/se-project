@@ -23,6 +23,10 @@ namespace ImageViewer.ViewModel
             ImageList = new ObservableCollection<Image>();
             DialogCommand = new RelayCommand(DialogExecute, DialogCanExecute);
             ClearCommand = new RelayCommand(ClearExecute, ClearCanExecute);
+            _aggregator.GetEvent<SendImage>().Subscribe(item => {
+                if (ImageList.Contains(item) == false)
+                    ImageList.Add(item);
+            });
         }
 
         private void ClearExecute(object obj)
