@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Image Viewer" Height="300" Width="300"
         ResizeMode="CanResizeWithGrip" 
-        ShowInTaskbar="False" 
+        ShowInTaskbar="True" 
         WindowState="Maximized"
         BorderBrush="#8BC34A"
         WindowTitleBrush="#8BC34A"

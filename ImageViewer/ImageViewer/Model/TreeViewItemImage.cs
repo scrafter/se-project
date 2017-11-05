@@ -15,7 +15,15 @@ namespace ImageViewer.Model
     {
         private ImageSource imageSource;
 
-        public ImageSource ImageSource { get => imageSource; set => imageSource = value; }
+        public ImageSource ImageSource {
+            get {
+                return imageSource;
+                }
+                 set
+                {
+                imageSource = value;
+                }
+            }
 
         public void AddItem(TreeViewItemImage item)
         {
