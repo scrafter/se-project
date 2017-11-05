@@ -21,7 +21,10 @@ namespace ImageViewer.ViewModel
         public RelayCommand RemoveImageCommand { get; set; }
         public ObservableCollection<Image> ImageList
         {
-            get => _imageList;
+            get
+            {
+                return _imageList;
+            }
             set
             {
                 _imageList = value;

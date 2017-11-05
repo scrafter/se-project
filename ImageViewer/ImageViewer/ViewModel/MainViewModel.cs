@@ -15,7 +15,10 @@ namespace ImageViewer.ViewModel
         public RelayCommand ShowExplorerCommand { get; set; }
         private Visibility fileExplorerVisibility;
         public Visibility FileExplorerVisibility {
-            get => fileExplorerVisibility;
+            get
+            {
+                return fileExplorerVisibility;
+            }
             set
             {
                 fileExplorerVisibility = value;
