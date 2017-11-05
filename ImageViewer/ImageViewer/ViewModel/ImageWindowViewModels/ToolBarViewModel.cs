@@ -29,24 +29,22 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void CreateMagnifyingGlassTool(object obj)
         {
-            ImagePresenterViewModel.tool = new MagnifyingGlass();
-            Console.WriteLine("MagnifyingGlass");
 
         }
 
         private void CreateEditRegionTool(object obj)
         {
-            Console.WriteLine("EditRegion");
+
         }
 
         private void CreateRegionTool(object obj)
         {
-            Console.WriteLine("CreateRegion");
+
         }
 
         private void CreatePixelPickerTool(object obj)
         {
-            Console.WriteLine("PixelPicker");
+
         }
 
     }
