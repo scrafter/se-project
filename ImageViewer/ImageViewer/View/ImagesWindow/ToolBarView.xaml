@@ -166,7 +166,7 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Grid Grid.Row="1" Grid.Column="0">
+        <!--<Grid Grid.Row="1" Grid.Column="0">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Background" Value="Yellow"/>
@@ -177,6 +177,6 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-        </Grid>
+        </Grid>-->
     </Grid>
 </UserControl>
