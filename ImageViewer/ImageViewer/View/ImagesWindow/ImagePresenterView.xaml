@@ -15,9 +15,9 @@
     </UserControl.DataContext>
 
     <Grid>
-        <DockPanel>
-            <StackPanel>
-                <Image Source="{Binding ImageSource}">
+        <ContentControl>
+            <Grid>
+                <Image Source="{Binding ImageSource}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Width="{Binding ImageWidth, Mode=OneWayToSource}" Height="{Binding ImageHeight, Mode=OneWayToSource}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
                             <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
@@ -27,12 +27,14 @@
                 <i:Interaction.Behaviors>
                     <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
                 </i:Interaction.Behaviors>
-            </StackPanel>
-            <!--<Canvas DockPanel.Dock="Bottom" >
+            </Grid>
+        </ContentControl>
+
+        <!--<Canvas DockPanel.Dock="Bottom" >
                 <i:Interaction.Behaviors>
                     <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
                 </i:Interaction.Behaviors>
             </Canvas>-->
-        </DockPanel>
+
     </Grid>
 </UserControl>

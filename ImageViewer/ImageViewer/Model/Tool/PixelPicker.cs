@@ -25,15 +25,16 @@ namespace ImageViewer.Model
             bitmapSource.CopyPixels(pixels, stride, 0);
             int index = mouseY * stride + 4 * mouseX;
 
-            byte red = pixels[index];
+            byte red = pixels[index+2];
             byte green = pixels[index + 1];
-            byte blue = pixels[index + 2];
+            byte blue = pixels[index];
             byte alpha = pixels[index + 3];
+
             Dictionary<string, byte> RGBA = new Dictionary<string, byte>();
+            RGBA.Add("Alpha", alpha);
             RGBA.Add("Red", red);
             RGBA.Add("Green", green);
             RGBA.Add("Blue", blue);
-            RGBA.Add("Alpha", alpha);
             IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
             _aggregator.GetEvent<SendPixelInformationEvent>().Publish(RGBA);
         }

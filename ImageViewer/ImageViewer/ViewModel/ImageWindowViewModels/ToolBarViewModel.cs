@@ -7,29 +7,42 @@ using ImageViewer.Methods;
 using ImageViewer.Model.Event;
 using ImageViewer.Model;
 using ImageViewer.View;
+using System.Windows.Media;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ToolBarViewModel : BaseViewModel
     {
-        private string _rGBA;
+        private Brush _pixelColor;
+        private Tools _tool = Tools.None;
 
         public RelayCommand HideToolBarCommand { get; set; }
         public RelayCommand CreateMagnifyingGlassToolCommand { get; set; }
         public RelayCommand CreateRegionToolCommand { get; set; }
         public RelayCommand CreateEditRegionToolCommand { get; set; }
         public RelayCommand CreatePixelPickerToolCommand { get; set; }
-        public string RGBA {
+        public Brush PixelColor   {
             get
             {
-                return _rGBA;
+                return _pixelColor;
             }
             set
             {
-                _rGBA = value;
+                _pixelColor = value;
                 NotifyPropertyChanged();
-                NotifyPropertyChanged("RGBA");
             } }
+
+        public Tools Tool {
+            get
+            {
+                return _tool;
+            }
+             set
+            {
+                _tool = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public ToolBarViewModel()
         {
@@ -45,8 +58,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
-                byte[] rgba = { RGBA["Red"], RGBA["Green"], RGBA["Blue"], RGBA["Alpha"] };
-                this.RGBA = "#" + BitConverter.ToString(rgba).Replace("-", string.Empty);
+                byte[] rgba = { RGBA["Alpha"], RGBA["Red"], RGBA["Green"], RGBA["Blue"] };
+                Color c = Color.FromArgb(RGBA["Alpha"], RGBA["Red"], RGBA["Green"], RGBA["Blue"]);
+                this.PixelColor = new SolidColorBrush(c);
             }));
         }
 
@@ -58,21 +72,25 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void CreateMagnifyingGlassTool(object obj)
         {
             ImagePresenterViewModel.Tool = new MagnifyingGlass();
+            Tool = Tools.Magnifier;
         }
 
         private void CreateEditRegionTool(object obj)
         {
             ImagePresenterViewModel.Tool = new EditRegion();
+            Tool = Tools.RegionTransformation;
         }
 
         private void CreateRegionTool(object obj)
         {
             ImagePresenterViewModel.Tool = new CreateRegion();
+            Tool = Tools.RegionSelection;
         }
 
         private void CreatePixelPickerTool(object obj)
         {
             ImagePresenterViewModel.Tool = new PixelPicker();
+            Tool = Tools.PixelInformations;
         }
 
     }

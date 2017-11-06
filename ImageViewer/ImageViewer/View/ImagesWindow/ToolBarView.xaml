@@ -31,7 +31,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button  Command="{Binding CreateRegionToolCommand}" Style="{StaticResource WhiteGreenButton}" Grid.Column="0" Margin="10" ToolTip="Region selection">
+                <Button  Command="{Binding CreateRegionToolCommand}"  Grid.Column="0" Margin="10" ToolTip="Region selection">
                     <StackPanel>
                         <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -40,8 +40,34 @@
                             </Rectangle.OpacityMask>
                         </Rectangle>
                     </StackPanel>
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tool}" Value="RegionSelection">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
-                <Button Command="{Binding CreateMagnifyingGlassToolCommand}" Style="{StaticResource WhiteGreenButton}" Grid.Column="1" Margin="10" ToolTip="Magnifier">
+                <Button Command="{Binding CreateMagnifyingGlassToolCommand}" Grid.Column="1" Margin="10" ToolTip="Magnifier">
                     <StackPanel>
                         <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -50,8 +76,34 @@
                             </Rectangle.OpacityMask>
                         </Rectangle>
                     </StackPanel>
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tool}" Value="Magnifier">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
-                <Button Command="{Binding CreatePixelPickerToolCommand}" Style="{StaticResource WhiteGreenButton}" Grid.Column="2" Margin="10" ToolTip="Pixel informations">
+                <Button Command="{Binding CreatePixelPickerToolCommand}" Grid.Column="2" Margin="10" ToolTip="Pixel informations">
                     <StackPanel>
                         <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -60,8 +112,34 @@
                             </Rectangle.OpacityMask>
                         </Rectangle>
                     </StackPanel>
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tool}" Value="PixelInformations">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
-                <Button Command="{Binding CreateEditRegionToolCommand}" Style="{StaticResource WhiteGreenButton}" Grid.Column="3" Margin="10" ToolTip="Move region">
+                <Button Command="{Binding CreateEditRegionToolCommand}" Grid.Column="3" Margin="10" ToolTip="Region transformation">
                     <StackPanel>
                         <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -70,6 +148,32 @@
                             </Rectangle.OpacityMask>
                         </Rectangle>
                     </StackPanel>
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tool}" Value="RegionTransformation">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
             </Grid>
         </Border>
@@ -166,17 +270,18 @@
                 </Style>
             </Button.Style>
         </Button>
-        <!--<Grid Grid.Row="1" Grid.Column="0">
-            <Grid.Style>
+        <Grid Grid.Row="1" Grid.Column="0" Background="{Binding PixelColor}" >
+            <!--<Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Background" Value="Yellow"/>
+                    <Setter Property="Visibility" Value="Visible"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding RGBA}">
-                            <Setter Property="Background" Value="{Binding RGBA}"/>
+                            <Setter Property="Visibility" Value="Collapsed"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Grid.Style>
-        </Grid>-->
+            </Grid.Style>-->
+        </Grid>
     </Grid>
 </UserControl>

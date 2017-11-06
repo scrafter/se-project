@@ -21,6 +21,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private BitmapSource _imageSource;
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         private static ITool tool = null;
+        public int ImageWidth;
+        public int ImageHeight;
         public static ITool Tool
         {
             get
