@@ -38,6 +38,7 @@ namespace ImageViewer.ViewModel
             RemoveImageCommand = new Methods.RelayCommand(RemoveImageExecute, RemoveImageCanExecute);
             DragEnterCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.DragEventArgs>(FileDragFromWindows);
             ImageList = new ObservableCollection<Image>();
+            ImageSaver.SendTheLoadedImages(ImageList);
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
             _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => {
                 ImageList = item;
@@ -47,6 +48,10 @@ namespace ImageViewer.ViewModel
                 if (ImageList.Contains(item) == false)
                     ImageList.Add(item);
             });
+        }
+         ~TiledWindowViewModel()
+        {
+            ImageSaver.SafeToText(ImageList);
         }
 
         private void RemoveImageExecute(object obj)
@@ -114,11 +119,7 @@ namespace ImageViewer.ViewModel
 
         private void ClearAll()
         {
-            App.Current.Dispatcher.Invoke(new Action(()=>
-            {
-                foreach (var item in ImageList)
-                    ImageList.Remove(item);
-            }));
+           ImageList = new ObservableCollection<Image>();
         }
     }
 }
