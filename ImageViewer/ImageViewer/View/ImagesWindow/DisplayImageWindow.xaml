@@ -13,23 +13,22 @@
         WindowState="Maximized"
         BorderBrush="#8BC34A"
         WindowTitleBrush="#8BC34A"
-        HorizontalAlignment="Stretch"
         WindowStartupLocation="CenterScreen"
-        MinHeight="500"
-        MinWidth="800"
+        MinHeight="500" MinWidth="800"
         >
 
     <Window.DataContext>
         <model:DisplayImageWindowViewModel/>
     </Window.DataContext>
 
-    <Grid Margin="0">
+    <Grid Margin="0" ClipToBounds="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="1*" MinHeight="200"/>
             <RowDefinition Height="8*"/>
+            <RowDefinition Height="0.5*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="0">
+        <Grid Grid.Row="0" Margin="0" ClipToBounds="True">
             <Button x:Name="ShowExplorer" Command="{Binding ShowToolbarCommand}" Margin="0, 0, 0, 5" Foreground="White">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="16" Height="16"
@@ -64,7 +63,7 @@
                 </Button.Style>
             </Button>
         </Grid>
-        <UniformGrid Grid.Row="0" Grid.RowSpan="2">
+        <UniformGrid Grid.Row="0" Grid.RowSpan="2" ClipToBounds="True">
             <UniformGrid.Style>
                 <Style TargetType="UniformGrid">
                     <Setter Property="Visibility" Value="Visible"/>
@@ -77,9 +76,9 @@
             </UniformGrid.Style>
             <local:ToolBarView/>
         </UniformGrid>
-        <UniformGrid>
-            <UniformGrid.Style>
-                <Style TargetType="UniformGrid">
+        <Grid ClipToBounds="True">
+            <Grid.Style>
+                <Style TargetType="Grid">
                     <Setter Property="Grid.Row" Value="2"/>
                     <Setter Property="Grid.RowSpan" Value="1"/>
                     <Style.Triggers>
@@ -89,8 +88,8 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </UniformGrid.Style>
-            <local:ImagePresenterView/>
-        </UniformGrid>
+            </Grid.Style>
+            <local:ImagePresenterView ClipToBounds="True"/>
+        </Grid>
     </Grid>
 </Controls:MetroWindow>

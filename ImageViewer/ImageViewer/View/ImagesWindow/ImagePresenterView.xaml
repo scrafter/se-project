@@ -10,65 +10,16 @@
              xmlns:mouse="clr-namespace:ImageViewer.Model.MouseBehaviour"
              xmlns:methods="clr-namespace:ImageViewer.Methods"
              mc:Ignorable="d" 
+             ClipToBounds="True"
              d:DesignHeight="300" d:DesignWidth="300">
+
     <UserControl.DataContext>
         <models:ImagePresenterViewModel/>
     </UserControl.DataContext>
-    
-    <!--<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >-->
-    <Grid Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=Width}" HorizontalAlignment="Center" VerticalAlignment="Center">
-
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <!--<Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>-->
-        <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <!--HorizontalAlignment="Center" VerticalAlignment="Center" methods:ColumnDefinitionObserver.ObserveColumn="True"
-                methods:ColumnDefinitionObserver.ObservedColumnWidth="{Binding ImageWidth, Mode=OneWayToSource}" methods:RowDefinitionObserver.ObserveRow="True"
-                methods:RowDefinitionObserver.ObservedRowHeight="{Binding ImageHeight, Mode=OneWayToSource}">-->
-                <!--RowHeight is a double Property in your ViewModel-->
-                <!--RowHeight is a double Property in your ViewModel-->
-                <!--Width="{Binding ImageWidth, Mode=OneWayToSource}" Height="{Binding ImageHeight, Mode=OneWayToSource}">-->
-            <DataGrid VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Center"
-                      >
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding ImageSource}" ClipToBounds="True" Grid.Column="0" Grid.Row="0">
-                                    <Image.RenderTransform>
-                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                    </Image.RenderTransform>
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDown">
-                                            <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Image>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-                <!--<Image Source="{Binding ImageSource}" ClipToBounds="True" Grid.Column="0" Grid.Row="0">
+    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Margin="0">
+        <Grid Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Path=Width}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid>
+                <Image Source="{Binding ImageSource}" ClipToBounds="False" Grid.Column="0" Grid.Row="0" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Image.RenderTransform>
                         <ScaleTransform ScaleX="1" ScaleY="1"/>
                     </Image.RenderTransform>
@@ -77,19 +28,19 @@
                             <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </Image>-->
-
-            </DataGrid>
-
+                </Image>
                 <i:Interaction.Behaviors>
                     <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
                 </i:Interaction.Behaviors>
             </Grid>
+
+            <!--</Grid>-->
             <!--<Canvas DockPanel.Dock="Bottom" >
                 <i:Interaction.Behaviors>
                     <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
                 </i:Interaction.Behaviors>
             </Canvas>-->
+
     </Grid>
-<!--</ScrollViewer>-->
+    </ScrollViewer>
 </UserControl>
