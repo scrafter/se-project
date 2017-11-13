@@ -17,12 +17,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     {
         private int _mouseX;
         private int _mouseY;
+        private int _imageWidth;
+        private int _imageHeight;
         private Image _displayedImage;
         private BitmapSource _imageSource;
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         private static ITool tool = null;
-        public int ImageWidth;
-        public int ImageHeight;
         public static ITool Tool
         {
             get
@@ -80,6 +80,30 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     return;
                 _mouseY = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        public int ImageWidth
+        {
+            get
+            {
+               return _imageWidth;
+            }
+            set
+            {
+                _imageWidth = value;
+            }
+        }
+
+        public int ImageHeight
+        {
+            get
+            {
+                return _imageHeight;
+            }
+            set
+            {
+                _imageHeight = value;
             }
         }
 
