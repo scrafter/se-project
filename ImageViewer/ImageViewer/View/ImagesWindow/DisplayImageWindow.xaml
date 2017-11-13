@@ -23,13 +23,13 @@
 
     <Grid Margin="0" ClipToBounds="True">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="1*" MinHeight="200"/>
-            <RowDefinition Height="8*"/>
             <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="8*"/>
+            
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="0" ClipToBounds="True">
-            <Button x:Name="ShowExplorer" Command="{Binding ShowToolbarCommand}" Margin="0, 0, 0, 5" Foreground="White">
+        <Grid Grid.Row="0" Grid.RowSpan="2">
+            <Button x:Name="ShowExplorer" Command="{Binding ShowToolbarCommand}" Margin="0, 0, 0, 5" Foreground="White" VerticalAlignment="Top">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Center">
@@ -76,7 +76,8 @@
             </UniformGrid.Style>
             <local:ToolBarView/>
         </UniformGrid>
-        <Grid ClipToBounds="True">
+
+        <Grid>
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Grid.Row" Value="2"/>
@@ -89,7 +90,7 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-            <local:ImagePresenterView ClipToBounds="True"/>
+            <local:ImagePresenterView/>
         </Grid>
     </Grid>
 </Controls:MetroWindow>
