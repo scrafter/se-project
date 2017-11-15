@@ -10,6 +10,6 @@ namespace ImageViewer.Model
 {
     public interface ITool
     {
-        void AffectImage(BitmapSource imageSource, object obj, int mouseX, int mouseY);
+        void AffectImage(Dictionary<String, Object> args);
     }
 }

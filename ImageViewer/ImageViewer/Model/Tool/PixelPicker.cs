@@ -17,26 +17,40 @@ namespace ImageViewer.Model
         {
 
         }
-        public void AffectImage(BitmapSource bitmapSource, object obj, int mouseX, int mouseY)
+        public void AffectImage(Dictionary<String, Object> args)
         {
-            int stride = bitmapSource.PixelWidth * 4;
-            int size = bitmapSource.PixelHeight * stride;
-            byte[] pixels = new byte[size];
-            bitmapSource.CopyPixels(pixels, stride, 0);
-            int index = mouseY * stride + 4 * mouseX;
+            try
+            {
+                BitmapSource bitmapSource = (BitmapSource)args["BitmapSource"];
+                int mouseX = (int)args["MouseX"];
+                int mouseY = (int)args["MouseY"];
 
-            byte red = pixels[index+2];
-            byte green = pixels[index + 1];
-            byte blue = pixels[index];
-            byte alpha = pixels[index + 3];
+                int stride = bitmapSource.PixelWidth * 4;
+                int size = bitmapSource.PixelHeight * stride;
+                byte[] pixels = new byte[size];
+                bitmapSource.CopyPixels(pixels, stride, 0);
+                int index = mouseY * stride + 4 * mouseX;
 
-            Dictionary<string, byte> RGBA = new Dictionary<string, byte>();
-            RGBA.Add("Alpha", alpha);
-            RGBA.Add("Red", red);
-            RGBA.Add("Green", green);
-            RGBA.Add("Blue", blue);
-            IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
-            _aggregator.GetEvent<SendPixelInformationEvent>().Publish(RGBA);
+                byte red = pixels[index + 2];
+                byte green = pixels[index + 1];
+                byte blue = pixels[index];
+                byte alpha = pixels[index + 3];
+
+                Dictionary<string, int> pixelInformation = new Dictionary<string, int>();
+                pixelInformation.Add("Alpha", alpha);
+                pixelInformation.Add("Red", red);
+                pixelInformation.Add("Green", green);
+                pixelInformation.Add("Blue", blue);
+                pixelInformation.Add("MouseX", mouseX);
+                pixelInformation.Add("MouseY", mouseY);
+
+                IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
+                _aggregator.GetEvent<SendPixelInformationEvent>().Publish(pixelInformation);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
+            }
         }
     }
 }

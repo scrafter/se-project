@@ -117,13 +117,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
-            object obj = new object();
             if(tool != null)
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    tool.AffectImage(ImageSource, obj, _mouseX, _mouseY);
                     PixelInformationView piv = new PixelInformationView();
                     piv.Show();
+                    Dictionary<String, Object> parameters = new Dictionary<string, object>();
+                    parameters.Add("MouseX", _mouseX);
+                    parameters.Add("MouseY", _mouseY);
+                    parameters.Add("BitmapSource", ImageSource);
+                    tool.AffectImage(parameters);
                 }));
         }
     }

@@ -67,23 +67,36 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<SendPixelInformationEvent>().Subscribe(SetPixelInformations);
         }
 
-        private void SetPixelInformations(Dictionary<String, byte> RGBA)
+        private void SetPixelInformations(Dictionary<String, int> pixelInfo)
         {
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
-                byte[] rgba = { RGBA["Alpha"], RGBA["Red"], RGBA["Green"], RGBA["Blue"] };
-                Color c = Color.FromArgb(RGBA["Alpha"], RGBA["Red"], RGBA["Green"], RGBA["Blue"]);
-                this.PixelColor = new SolidColorBrush(c);
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Red: ");
-                sb.AppendLine(c.R.ToString());
-                sb.Append("Green: ");
-                sb.AppendLine(c.G.ToString());
-                sb.Append("Blue: ");
-                sb.AppendLine(c.B.ToString());
-                sb.Append("Alpha: ");
-                sb.Append(c.A.ToString());
-                RGBAValue = sb.ToString();
+                try
+                {
+                    byte[] rgba = { (byte)pixelInfo["Alpha"], (byte)pixelInfo["Red"], (byte)pixelInfo["Green"], (byte)pixelInfo["Blue"] };
+                    Color c = Color.FromArgb(rgba[0], rgba[1], rgba[2], rgba[3]);
+                    this.PixelColor = new SolidColorBrush(c);
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Red: ");
+                    sb.AppendLine(c.R.ToString());
+                    sb.Append("Green: ");
+                    sb.AppendLine(c.G.ToString());
+                    sb.Append("Blue: ");
+                    sb.AppendLine(c.B.ToString());
+                    sb.Append("Alpha: ");
+                    sb.AppendLine(c.A.ToString());
+                    sb.Append("X position: ");
+                    sb.AppendLine(pixelInfo["MouseX"].ToString());
+                    sb.Append("Y position: ");
+                    sb.Append(pixelInfo["MouseY"].ToString());
+                    RGBAValue = sb.ToString();
+                }
+                catch (Exception)
+                {
+
+                    throw ;
+                }
+
             }));
         }
     }
