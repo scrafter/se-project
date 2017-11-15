@@ -11,5 +11,6 @@ namespace ImageViewer.Model
     public interface ITool
     {
         void AffectImage(Dictionary<String, Object> args);
+        Tools GetToolEnum();
     }
 }

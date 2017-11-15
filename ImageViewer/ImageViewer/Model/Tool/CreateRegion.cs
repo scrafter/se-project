@@ -13,5 +13,10 @@ namespace ImageViewer.Model
         {
             throw new NotImplementedException();
         }
+
+        public Tools GetToolEnum()
+        {
+            return Tools.RegionSelection;
+        }
     }
 }

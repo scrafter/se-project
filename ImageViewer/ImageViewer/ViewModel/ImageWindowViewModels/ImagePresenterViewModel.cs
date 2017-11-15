@@ -120,12 +120,29 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             if(tool != null)
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    PixelInformationView piv = new PixelInformationView();
-                    piv.Show();
                     Dictionary<String, Object> parameters = new Dictionary<string, object>();
-                    parameters.Add("MouseX", _mouseX);
-                    parameters.Add("MouseY", _mouseY);
-                    parameters.Add("BitmapSource", ImageSource);
+                    switch (Tool.GetToolEnum())
+                    {
+                        case Tools.None:
+                            break;
+                        case Tools.RegionSelection:
+                            break;
+                        case Tools.Magnifier:
+                            break;
+                        case Tools.PixelInformations:
+                            {
+                                PixelInformationView piv = new PixelInformationView();
+                                piv.Show();
+                                parameters.Add("MouseX", _mouseX);
+                                parameters.Add("MouseY", _mouseY);
+                                parameters.Add("BitmapSource", ImageSource);
+                            }
+                            break;
+                        case Tools.RegionTransformation:
+                            break;
+                        default:
+                            break;
+                    }
                     tool.AffectImage(parameters);
                 }));
         }

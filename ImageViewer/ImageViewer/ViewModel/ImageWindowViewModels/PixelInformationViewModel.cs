@@ -1,20 +1,28 @@
 ﻿using ImageViewer.View;
 using ImageViewer.Model.Event;
+using ImageViewer.Methods.MouseBehaviour;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class PixelInformationViewModel : BaseViewModel
     {
+#region Variables
         private Brush _pixelColor;
         private String _rgbaValue;
         private int _mouseX;
         private int _mouseY;
+        private double _top;
+        private double _left;
+#endregion
+#region Properties
         public Brush PixelColor
         {
             get
@@ -48,6 +56,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             set
             {
                 _mouseX = value;
+                NotifyPropertyChanged();
             }
         }
         public int MouseY
@@ -59,16 +68,51 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             set
             {
                 _mouseY = value;
+                NotifyPropertyChanged();
             }
         }
-
+        public double Top
+        {
+            get
+            {
+                return _top;
+            }
+            set
+            {
+                _top = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public double Left
+        {
+            get
+            {
+                return _left;
+            }
+            set
+            {
+                _left = value;
+                NotifyPropertyChanged();
+            }
+        }
+#endregion
         public PixelInformationViewModel()
         {
+            using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
+            {
+                var pixelWidth = ( graphics.DpiX / 96.0);
+                var pixelHeight =( graphics.DpiY / 96.0);
+                Left = Control.MousePosition.X/pixelWidth;
+                Top = Control.MousePosition.Y/pixelHeight;
+            }
             _aggregator.GetEvent<SendPixelInformationEvent>().Subscribe(SetPixelInformations);
+            
         }
 
         private void SetPixelInformations(Dictionary<String, int> pixelInfo)
         {
+            if (PixelColor != null)
+                return;
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
                 try

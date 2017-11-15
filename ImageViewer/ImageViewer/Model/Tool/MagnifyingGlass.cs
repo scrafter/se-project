@@ -15,10 +15,13 @@ namespace ImageViewer.Model
         {
            
         }
-
         public void AffectImage(Dictionary<String, Object> args)
         {
+        }
 
+        public Tools GetToolEnum()
+        {
+            return Tools.Magnifier;
         }
     }
 }

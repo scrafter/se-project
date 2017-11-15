@@ -52,5 +52,10 @@ namespace ImageViewer.Model
                 throw;
             }
         }
+
+        public Tools GetToolEnum()
+        {
+            return Tools.PixelInformations;
+        }
     }
 }

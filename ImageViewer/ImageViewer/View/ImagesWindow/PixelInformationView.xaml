@@ -9,20 +9,25 @@
              ShowInTaskbar="False"
              ShowTitleBar="False"
              ResizeMode="NoResize"
-             ShowCloseButton="False"
+             ShowCloseButton="True"
              ShowMinButton="False"
-             ShowMaxRestoreButton="False"         
+             ShowMaxRestoreButton="False"    
              Topmost="True"
              WindowStyle="None"
-             WindowStartupLocation="CenterScreen"
+             WindowTransitionsEnabled="False"
              mc:Ignorable="d" Height="150" Width="200">
-    
+
     <Window.DataContext>
         <models:PixelInformationViewModel/>
     </Window.DataContext>
-    <!--<Window.InputBindings>
-        <MouseBinding MouseAction="LeftClick" Command="ApplicationCommands.Close" CommandParameter="{Binding}"/>
-    </Window.InputBindings>-->
+    
+    <Controls:MetroWindow.Style>
+        <Style TargetType="Controls:MetroWindow">
+            <Setter Property="Top" Value="{Binding Top}"/>
+            <Setter Property="Left" Value="{Binding Left}"/>
+        </Style>
+    </Controls:MetroWindow.Style>
+    
     <Border Grid.Row="0" Grid.Column="0" Background="#E0E0E0" BorderBrush="DarkGray" BorderThickness="3">
         <Grid Margin="5">
             <Grid.ColumnDefinitions>
@@ -41,7 +46,7 @@
                 </Border>
             </Grid>
             <Grid Grid.Column="2">
-                <TextBox Grid.Row="0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="0" FontWeight="Bold" Foreground="Gray" Text="{Binding Path=RGBAValue}"/>
+                <Label Grid.Row="0" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="0" FontWeight="Bold" Foreground="Gray" Content="{Binding Path=RGBAValue}"/>
             </Grid>
         </Grid>
     </Border>
