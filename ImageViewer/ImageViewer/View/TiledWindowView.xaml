@@ -7,7 +7,7 @@
              xmlns:model="clr-namespace:ImageViewer.ViewModel"  
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-            xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
+             xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
@@ -58,20 +58,10 @@
             </ItemsControl>
         </ScrollViewer>
         
-        <!--ListView ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding ImageList,UpdateSourceTrigger=PropertyChanged}" BorderThickness="0"/-->
-          <i:Interaction.Triggers>
+        <i:Interaction.Triggers>
             <i:EventTrigger EventName="Drop">
                 <Command:EventToCommand Command="{Binding DragEnterCommand}" PassEventArgsToCommand="True"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
-        <!--<ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
-                        <Image Source="{Binding FilePath}" HorizontalAlignment="Center" VerticalAlignment="Top" Height="50" Width="50"/>
-                        <TextBlock Text="{Binding FileName}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
     </Grid>
 </UserControl>

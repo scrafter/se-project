@@ -69,6 +69,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -109,9 +110,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Methods\AttachedProperties.cs" />
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\ImageSaver.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
+    <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
+    <Compile Include="Methods\MouseManagement.cs" />
+    <Compile Include="Model\Tools.cs" />
     <Compile Include="Model\Tool\ITool.cs" />
     <Compile Include="Model\Tool\CreateRegion.cs" />
     <Compile Include="Model\Tool\EditRegion.cs" />
@@ -134,6 +139,7 @@
     <Compile Include="ViewModel\ImageWindowViewModels\DisplayImageWindowViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\ImageExplorerViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\ImagePresenterViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\PixelInformationViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\ToolBarViewModel.cs" />
     <Compile Include="ViewModel\MainMenuViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -150,6 +156,9 @@
     </Compile>
     <Compile Include="View\ImagesWindow\ImagePresenterView.xaml.cs">
       <DependentUpon>ImagePresenterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\PixelInformationView.xaml.cs">
+      <DependentUpon>PixelInformationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ImagesWindow\ToolBarView.xaml.cs">
       <DependentUpon>ToolBarView.xaml</DependentUpon>
@@ -185,6 +194,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ImagesWindow\ImagePresenterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\PixelInformationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
