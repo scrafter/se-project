@@ -12,13 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 
 namespace ImageViewer.View.ImagesWindow
 {
     /// <summary>
     /// Interaction logic for PixelInformationView.xaml
     /// </summary>
-    public partial class PixelInformationView : UserControl
+    public partial class PixelInformationView : MetroWindow
     {
         public PixelInformationView()
         {

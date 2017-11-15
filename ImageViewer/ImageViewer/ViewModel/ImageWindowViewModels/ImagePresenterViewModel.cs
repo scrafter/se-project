@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ImageViewer.Methods;
 using ImageViewer.View;
+using ImageViewer.View.ImagesWindow;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -121,6 +122,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     tool.AffectImage(ImageSource, obj, _mouseX, _mouseY);
+                    PixelInformationView piv = new PixelInformationView();
+                    piv.Show();
                 }));
         }
     }

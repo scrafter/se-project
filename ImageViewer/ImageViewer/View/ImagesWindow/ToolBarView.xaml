@@ -270,18 +270,5 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Grid Grid.Row="1" Grid.Column="0" Background="{Binding PixelColor}" >
-            <!--<Grid.Style>
-                <Style TargetType="Grid">
-                    <Setter Property="Background" Value="Yellow"/>
-                    <Setter Property="Visibility" Value="Visible"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding RGBA}">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Style>-->
-        </Grid>
     </Grid>
 </UserControl>

@@ -13,7 +13,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ToolBarViewModel : BaseViewModel
     {
-        private Brush _pixelColor;
         private Tools _tool = Tools.None;
 
         public RelayCommand HideToolBarCommand { get; set; }
@@ -21,16 +20,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand CreateRegionToolCommand { get; set; }
         public RelayCommand CreateEditRegionToolCommand { get; set; }
         public RelayCommand CreatePixelPickerToolCommand { get; set; }
-        public Brush PixelColor   {
-            get
-            {
-                return _pixelColor;
-            }
-            set
-            {
-                _pixelColor = value;
-                NotifyPropertyChanged();
-            } }
 
         public Tools Tool {
             get
@@ -51,17 +40,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             CreateEditRegionToolCommand = new RelayCommand(CreateEditRegionTool);
             CreateRegionToolCommand = new RelayCommand(CreateRegionTool);
             CreatePixelPickerToolCommand = new RelayCommand(CreatePixelPickerTool);
-            _aggregator.GetEvent<SendPixelInformationEvent>().Subscribe(SetPixelInformations);
-        }
-
-        private void SetPixelInformations(Dictionary<String, byte> RGBA)
-        {
-            App.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                byte[] rgba = { RGBA["Alpha"], RGBA["Red"], RGBA["Green"], RGBA["Blue"] };
-                Color c = Color.FromArgb(RGBA["Alpha"], RGBA["Red"], RGBA["Green"], RGBA["Blue"]);
-                this.PixelColor = new SolidColorBrush(c);
-            }));
         }
 
         private void HideToolBarExecute(object obj)
@@ -92,6 +70,5 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             ImagePresenterViewModel.Tool = new PixelPicker();
             Tool = Tools.PixelInformations;
         }
-
     }
 }
