@@ -101,6 +101,7 @@ namespace ImageViewer.ViewModel
                 try
                 {
                     image.FilePath = path;
+                    image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
                     image.Extension = Path.GetExtension(path);
                     if (image.Extension != "" && image.Extension != ".tmp")
                         _aggregator.GetEvent<SendImage>().Publish(image);
