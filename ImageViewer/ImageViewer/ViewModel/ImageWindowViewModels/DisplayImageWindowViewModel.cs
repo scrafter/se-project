@@ -30,6 +30,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<HideToolbarEvent>().Subscribe(HideToolbar);
         }
 
+        ~DisplayImageWindowViewModel()
+        {
+            _aggregator.GetEvent<DisplayImageWindowClosed>().Publish();
+        }
+
         private void HideToolbar()
         {
             ToolbarVisibility = Visibility.Collapsed;

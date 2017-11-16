@@ -143,7 +143,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         default:
                             break;
                     }
-                    tool.AffectImage(parameters);
+                    try
+                    {
+                        tool.AffectImage(parameters);
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
                 }));
         }
     }

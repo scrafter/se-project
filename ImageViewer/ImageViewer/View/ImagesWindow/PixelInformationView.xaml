@@ -25,6 +25,12 @@
         <Style TargetType="Controls:MetroWindow">
             <Setter Property="Top" Value="{Binding Top}"/>
             <Setter Property="Left" Value="{Binding Left}"/>
+            <Setter Property="Visibility" Value="{Binding PixelInformationWindowVisibility}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding PixelInformationWindowVisibility}" Value="Collapsed">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </Controls:MetroWindow.Style>
     
