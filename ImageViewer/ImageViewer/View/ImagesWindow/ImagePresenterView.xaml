@@ -37,7 +37,7 @@
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Image.RenderTransform>
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
+                            <i:EventTrigger EventName="MouseLeftButtonDown">
                                 <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
