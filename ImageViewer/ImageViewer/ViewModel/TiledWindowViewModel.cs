@@ -18,6 +18,7 @@ namespace ImageViewer.ViewModel
         public Methods.RelayCommand DoubleClickCommand { get; set; }
         public Methods.RelayCommand RemoveImageCommand { get; set; }
         public RelayCommand<System.Windows.DragEventArgs> DragEnterCommand { get; set; }
+        public static readonly System.Collections.Generic.List<string> ImageExtensions = new System.Collections.Generic.List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG",".JPEG",".TIF",".ICO" };
 
         public ObservableCollection<Image> ImageList
         {
@@ -100,10 +101,10 @@ namespace ImageViewer.ViewModel
             foreach (string path in files)
                 try
                 {
-                    image.FilePath = path;
+                        image.FilePath = path;
                     image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
                     image.Extension = Path.GetExtension(path);
-                    if (image.Extension != "" && image.Extension != ".tmp")
+                    if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
                         _aggregator.GetEvent<SendImage>().Publish(image);
                 }
                 catch (Exception)
