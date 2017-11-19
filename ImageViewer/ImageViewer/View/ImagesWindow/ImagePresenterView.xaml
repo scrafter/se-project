@@ -39,7 +39,7 @@
                             </ImageBrush.ImageSource>
                         </ImageBrush>
                     </Grid.Background>
-                    <Image Source="{Binding ImageSource}" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Source="{Binding ImageSource}" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Fill">
                         <Image.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Image.RenderTransform>
