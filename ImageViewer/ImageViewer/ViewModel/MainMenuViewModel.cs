@@ -12,30 +12,20 @@ namespace ImageViewer.ViewModel
 {
     public class MainMenuViewModel : BaseViewModel
     {
-
-        public ObservableCollection<Image> ImageList;
-
         public RelayCommand DialogCommand { get; set; }
         public RelayCommand ClearCommand { get; set; }
 
         public MainMenuViewModel()
         {
-            ImageList = new ObservableCollection<Image>();
             DialogCommand = new RelayCommand(DialogExecute, DialogCanExecute);
             ClearCommand = new RelayCommand(ClearExecute, ClearCanExecute);
-            _aggregator.GetEvent<SendImage>().Subscribe(item => {
-                if (ImageList.Contains(item) == false)
-                    ImageList.Add(item);
-            });
         }
 
         private void ClearExecute(object obj)
         {
             _aggregator.GetEvent<ClearEvent>().Publish();
-            ImageList.Clear();
         }
     
-
         private bool ClearCanExecute(object obj)
         {
             return true;
@@ -48,9 +38,10 @@ namespace ImageViewer.ViewModel
 
         public void DialogMethod()
         {
+            ObservableCollection<Image> list = new ObservableCollection<Image>();
             FileDialogMethod fdm = new FileDialogMethod();
-            fdm.ReturnFilesFromDialog(ImageList);
-            _aggregator.GetEvent<FileDialogEvent>().Publish(ImageList);
+            fdm.ReturnFilesFromDialog(list);
+            _aggregator.GetEvent<FileDialogEvent>().Publish(list);
         }
 
         private bool DialogCanExecute(object obj)

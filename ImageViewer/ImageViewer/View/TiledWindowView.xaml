@@ -27,7 +27,7 @@
             <ItemsControl Name="imageList" ItemsSource="{Binding Path=ImageList}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Margin="10" Columns="5" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                        <UniformGrid Margin="10" Columns="5" Rows="{Binding TiledViewRows}" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                         </UniformGrid>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>

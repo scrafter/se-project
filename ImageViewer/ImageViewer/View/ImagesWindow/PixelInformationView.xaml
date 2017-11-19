@@ -43,6 +43,13 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
                 <Border Grid.Row="1" BorderBrush="White" BorderThickness="0" CornerRadius="5">
+                    <Border.Background>
+                        <ImageBrush Stretch="UniformToFill">
+                            <ImageBrush.ImageSource>
+                                <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Border.Background>
                     <Rectangle Fill="{Binding PixelColor}" RadiusX="5" RadiusY="5"/>
                 </Border>
             </Grid>

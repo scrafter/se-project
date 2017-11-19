@@ -19,6 +19,15 @@ namespace ImageViewer.ViewModel
         public Methods.RelayCommand RemoveImageCommand { get; set; }
         public RelayCommand<System.Windows.DragEventArgs> DragEnterCommand { get; set; }
 
+        public int TiledViewRows
+        {
+            get
+            {
+                return _imageList.Count > 15 ? _imageList.Count / 5 + 1 : 3;  
+            }
+            set { }
+        }
+
         public ObservableCollection<Image> ImageList
         {
             get
@@ -29,6 +38,7 @@ namespace ImageViewer.ViewModel
             {
                 _imageList = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("TiledViewRows");
             }
         }
 
@@ -40,9 +50,23 @@ namespace ImageViewer.ViewModel
             ImageList = new ObservableCollection<Image>();
             ImageSaver.SendTheLoadedImages(ImageList);
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
-            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => {
-                ImageList = item;
-                SynchronizeImageExplorer();
+            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => 
+            {
+                App.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    ObservableCollection<Image> list = new ObservableCollection<Image>();
+                    foreach (var image in ImageList)
+                    {
+                        list.Add(image);
+                    }
+                    foreach (var image in item)
+                    {
+                        if(!list.Contains(image))
+                            list.Add(image);
+                    }
+                    ImageList = list;
+                    SynchronizeImageExplorer();
+                }));
             });
             _aggregator.GetEvent<SendImage>().Subscribe(item => {
                 if (ImageList.Contains(item) == false)
@@ -53,7 +77,6 @@ namespace ImageViewer.ViewModel
         {
             ImageSaver.SafeToText(ImageList);
         }
-
         private void RemoveImageExecute(object obj)
         {
             var image = (Image)obj;

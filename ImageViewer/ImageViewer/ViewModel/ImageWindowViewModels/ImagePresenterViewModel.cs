@@ -111,7 +111,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public ImagePresenterViewModel()
         {
             _aggregator.GetEvent<DisplayImage>().Subscribe(item => { DisplayedImage = item; });
-            //ImageClickCommand = new RelayCommand(ImageClickExecute);
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
         }
 
