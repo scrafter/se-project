@@ -49,7 +49,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             DialogCommand = new RelayCommand(DialogExecute);
             ImageList = new ObservableCollection<Image>();
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
-            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => { ImageList = item; });
+            //_aggregator.GetEvent<FileDialogEvent>().Subscribe(item => 
+            //{
+            //    foreach (var image in item)
+            //    {
+            //        _imageList.Add(image);
+            //    }
+            //});
             _aggregator.GetEvent<SendImage>().Subscribe(item => {
                 if (ImageList.Contains(item) == false)
                     ImageList.Add(item);

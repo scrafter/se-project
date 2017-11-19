@@ -32,6 +32,13 @@
             </Grid.ColumnDefinitions>
             <Grid x:Name="ImageGrid" x:FieldModifier="public" Grid.Row="1" Grid.Column="1" Background="Black">
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.Background>
+                        <ImageBrush Stretch="UniformToFill">
+                            <ImageBrush.ImageSource>
+                                <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Grid.Background>
                     <Image Source="{Binding ImageSource}" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
