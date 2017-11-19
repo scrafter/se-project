@@ -22,8 +22,8 @@ namespace ImageViewer.Model
             try
             {
                 BitmapSource bitmapSource = (BitmapSource)args["BitmapSource"];
-                int mouseX = (int)args["MouseX"];
-                int mouseY = (int)args["MouseY"];
+                int mouseX = (int)((int)args["MouseX"] * bitmapSource.DpiX / 96);
+                int mouseY = (int)((int)args["MouseY"] * bitmapSource.DpiY / 96);
 
                 int stride = bitmapSource.PixelWidth * 4;
                 int size = bitmapSource.PixelHeight * stride;
