@@ -22,19 +22,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private double _top;
         private double _left;
         private Prism.Events.SubscriptionToken _token;
-        private Visibility _visibility = Visibility.Visible;
-        public Visibility PixelInformationWindowVisibility
-        {
-            get
-            {
-                return _visibility;
-            }
-            set
-            {
-                _visibility = value;
-                NotifyPropertyChanged();
-            }
-        }
 #endregion
         #region Properties
         public Brush PixelColor
@@ -114,17 +101,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
             {
-                var pixelWidth = ( graphics.DpiX / 96.0);
-                var pixelHeight =( graphics.DpiY / 96.0);
+                var pixelWidth = (graphics.DpiX / 96.0);
+                var pixelHeight = (graphics.DpiY / 96.0);
                 Left = Control.MousePosition.X/pixelWidth;
                 Top = Control.MousePosition.Y/pixelHeight;
             }
             _token = _aggregator.GetEvent<SendPixelInformationEvent>().Subscribe(SetPixelInformations);
-            _aggregator.GetEvent<DisplayImageWindowClosed>().Subscribe(CloseWindow);
-        }
-        private void CloseWindow()
-        {
-            PixelInformationWindowVisibility = Visibility.Collapsed;
         }
         private void SetPixelInformations(Dictionary<String, int> pixelInfo)
         {

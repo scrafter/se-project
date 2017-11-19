@@ -7,7 +7,8 @@
              xmlns:models="clr-namespace:ImageViewer.ViewModel.ImageWindowViewModels"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              ShowInTaskbar="False"
-             ShowTitleBar="False"
+             ShowTitleBar="True"
+             TitlebarHeight="15"
              ResizeMode="NoResize"
              ShowCloseButton="True"
              ShowMinButton="False"
@@ -25,12 +26,6 @@
         <Style TargetType="Controls:MetroWindow">
             <Setter Property="Top" Value="{Binding Top}"/>
             <Setter Property="Left" Value="{Binding Left}"/>
-            <Setter Property="Visibility" Value="{Binding PixelInformationWindowVisibility}"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding PixelInformationWindowVisibility}" Value="Collapsed">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                </DataTrigger>
-            </Style.Triggers>
         </Style>
     </Controls:MetroWindow.Style>
     
