@@ -133,6 +133,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             {
                                 PixelInformationView piv = new PixelInformationView();
                                 piv.Show();
+                                _aggregator.GetEvent<SendPixelInformationViewEvent>().Publish(piv);
                                 parameters.Add("MouseX", _mouseX);
                                 parameters.Add("MouseY", _mouseY);
                                 parameters.Add("BitmapSource", ImageSource);
@@ -143,7 +144,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         default:
                             break;
                     }
-                    tool.AffectImage(parameters);
+                    try
+                    {
+                        tool.AffectImage(parameters);
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
                 }));
         }
     }

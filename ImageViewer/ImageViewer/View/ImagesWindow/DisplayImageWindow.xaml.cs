@@ -43,6 +43,7 @@ namespace ImageViewer.View.ImagesWindow
 
         void MyWindow_Closed(object sender, System.EventArgs e)
         {
+            
             _instance = null;
         }
     }

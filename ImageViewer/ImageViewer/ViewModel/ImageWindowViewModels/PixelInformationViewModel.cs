@@ -21,8 +21,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private int _mouseY;
         private double _top;
         private double _left;
+        private Prism.Events.SubscriptionToken _token;
 #endregion
-#region Properties
+        #region Properties
         public Brush PixelColor
         {
             get
@@ -100,19 +101,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
             {
-                var pixelWidth = ( graphics.DpiX / 96.0);
-                var pixelHeight =( graphics.DpiY / 96.0);
+                var pixelWidth = (graphics.DpiX / 96.0);
+                var pixelHeight = (graphics.DpiY / 96.0);
                 Left = Control.MousePosition.X/pixelWidth;
                 Top = Control.MousePosition.Y/pixelHeight;
             }
-            _aggregator.GetEvent<SendPixelInformationEvent>().Subscribe(SetPixelInformations);
-            
+            _token = _aggregator.GetEvent<SendPixelInformationEvent>().Subscribe(SetPixelInformations);
         }
-
         private void SetPixelInformations(Dictionary<String, int> pixelInfo)
         {
-            if (PixelColor != null)
-                return;
+            _aggregator.GetEvent<SendPixelInformationEvent>().Unsubscribe(_token);
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
                 try
