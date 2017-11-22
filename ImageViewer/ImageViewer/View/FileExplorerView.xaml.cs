@@ -16,6 +16,7 @@ using System.Drawing;
 using ImageViewer.Model;
 using ImageViewer.Model.Event;
 using Prism.Events;
+using System.Collections.ObjectModel;
 
 namespace ImageViewer.View
 {
@@ -214,7 +215,11 @@ namespace ImageViewer.View
                     image.FilePath = clickedItem.Tag.ToString();
                     image.Extension = Path.GetExtension(image.FilePath);
                     if (image.Extension != "" && image.Extension != ".tmp")
-                        _aggregator.GetEvent<SendImage>().Publish(image);
+                    {
+                        ObservableCollection<Model.Image> temp = new ObservableCollection<Model.Image>();
+                        temp.Add(image);
+                        _aggregator.GetEvent<SendImage>().Publish(temp);
+                    }
                 }
                 catch (Exception)
                 {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    public class FileDialogEvent : PubSubEvent<ObservableCollection<Image>>
+    public class FileDialogEvent : PubSubEvent<ObservableCollection<ObservableCollection<Image>>>
     {
 
     }
