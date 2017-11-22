@@ -41,7 +41,12 @@ namespace ImageViewer.ViewModel
             ObservableCollection<Image> list = new ObservableCollection<Image>();
             FileDialogMethod fdm = new FileDialogMethod();
             fdm.ReturnFilesFromDialog(list);
-            _aggregator.GetEvent<FileDialogEvent>().Publish(list);
+            if(list.Count != 0)
+            {
+                ObservableCollection<ObservableCollection<Image>> imageList = new ObservableCollection<ObservableCollection<Image>>();
+                imageList.Add(list);
+                _aggregator.GetEvent<FileDialogEvent>().Publish(imageList);
+            }
         }
 
         private bool DialogCanExecute(object obj)

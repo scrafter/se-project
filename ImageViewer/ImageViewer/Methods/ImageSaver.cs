@@ -10,7 +10,7 @@ using System.Linq;
 
 public static class ImageSaver
 {
-    public static void SafeToText(ObservableCollection<Image> list)
+    public static void SafeToText(ObservableCollection<ObservableCollection<Image>> list)
     {
         string directory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer";
         string filename = @"\ImagesKeeper.txt";
@@ -28,34 +28,46 @@ public static class ImageSaver
         finally
         {
             StreamWriter sw = File.AppendText(path);
-            foreach (Image image in list)
+            foreach (ObservableCollection<Image> x in list)
             {
-                sw.WriteLine(image.Extension);
-                sw.WriteLine(image.FilePath);
-                sw.WriteLine(image.FileName);
+                foreach (var image in x)
+                {
+                    sw.WriteLine(image.Extension);
+                    sw.WriteLine(image.FilePath);
+                    sw.WriteLine(image.FileName);
+                }
+                sw.WriteLine();
             }
             sw.Close();
         }
     }
-    public static void SendTheLoadedImages(ObservableCollection<Image> list)
+    public static void SendTheLoadedImages(ObservableCollection<ObservableCollection<Image>> list)
     {
 
         string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\ImagesKeeper.txt";
         try
         {
             var lineCount = File.ReadLines(path).Count();
-            var f = System.IO.File.ReadAllLines(path);
-
+            String[] f = System.IO.File.ReadAllLines(path).Take(lineCount).ToArray();
+            ObservableCollection<Image> imageList = new ObservableCollection<Image>();
             for (int i = 0; i < lineCount; i += 3)
             {
-                Image image = new Image
+                if (f[i] == "")
                 {
-                    FileName = f[i + 2],
-                    FilePath = f[i + 1],
-                    Extension = (f[i])
-                };
-                App.Current.Dispatcher.Invoke(() => list.Add(image));
-
+                    list.Add(imageList);
+                    imageList = new ObservableCollection<Image>();
+                    i -= 2;
+                }
+                else
+                {
+                    Image image = new Image
+                    {
+                        FileName = f[i + 2],
+                        FilePath = f[i + 1],
+                        Extension = (f[i])
+                    };
+                    imageList.Add(image);
+                }
             }
         }
         catch(FileNotFoundException e)

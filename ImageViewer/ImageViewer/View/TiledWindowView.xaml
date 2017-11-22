@@ -36,10 +36,10 @@
                         <Grid Margin="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="10*"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="20"/>
                                 <RowDefinition Height="0.3*"/>
                             </Grid.RowDefinitions>
-                            <Image Name="image" Source="{Binding Path=FilePath}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Image Name="image" Source="{Binding Path=FilePath}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Image.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Remove Image" Command="{Binding Path=DataContext.RemoveImageCommand, Source={x:Reference Name=imageList}}" CommandParameter="{Binding}"/>
@@ -49,7 +49,17 @@
                                     <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding  DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
                                 </Image.InputBindings>
                             </Image>
-                            <TextBlock Text="{Binding Path=FileName}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="WrapWithOverflow"/>
+                            <!--<TextBlock Text="{Binding Path=Extension}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="0" TextWrapping="WrapWithOverflow"/>-->
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Path=Count}" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="0" TextWrapping="WrapWithOverflow" Margin="0, 0, 5, 0"/>
+                                <TextBlock Text="x" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0"/>
+                                <Image Source="pack://application:,,,/Resources/Images/ImageIcon.png" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5, 0, 0, 0"/>
+                            </Grid>
                         </Grid>
                     </DataTemplate>
 
