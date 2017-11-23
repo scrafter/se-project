@@ -102,7 +102,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 DisplayImageWindow displayImageWindow = DisplayImageWindow.Instance;
                 displayImageWindow.Show();
-                _aggregator.GetEvent<DisplayImage>().Publish(image[0]);
+                _aggregator.GetEvent<DisplayImage>().Publish(image);
             }
 
         }

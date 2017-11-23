@@ -1,5 +1,4 @@
 using ImageViewer.Methods;
-using GalaSoft.MvvmLight.Command;
 using ImageViewer.Model;
 using ImageViewer.Model.Event;
 using ImageViewer.View;
@@ -17,10 +16,10 @@ namespace ImageViewer.ViewModel
     public class TiledWindowViewModel : BaseViewModel
     {
         private ObservableCollection<ObservableCollection<Image>> _imageList;
-        public Methods.RelayCommand DoubleClickCommand { get; set; }
-        public Methods.RelayCommand RemoveImageCommand { get; set; }
-        public RelayCommand<System.Windows.DragEventArgs> DragEnterCommand { get; set; }
-        public static readonly System.Collections.Generic.List<string> ImageExtensions = new System.Collections.Generic.List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG",".JPEG",".TIF",".ICO" };
+        public RelayCommand DoubleClickCommand { get; set; }
+        public RelayCommand RemoveImageCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<DragEventArgs> DragEnterCommand { get; set; }
+        public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG",".JPEG",".TIF",".ICO" };
 
         public int TiledViewRows
         {
@@ -104,7 +103,7 @@ namespace ImageViewer.ViewModel
             {
                 DisplayImageWindow displayImageWindow = DisplayImageWindow.Instance;
                 displayImageWindow.Show();
-                _aggregator.GetEvent<DisplayImage>().Publish(image[0]);
+                _aggregator.GetEvent<DisplayImage>().Publish(image);
                 SynchronizeImageExplorer();
             }
             

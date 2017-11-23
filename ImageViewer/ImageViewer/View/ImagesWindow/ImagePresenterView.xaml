@@ -11,14 +11,20 @@
              xmlns:methods="clr-namespace:ImageViewer.Methods"
              mc:Ignorable="d" 
              ClipToBounds="True"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             Focusable="True"
+             >
 
     <UserControl.DataContext>
         <models:ImagePresenterViewModel/>
     </UserControl.DataContext>
 
-        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Margin="0" 
+    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Margin="0" 
                       VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" VirtualizingPanel.VirtualizationMode="Recycling">
+        <ScrollViewer.InputBindings>
+            <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
+            <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
+        </ScrollViewer.InputBindings>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.2*"/>
