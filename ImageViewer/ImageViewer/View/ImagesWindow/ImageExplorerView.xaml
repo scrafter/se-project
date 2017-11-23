@@ -37,16 +37,6 @@
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Margin="0" Rows="1"  ScrollViewer.HorizontalScrollBarVisibility="Auto">
-                            <UniformGrid.Style>
-                                <Style TargetType="UniformGrid">
-                                    <Setter Property ="Columns" Value="{Binding ImageListCount}"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ImageListCount}">
-                                            <Setter Property ="Columns" Value="{Binding ImageListCount}"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </UniformGrid.Style>
                         </UniformGrid>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -77,9 +67,6 @@
                                             <MenuItem Header="Remove Image" Command="{Binding Path=DataContext.RemoveImageCommand, Source={x:Reference Name=imageList}}" CommandParameter="{Binding}"/>
                                         </ContextMenu>
                                     </Image.ContextMenu>
-                                    <Image.InputBindings>
-                                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding  DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
-                                    </Image.InputBindings>
                                 </Image>
                                 <!--<TextBlock Text="{Binding Path=FilePath}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="WrapWithOverflow"/>-->
                                 <Grid Grid.Row="1">
@@ -93,6 +80,9 @@
                                     <Image Source="pack://application:,,,/Resources/Images/ImageIcon.png" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5, 0, 0, 0"/>
                                 </Grid>
                             </Grid>
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding  DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                            </Border.InputBindings>
                         </Border>
                     </DataTemplate>
 
