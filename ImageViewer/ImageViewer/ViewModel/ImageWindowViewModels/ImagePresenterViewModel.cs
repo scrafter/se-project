@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using ImageViewer.Methods;
 using ImageViewer.View;
 using ImageViewer.View.ImagesWindow;
+using System.Collections.ObjectModel;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -21,8 +22,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private int _imageWidth;
         private int _imageHeight;
         private Image _displayedImage;
+        private ObservableCollection<Image> _imageList;
+        private int _imageIndex = 0;
         private BitmapSource _imageSource;
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
+        public RelayCommand LeftArrowCommand { get; set; }
+        public RelayCommand RightArrowCommand { get; set; }
         private static ITool tool = null;
         public static ITool Tool
         {
@@ -110,8 +115,27 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         public ImagePresenterViewModel()
         {
-            _aggregator.GetEvent<DisplayImage>().Subscribe(item => { DisplayedImage = item; });
+            _imageList = new ObservableCollection<Image>();
+            _aggregator.GetEvent<DisplayImage>().Subscribe(item => 
+            { 
+                _imageList = item;
+                _imageIndex = 0;
+                DisplayedImage = _imageList[_imageIndex];
+            });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
+            LeftArrowCommand = new RelayCommand(LeftKeyPressed);
+            RightArrowCommand = new RelayCommand(RightKeyPressed);
+        }
+
+        private void LeftKeyPressed(Object obj)
+        {
+            _imageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
+            DisplayedImage = _imageList[_imageIndex];
+        }
+        private void RightKeyPressed(Object obj)
+        {
+            _imageIndex = _imageIndex == (_imageList.Count - 1 ) ? 0 : (_imageIndex + 1);
+            DisplayedImage = _imageList[_imageIndex];
         }
 
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
