@@ -263,6 +263,7 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\ImageKeeper.txt" />
     <Content Include="Resources\Images\FolderIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
