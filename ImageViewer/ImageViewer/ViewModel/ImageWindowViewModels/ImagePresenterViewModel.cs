@@ -22,9 +22,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private int _mouseX;
         private int _mouseY;
         private Point _mouseClickPosition;
-        private Point _boundingBoxPosition;
-        private int _boundingBoxWidth;
-        private int _boundingBoxHeight;
+        private Point _regionLocation;
+        private int _regionWidth;
+        private int _regionHeight;
         private Image _displayedImage;
         private ObservableCollection<Image> _imageList;
         private int _imageIndex = 0;
@@ -100,11 +100,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return _boundingBoxWidth;
+                return _regionWidth;
             }
             set
             {
-                _boundingBoxWidth = value;
+                _regionWidth = value;
                 NotifyPropertyChanged();
             }
         }
@@ -112,11 +112,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return _boundingBoxHeight;
+                return _regionHeight;
             }
             set
             {
-                _boundingBoxHeight = value;
+                _regionHeight = value;
                 NotifyPropertyChanged();
             }
         }
@@ -124,7 +124,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return new Thickness(_boundingBoxPosition.X, _boundingBoxPosition.Y, 0, 0);
+                return new Thickness(_regionLocation.X, _regionLocation.Y, 0, 0);
             }
             set
             {
@@ -156,8 +156,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
             if (Tool.GetToolEnum() == Tools.RegionSelection)
             {
-                _boundingBoxPosition.X = _mouseX;
-                _boundingBoxPosition.Y = _mouseY;
+                _regionLocation.X = _mouseX;
+                _regionLocation.Y = _mouseY;
                 BoundingBoxWidth = 0;
                 BoundingBoxHeight = 0;
                 NotifyPropertyChanged("BoundingBoxLocation");
@@ -173,14 +173,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 if(BoundingBoxWidth < 0)
                 {
                     BoundingBoxWidth = Math.Abs(BoundingBoxWidth);
-                    _boundingBoxPosition.X = _mouseX;
+                    _regionLocation.X = _mouseX;
                     NotifyPropertyChanged("BoundingBoxLocation");
                 }
                 BoundingBoxHeight = _mouseY - (int)_mouseClickPosition.Y;
                 if (BoundingBoxHeight < 0)
                 {
                     BoundingBoxHeight = Math.Abs(BoundingBoxHeight);
-                    _boundingBoxPosition.Y = _mouseY;
+                    _regionLocation.Y = _mouseY;
                     NotifyPropertyChanged("BoundingBoxLocation");
                 }
             }
@@ -210,6 +210,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         case Tools.RegionSelection:
                             {
                                 isDragged = false;
+                                parameters.Add("BoundingBoxLocation", new Point(BoundingBoxLocation.Left, BoundingBoxLocation.Top));
+                                parameters.Add("BoundingBoxWidth", BoundingBoxWidth);
+                                parameters.Add("BoundingBoxHeight", BoundingBoxHeight);
+                                parameters.Add("BitmapSource", ImageSource);
                             }
                             break;
                         case Tools.Magnifier:
