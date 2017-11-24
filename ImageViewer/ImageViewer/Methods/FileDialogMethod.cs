@@ -28,8 +28,8 @@ namespace ImageViewer.Methods
                         Image image = new Image() { FileName = Path.GetFileName(item), FilePath = item, Extension = Path.GetExtension(item) };
                         if (list.Count != 0 && CheckExtension(item))
                         {
-                            contains = list.Any(x => x.FilePath == item);
-                            if (contains == false)
+                            //contains = list.Any(x => x.FilePath == item);
+                            //if (contains == false)
                                 list.Add(image);
                         }
                         else if (CheckExtension(item))

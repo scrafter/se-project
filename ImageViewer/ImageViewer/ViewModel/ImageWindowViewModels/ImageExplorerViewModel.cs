@@ -17,11 +17,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     public class ImageExplorerViewModel : BaseViewModel
     {
         private const int displayedImages = 6;
-        private ObservableCollection<Image> _imageList;
+        private ObservableCollection<ObservableCollection<Image>> _imageList;
         public RelayCommand DoubleClickCommand { get; set; }
         public RelayCommand RemoveImageCommand { get; set; }
         public RelayCommand DialogCommand { get; set; }
-        public ObservableCollection<Image> ImageList
+        public ObservableCollection<ObservableCollection<Image>> ImageList
         {
             get => _imageList;
             set
@@ -47,9 +47,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             DoubleClickCommand = new RelayCommand(DoubleClickExecute, DoubleClickCanExecute);
             RemoveImageCommand = new RelayCommand(RemoveImageExecute, RemoveImageCanExecute);
             DialogCommand = new RelayCommand(DialogExecute);
-            ImageList = new ObservableCollection<Image>();
+            ImageList = new ObservableCollection<ObservableCollection<Image>>();
+
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
-            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => { ImageList = item; });
             _aggregator.GetEvent<SendImage>().Subscribe(item => {
                 if (ImageList.Contains(item) == false)
                     ImageList.Add(item);
@@ -64,15 +64,23 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         public void DialogMethod()
         {
+            ObservableCollection<Image> list = new ObservableCollection<Image>();
             FileDialogMethod fdm = new FileDialogMethod();
-            fdm.ReturnFilesFromDialog(ImageList);
-            _aggregator.GetEvent<FileDialogEvent>().Publish(ImageList);
+            fdm.ReturnFilesFromDialog(list);
+            App.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                if (list.Count != 0)
+            {
+                ImageList.Add(list);
+                _aggregator.GetEvent<FileDialogEvent>().Publish(ImageList);
+                }
+            }));
         }
 
 
         private void RemoveImageExecute(object obj)
         {
-            var image = (Image)obj;
+            var image = (ObservableCollection<Image>)obj;
             if (image != null)
             {
                 App.Current.Dispatcher.Invoke(new Action(() =>
@@ -89,7 +97,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void DoubleClickExecute(object obj)
         {
-            var image = (Image)obj;
+            ObservableCollection<Image> image = (ObservableCollection<Image>)obj;
             if (image != null)
             {
                 DisplayImageWindow displayImageWindow = DisplayImageWindow.Instance;
