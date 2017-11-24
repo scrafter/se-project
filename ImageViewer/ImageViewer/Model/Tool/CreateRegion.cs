@@ -11,7 +11,7 @@ namespace ImageViewer.Model
     {
         public void AffectImage(Dictionary<String, Object> args)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public Tools GetToolEnum()

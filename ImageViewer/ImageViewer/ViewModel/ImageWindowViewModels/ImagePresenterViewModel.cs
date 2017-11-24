@@ -12,15 +12,19 @@ using ImageViewer.Methods;
 using ImageViewer.View;
 using ImageViewer.View.ImagesWindow;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
+        private bool isDragged = false;
         private int _mouseX;
         private int _mouseY;
-        private int _imageWidth;
-        private int _imageHeight;
+        private Point _mouseClickPosition;
+        private Point _boundingBoxPosition;
+        private int _boundingBoxWidth;
+        private int _boundingBoxHeight;
         private Image _displayedImage;
         private ObservableCollection<Image> _imageList;
         private int _imageIndex = 0;
@@ -28,6 +32,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
         private static ITool tool = null;
         public static ITool Tool
         {
@@ -52,6 +58,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
                 if(_displayedImage != null)
                     ImageSource = new BitmapImage(new Uri(_displayedImage.FilePath));
+                BoundingBoxWidth = 0;
+                BoundingBoxHeight = 0;
             }
         }
         public BitmapSource ImageSource
@@ -88,28 +96,40 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-
-        public int ImageWidth
+        public int BoundingBoxWidth
         {
             get
             {
-               return _imageWidth;
+                return _boundingBoxWidth;
             }
             set
             {
-                _imageWidth = value;
+                _boundingBoxWidth = value;
+                NotifyPropertyChanged();
             }
         }
-
-        public int ImageHeight
+        public int BoundingBoxHeight
         {
             get
             {
-                return _imageHeight;
+                return _boundingBoxHeight;
             }
             set
             {
-                _imageHeight = value;
+                _boundingBoxHeight = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public Thickness BoundingBoxLocation
+        {
+            get
+            {
+                return new Thickness(_boundingBoxPosition.X, _boundingBoxPosition.Y, 0, 0);
+            }
+            set
+            {
+                BoundingBoxLocation = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -123,16 +143,55 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 DisplayedImage = _imageList[_imageIndex];
             });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
-            LeftArrowCommand = new RelayCommand(LeftKeyPressed);
-            RightArrowCommand = new RelayCommand(RightKeyPressed);
+            LeftArrowCommand = new RelayCommand(PreviousImage);
+            RightArrowCommand = new RelayCommand(NextImage);
+            MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
+            MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
         }
 
-        private void LeftKeyPressed(Object obj)
+        private void MouseLeftClick(System.Windows.RoutedEventArgs args)
+        {
+            _mouseClickPosition.X = _mouseX;
+            _mouseClickPosition.Y = _mouseY;
+
+            if (Tool.GetToolEnum() == Tools.RegionSelection)
+            {
+                _boundingBoxPosition.X = _mouseX;
+                _boundingBoxPosition.Y = _mouseY;
+                BoundingBoxWidth = 0;
+                BoundingBoxHeight = 0;
+                NotifyPropertyChanged("BoundingBoxLocation");
+                isDragged = true;
+            }
+            return;
+        }
+        private void MouseMove(RoutedEventArgs args)
+        {
+            if (isDragged)
+            {
+                BoundingBoxWidth = _mouseX - (int)_mouseClickPosition.X;
+                if(BoundingBoxWidth < 0)
+                {
+                    BoundingBoxWidth = Math.Abs(BoundingBoxWidth);
+                    _boundingBoxPosition.X = _mouseX;
+                    NotifyPropertyChanged("BoundingBoxLocation");
+                }
+                BoundingBoxHeight = _mouseY - (int)_mouseClickPosition.Y;
+                if (BoundingBoxHeight < 0)
+                {
+                    BoundingBoxHeight = Math.Abs(BoundingBoxHeight);
+                    _boundingBoxPosition.Y = _mouseY;
+                    NotifyPropertyChanged("BoundingBoxLocation");
+                }
+            }
+        }
+
+        private void PreviousImage(Object obj)
         {
             _imageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
             DisplayedImage = _imageList[_imageIndex];
         }
-        private void RightKeyPressed(Object obj)
+        private void NextImage(Object obj)
         {
             _imageIndex = _imageIndex == (_imageList.Count - 1 ) ? 0 : (_imageIndex + 1);
             DisplayedImage = _imageList[_imageIndex];
@@ -149,6 +208,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         case Tools.None:
                             break;
                         case Tools.RegionSelection:
+                            {
+                                isDragged = false;
+                            }
                             break;
                         case Tools.Magnifier:
                             break;
@@ -165,7 +227,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         case Tools.RegionTransformation:
                             break;
                         default:
-                            break;
+                            return;
                     }
                     try
                     {
