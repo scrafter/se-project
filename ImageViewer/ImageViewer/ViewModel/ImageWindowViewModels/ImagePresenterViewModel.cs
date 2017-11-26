@@ -34,16 +34,31 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand RightArrowCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
-        private static ITool tool = null;
-        public static ITool Tool
+        private  ITool _tool = null;
+        private Tools _toolType = Tools.None;
+        public  ITool Tool
         {
             get
             {
-                return tool;
+                return _tool;
             }
             set
             {
-                tool = value;
+                _tool = value;
+                ToolType = _tool.GetToolEnum();
+                NotifyPropertyChanged();
+            }
+        }
+        public Tools ToolType
+        {
+            get
+            {
+                return _toolType;
+            }
+            set
+            {
+                _toolType = value;
+                NotifyPropertyChanged();
             }
         }
         public Image DisplayedImage
@@ -142,19 +157,22 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 _imageIndex = 0;
                 DisplayedImage = _imageList[_imageIndex];
             });
+            _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
+            {
+                Tool = item;
+            });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
         }
-
         private void MouseLeftClick(System.Windows.RoutedEventArgs args)
         {
             _mouseClickPosition.X = _mouseX;
             _mouseClickPosition.Y = _mouseY;
 
-            if (Tool.GetToolEnum() == Tools.RegionSelection)
+            if (_toolType == Tools.RegionSelection)
             {
                 _regionLocation.X = _mouseX;
                 _regionLocation.Y = _mouseY;
@@ -199,7 +217,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
-            if(tool != null)
+            if(_tool != null)
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     Dictionary<String, Object> parameters = new Dictionary<string, object>();
@@ -235,7 +253,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     }
                     try
                     {
-                        tool.AffectImage(parameters);
+                        _tool.AffectImage(parameters);
                     }
                     catch (Exception e)
                     {
