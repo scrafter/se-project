@@ -40,8 +40,7 @@ namespace ImageViewer.Model
                     double pixelWidth = (graphics.DpiX / bitmapSource.DpiX);
                     double pixelHeight = (graphics.DpiY / bitmapSource.DpiY);
                     bitmap = GetBitmap(bitmapSource);
-                    bitmap = getGrayOverlayLBA(bitmap, (int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * bitmapSource.DpiX/96.0), (int)(regionHeight*bitmapSource.DpiY/96.0));/* (int)(regionWidth * pixelWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * pixelHeight * bitmapSource.DpiX / 96.0))*/;
-                    //bitmap = CopyBitmap(bitmap, new Rectangle((int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * pixelWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * pixelHeight * bitmapSource.DpiX / 96.0)));
+                    bitmap = GetBitmapFragment(bitmap, (int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * bitmapSource.DpiY / 96.0));
                 }
 
 
@@ -93,12 +92,19 @@ namespace ImageViewer.Model
                 maxs[2] = blues.Max();
                 maxs[3] = alphas.Max();
 
+                double[] variances = new double[4];
+                double[] deviations = new double[4];
+
+                GetVarianceAndDeviation(ref variances, ref deviations, averages, reds, greens, blues, alphas);
+
                 Dictionary<string,Object> regionInformation = new Dictionary<string, Object>();
                 regionInformation.Add("Averages", averages);
                 regionInformation.Add("Mins", mins);
                 regionInformation.Add("Maxs", maxs);
                 regionInformation.Add("Width", bitmap.Width);
                 regionInformation.Add("Height", bitmap.Height);
+                regionInformation.Add("Variances", variances);
+                regionInformation.Add("Deviations", deviations);
 
                 IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
                 _aggregator.GetEvent<SendRegionInformationEvent>().Publish(regionInformation);
@@ -121,25 +127,44 @@ namespace ImageViewer.Model
             }
             catch { MessageBox.Show("failed"); return null; }
         }
-        //Bitmap GetBitmap(BitmapSource source)
-        //{
-        //    Bitmap bmp = new Bitmap(
-        //      source.PixelWidth,
-        //      source.PixelHeight,
-        //      (System.Drawing.Imaging.)source.Format);
-        //    BitmapData data = bmp.LockBits(
-        //      new Rectangle(System.Drawing.Point.Empty, bmp.Size),
-        //      ImageLockMode.WriteOnly,
-        //      System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-        //    source.CopyPixels(
-        //      Int32Rect.Empty,
-        //      data.Scan0,
-        //      data.Height * data.Stride,
-        //      data.Stride);
-        //    bmp.UnlockBits(data);
-        //    return bmp;
-        //}
-        public Bitmap getGrayOverlayLBA(Bitmap bmp1, int posX, int posY, int width, int height)
+        private void GetVarianceAndDeviation(ref double[] variances, ref double[] deviations, double[] averages, List<byte> reds, List<byte> greens, List<byte> blues, List<byte> alphas)
+        {
+            double sum;
+            //Red
+            sum = 0.0;
+            for (int i = 0; i < reds.Count; i++)
+            {
+                sum += Math.Pow(reds[i] - averages[0], 2);
+            }
+            variances[0] = sum / reds.Count;
+            deviations[0] = Math.Sqrt(variances[0]);
+            //Green
+            sum = 0.0;
+            for (int i = 0; i < greens.Count; i++)
+            {
+                sum += Math.Pow(greens[i] - averages[1], 2);
+            }
+            variances[1] = sum / greens.Count;
+            deviations[1] = Math.Sqrt(variances[1]);
+            //Blue
+            sum = 0.0;
+            for (int i = 0; i < blues.Count; i++)
+            {
+                sum += Math.Pow(blues[i] - averages[2], 2);
+            }
+            variances[2] = sum / blues.Count;
+            deviations[2] = Math.Sqrt(variances[2]);
+            //Alpha
+            sum = 0.0;
+            for (int i = 0; i < alphas.Count; i++)
+            {
+                sum += Math.Pow(alphas[i] - averages[3], 2);
+            }
+            variances[3] = sum / alphas.Count;
+            deviations[3] = Math.Sqrt(variances[3]);
+
+        }
+        private Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height)
         {
             System.Drawing.Size s1 = bmp1.Size;
             System.Drawing.Imaging.PixelFormat fmt1 = bmp1.PixelFormat;
@@ -191,7 +216,7 @@ namespace ImageViewer.Model
             bmp3.UnlockBits(bmp3Data);
             return bmp3;
         }
-        public BitmapSource Convert(System.Drawing.Bitmap bitmap)
+        private BitmapSource Convert(System.Drawing.Bitmap bitmap)
         {
             try
             {
@@ -215,7 +240,7 @@ namespace ImageViewer.Model
             }
         }
 
-        public static byte[] BitmapToByteArray(Bitmap bitmap)
+        private static byte[] BitmapToByteArray(Bitmap bitmap)
         {
 
             BitmapData bmpdata = null;
@@ -237,15 +262,6 @@ namespace ImageViewer.Model
                     bitmap.UnlockBits(bmpdata);
             }
 
-        }
-
-        protected Bitmap CopyBitmap(Bitmap source, Rectangle part)
-        {
-            Bitmap bmp = new Bitmap(part.Width, part.Height);
-            Graphics g = Graphics.FromImage(bmp);
-            g.DrawImage(source, 0, 0, part, GraphicsUnit.Pixel);
-            g.Dispose();
-            return bmp;
         }
 
         public Tools GetToolEnum()
