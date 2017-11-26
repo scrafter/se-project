@@ -32,6 +32,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
+        public RelayCommand SaveRegionCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
         private  ITool _tool = null;
@@ -73,8 +74,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
                 if(_displayedImage != null)
                     ImageSource = new BitmapImage(new Uri(_displayedImage.FilePath));
-                BoundingBoxWidth = 0;
-                BoundingBoxHeight = 0;
+                RegionWidth = 0;
+                RegionHeight = 0;
             }
         }
         public BitmapSource ImageSource
@@ -111,7 +112,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public int BoundingBoxWidth
+        public int RegionWidth
         {
             get
             {
@@ -123,7 +124,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public int BoundingBoxHeight
+        public int RegionHeight
         {
             get
             {
@@ -135,7 +136,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public Thickness BoundingBoxLocation
+        public Thickness RegionLocation
         {
             get
             {
@@ -143,7 +144,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
             set
             {
-                BoundingBoxLocation = value;
+                RegionLocation = value;
                 NotifyPropertyChanged();
             }
         }
@@ -161,12 +162,27 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 Tool = item;
             });
+            _aggregator.GetEvent<SendRegionNameEvent>().Subscribe(SaveRegion);
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
+            SaveRegionCommand = new RelayCommand(OpenSaveRegionWindow);
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
         }
+
+        private void SaveRegion(String name)
+        {
+            Point point = new Point(_regionLocation.X * ImageSource.DpiY / 96.0, _regionLocation.Y * ImageSource.DpiY / 96.0);
+            Region region = new Region(point , new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name);
+            region.Save();
+            _aggregator.GetEvent<SendRegionEvent>().Publish(region);
+        }
+        private void OpenSaveRegionWindow(Object obj)
+        {
+            SaveRegionWindow.Instance.Show();
+        }
+
         private void MouseLeftClick(System.Windows.RoutedEventArgs args)
         {
             _mouseClickPosition.X = _mouseX;
@@ -176,9 +192,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 _regionLocation.X = _mouseX;
                 _regionLocation.Y = _mouseY;
-                BoundingBoxWidth = 0;
-                BoundingBoxHeight = 0;
-                NotifyPropertyChanged("BoundingBoxLocation");
+                RegionWidth = 0;
+                RegionHeight = 0;
+                NotifyPropertyChanged("RegionLocation");
                 isDragged = true;
             }
             return;
@@ -187,19 +203,19 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if (isDragged)
             {
-                BoundingBoxWidth = _mouseX - (int)_mouseClickPosition.X;
-                if(BoundingBoxWidth < 0)
+                RegionWidth = _mouseX - (int)_mouseClickPosition.X;
+                if(RegionWidth < 0)
                 {
-                    BoundingBoxWidth = Math.Abs(BoundingBoxWidth);
+                    RegionWidth = Math.Abs(RegionWidth);
                     _regionLocation.X = _mouseX;
-                    NotifyPropertyChanged("BoundingBoxLocation");
+                    NotifyPropertyChanged("RegionLocation");
                 }
-                BoundingBoxHeight = _mouseY - (int)_mouseClickPosition.Y;
-                if (BoundingBoxHeight < 0)
+                RegionHeight = _mouseY - (int)_mouseClickPosition.Y;
+                if (RegionHeight < 0)
                 {
-                    BoundingBoxHeight = Math.Abs(BoundingBoxHeight);
+                    RegionHeight = Math.Abs(RegionHeight);
                     _regionLocation.Y = _mouseY;
-                    NotifyPropertyChanged("BoundingBoxLocation");
+                    NotifyPropertyChanged("RegionLocation");
                 }
             }
         }
@@ -228,9 +244,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         case Tools.RegionSelection:
                             {
                                 isDragged = false;
-                                parameters.Add("BoundingBoxLocation", new Point(BoundingBoxLocation.Left, BoundingBoxLocation.Top));
-                                parameters.Add("BoundingBoxWidth", BoundingBoxWidth);
-                                parameters.Add("BoundingBoxHeight", BoundingBoxHeight);
+                                parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
+                                parameters.Add("RegionWidth", RegionWidth);
+                                parameters.Add("RegionHeight", RegionHeight);
                                 parameters.Add("BitmapSource", ImageSource);
                             }
                             break;

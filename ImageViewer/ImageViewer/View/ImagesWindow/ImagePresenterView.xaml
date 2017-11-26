@@ -50,12 +50,17 @@
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Image.RenderTransform>
                     </Image>
-                    <Rectangle StrokeThickness="1" Width="{Binding BoundingBoxWidth}" Height="{Binding BoundingBoxHeight}" Fill="Transparent" Margin="{Binding BoundingBoxLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
+                    <Rectangle StrokeThickness="1" Width="{Binding RegionWidth}" Height="{Binding RegionHeight}" Fill="Transparent" Margin="{Binding RegionLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
                         <Rectangle.ToolTip>
                             <ToolTip>
                                 <local:RegionInformationView Margin="0"/>
                             </ToolTip>
                         </Rectangle.ToolTip>
+                        <Rectangle.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Save region" Command="{Binding SaveRegionCommand}" CommandParameter="{Binding}"/>
+                            </ContextMenu>
+                        </Rectangle.ContextMenu>
                         <Rectangle.Stroke>
                             <LinearGradientBrush x:Name="StrokeColor" StartPoint="0,0" EndPoint="0.005, 0.005" SpreadMethod="Reflect">
                                 <GradientStop Color="Black" Offset="1"/>

@@ -117,8 +117,11 @@
     <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
     <Compile Include="Methods\MouseManagement.cs" />
     <Compile Include="Model\Event\SendPixelInformationViewEvent.cs" />
+    <Compile Include="Model\Event\SendRegionEvent.cs" />
     <Compile Include="Model\Event\SendRegionInformationEvent.cs" />
+    <Compile Include="Model\Event\SendRegionNameEvent.cs" />
     <Compile Include="Model\Event\SendToolEvent.cs" />
+    <Compile Include="Model\Region.cs" />
     <Compile Include="Model\Tools.cs" />
     <Compile Include="Model\Tool\ITool.cs" />
     <Compile Include="Model\Tool\CreateRegion.cs" />
@@ -143,7 +146,9 @@
     <Compile Include="ViewModel\ImageWindowViewModels\ImageExplorerViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\ImagePresenterViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\PixelInformationViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\RegionExplorerViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\RegionInformationViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\SaveRegionWindowViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\ToolBarViewModel.cs" />
     <Compile Include="ViewModel\MainMenuViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -164,8 +169,14 @@
     <Compile Include="View\ImagesWindow\PixelInformationView.xaml.cs">
       <DependentUpon>PixelInformationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ImagesWindow\RegionExplorerView.xaml.cs">
+      <DependentUpon>RegionExplorerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ImagesWindow\RegionInformationView.xaml.cs">
       <DependentUpon>RegionInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\SaveRegionWindow.xaml.cs">
+      <DependentUpon>SaveRegionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ImagesWindow\ToolBarView.xaml.cs">
       <DependentUpon>ToolBarView.xaml</DependentUpon>
@@ -208,7 +219,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ImagesWindow\RegionExplorerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ImagesWindow\RegionInformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\SaveRegionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
