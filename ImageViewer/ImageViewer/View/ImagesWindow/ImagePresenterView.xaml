@@ -49,12 +49,29 @@
                         <Image.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Image.RenderTransform>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseLeftButtonDown">
-                                <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
                     </Image>
+                    <Rectangle StrokeThickness="1" Width="{Binding BoundingBoxWidth}" Height="{Binding BoundingBoxHeight}" Fill="Transparent" Margin="{Binding BoundingBoxLocation}" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Rectangle.ToolTip>
+                            <local:RegionInformationView/>
+                        </Rectangle.ToolTip>
+                        <Rectangle.Stroke>
+                            <LinearGradientBrush x:Name="StrokeColor" StartPoint="0,0" EndPoint="0.005, 0.005" SpreadMethod="Reflect">
+                                <GradientStop Color="Black" Offset="1"/>
+                                <GradientStop Color="White" Offset="0"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Stroke>
+                    </Rectangle>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                            <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseMove">
+                            <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <i:Interaction.Behaviors>
                         <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
                     </i:Interaction.Behaviors>

@@ -12,15 +12,19 @@ using ImageViewer.Methods;
 using ImageViewer.View;
 using ImageViewer.View.ImagesWindow;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
+        private bool isDragged = false;
         private int _mouseX;
         private int _mouseY;
-        private int _imageWidth;
-        private int _imageHeight;
+        private Point _mouseClickPosition;
+        private Point _regionLocation;
+        private int _regionWidth;
+        private int _regionHeight;
         private Image _displayedImage;
         private ObservableCollection<Image> _imageList;
         private int _imageIndex = 0;
@@ -28,16 +32,33 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
-        private static ITool tool = null;
-        public static ITool Tool
+        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
+        private  ITool _tool = null;
+        private Tools _toolType = Tools.None;
+        public  ITool Tool
         {
             get
             {
-                return tool;
+                return _tool;
             }
             set
             {
-                tool = value;
+                _tool = value;
+                ToolType = _tool.GetToolEnum();
+                NotifyPropertyChanged();
+            }
+        }
+        public Tools ToolType
+        {
+            get
+            {
+                return _toolType;
+            }
+            set
+            {
+                _toolType = value;
+                NotifyPropertyChanged();
             }
         }
         public Image DisplayedImage
@@ -52,6 +73,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
                 if(_displayedImage != null)
                     ImageSource = new BitmapImage(new Uri(_displayedImage.FilePath));
+                BoundingBoxWidth = 0;
+                BoundingBoxHeight = 0;
             }
         }
         public BitmapSource ImageSource
@@ -88,28 +111,40 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-
-        public int ImageWidth
+        public int BoundingBoxWidth
         {
             get
             {
-               return _imageWidth;
+                return _regionWidth;
             }
             set
             {
-                _imageWidth = value;
+                _regionWidth = value;
+                NotifyPropertyChanged();
             }
         }
-
-        public int ImageHeight
+        public int BoundingBoxHeight
         {
             get
             {
-                return _imageHeight;
+                return _regionHeight;
             }
             set
             {
-                _imageHeight = value;
+                _regionHeight = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public Thickness BoundingBoxLocation
+        {
+            get
+            {
+                return new Thickness(_regionLocation.X, _regionLocation.Y, 0, 0);
+            }
+            set
+            {
+                BoundingBoxLocation = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -122,17 +157,59 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 _imageIndex = 0;
                 DisplayedImage = _imageList[_imageIndex];
             });
+            _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
+            {
+                Tool = item;
+            });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
-            LeftArrowCommand = new RelayCommand(LeftKeyPressed);
-            RightArrowCommand = new RelayCommand(RightKeyPressed);
+            LeftArrowCommand = new RelayCommand(PreviousImage);
+            RightArrowCommand = new RelayCommand(NextImage);
+            MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
+            MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
+        }
+        private void MouseLeftClick(System.Windows.RoutedEventArgs args)
+        {
+            _mouseClickPosition.X = _mouseX;
+            _mouseClickPosition.Y = _mouseY;
+
+            if (_toolType == Tools.RegionSelection)
+            {
+                _regionLocation.X = _mouseX;
+                _regionLocation.Y = _mouseY;
+                BoundingBoxWidth = 0;
+                BoundingBoxHeight = 0;
+                NotifyPropertyChanged("BoundingBoxLocation");
+                isDragged = true;
+            }
+            return;
+        }
+        private void MouseMove(RoutedEventArgs args)
+        {
+            if (isDragged)
+            {
+                BoundingBoxWidth = _mouseX - (int)_mouseClickPosition.X;
+                if(BoundingBoxWidth < 0)
+                {
+                    BoundingBoxWidth = Math.Abs(BoundingBoxWidth);
+                    _regionLocation.X = _mouseX;
+                    NotifyPropertyChanged("BoundingBoxLocation");
+                }
+                BoundingBoxHeight = _mouseY - (int)_mouseClickPosition.Y;
+                if (BoundingBoxHeight < 0)
+                {
+                    BoundingBoxHeight = Math.Abs(BoundingBoxHeight);
+                    _regionLocation.Y = _mouseY;
+                    NotifyPropertyChanged("BoundingBoxLocation");
+                }
+            }
         }
 
-        private void LeftKeyPressed(Object obj)
+        private void PreviousImage(Object obj)
         {
             _imageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
             DisplayedImage = _imageList[_imageIndex];
         }
-        private void RightKeyPressed(Object obj)
+        private void NextImage(Object obj)
         {
             _imageIndex = _imageIndex == (_imageList.Count - 1 ) ? 0 : (_imageIndex + 1);
             DisplayedImage = _imageList[_imageIndex];
@@ -140,7 +217,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
-            if(tool != null)
+            if(_tool != null)
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     Dictionary<String, Object> parameters = new Dictionary<string, object>();
@@ -149,6 +226,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         case Tools.None:
                             break;
                         case Tools.RegionSelection:
+                            {
+                                isDragged = false;
+                                parameters.Add("BoundingBoxLocation", new Point(BoundingBoxLocation.Left, BoundingBoxLocation.Top));
+                                parameters.Add("BoundingBoxWidth", BoundingBoxWidth);
+                                parameters.Add("BoundingBoxHeight", BoundingBoxHeight);
+                                parameters.Add("BitmapSource", ImageSource);
+                            }
                             break;
                         case Tools.Magnifier:
                             break;
@@ -165,11 +249,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         case Tools.RegionTransformation:
                             break;
                         default:
-                            break;
+                            return;
                     }
                     try
                     {
-                        tool.AffectImage(parameters);
+                        _tool.AffectImage(parameters);
                     }
                     catch (Exception e)
                     {

@@ -16,14 +16,14 @@
     <Grid Background="#616161">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="8*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.Column="0" Margin="20" Background="#E0E0E0" BorderBrush="DarkGray" BorderThickness="3">
+        <Border Grid.Row="0" Grid.Column="0" Margin="20, 20, 20, 0" Background="#E0E0E0" BorderBrush="DarkGray" BorderThickness="3">
             <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

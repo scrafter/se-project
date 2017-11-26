@@ -49,25 +49,25 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void CreateMagnifyingGlassTool(object obj)
         {
-            ImagePresenterViewModel.Tool = new MagnifyingGlass();
+            _aggregator.GetEvent<SendToolEvent>().Publish(new MagnifyingGlass());
             Tool = Tools.Magnifier;
         }
 
         private void CreateEditRegionTool(object obj)
         {
-            ImagePresenterViewModel.Tool = new EditRegion();
+            _aggregator.GetEvent<SendToolEvent>().Publish(new EditRegion());
             Tool = Tools.RegionTransformation;
         }
 
         private void CreateRegionTool(object obj)
         {
-            ImagePresenterViewModel.Tool = new CreateRegion();
+            _aggregator.GetEvent<SendToolEvent>().Publish(new CreateRegion());
             Tool = Tools.RegionSelection;
         }
 
         private void CreatePixelPickerTool(object obj)
         {
-            ImagePresenterViewModel.Tool = new PixelPicker();
+            _aggregator.GetEvent<SendToolEvent>().Publish(new PixelPicker());
             Tool = Tools.PixelInformations;
         }
     }
