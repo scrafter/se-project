@@ -2,16 +2,18 @@
 using Prism.Events;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
+//using System.Windows.Media;
+//using System.Windows.Media.Imaging;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace ImageViewer.Model
 {
@@ -33,29 +35,23 @@ namespace ImageViewer.Model
 
                 bitmapSource.CopyPixels(pixels, stride, 0);
                 Bitmap bitmap;
-                //using (MemoryStream outStream = new MemoryStream())
-                    //{
-                    //    BitmapEncoder enc = new BmpBitmapEncoder();
+                using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
+                {
+                    double pixelWidth = (graphics.DpiX / bitmapSource.DpiX);
+                    double pixelHeight = (graphics.DpiY / bitmapSource.DpiY);
+                    bitmap = GetBitmap(bitmapSource);
+                    bitmap = getGrayOverlayLBA(bitmap, (int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * bitmapSource.DpiX/96.0), (int)(regionHeight*bitmapSource.DpiY/96.0));/* (int)(regionWidth * pixelWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * pixelHeight * bitmapSource.DpiX / 96.0))*/;
+                    //bitmap = CopyBitmap(bitmap, new Rectangle((int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * pixelWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * pixelHeight * bitmapSource.DpiX / 96.0)));
+                }
 
-                    //    enc.Frames.Add(BitmapFrame.Create(bitmapSource));
-                    //    enc.Save(outStream);
-                    //    bitmap = new System.Drawing.Bitmap(outStream);
-                    //    bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\bitmap2.png", ImageFormat.Png);
-                    //}
-                bitmap = GetBitmap(bitmapSource);
-                bitmap = getGrayOverlayLBA(bitmap, (int)regionLocation.X, (int)regionLocation.Y, regionWidth, regionHeight);
-                //using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-                //{
-                //    double pixelWidth = (graphics.DpiX / bitmapSource.DpiX);
-                //    double pixelHeight = (graphics.DpiY / bitmapSource.DpiY);
-                //    bitmap = CopyBitmap(bitmap, new Rectangle((int)(regionLocation.X * bitmapSource.DpiX/96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth*pixelWidth * bitmapSource.DpiX/96.0), (int)(regionHeight*pixelHeight * bitmapSource.DpiX / 96.0)));
-                //}
+
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\bitmap.png", ImageFormat.Png);
                 bitmapSource = Convert(bitmap);
                 stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
                 size = regionHeight * stride;
                 pixels = BitmapToByteArray(bitmap); ;
                 bitmapSource.CopyPixels(pixels, stride, 0);
+
                 List<byte> alphas = new List<byte>();
                 List<byte> reds = new List<byte>();
                 List<byte> greens = new List<byte>();
@@ -101,6 +97,8 @@ namespace ImageViewer.Model
                 regionInformation.Add("Averages", averages);
                 regionInformation.Add("Mins", mins);
                 regionInformation.Add("Maxs", maxs);
+                regionInformation.Add("Width", bitmap.Width);
+                regionInformation.Add("Height", bitmap.Height);
 
                 IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
                 _aggregator.GetEvent<SendRegionInformationEvent>().Publish(regionInformation);
@@ -111,24 +109,36 @@ namespace ImageViewer.Model
 
             }
         }
-        Bitmap GetBitmap(BitmapSource source)
+        System.Drawing.Bitmap GetBitmap(BitmapSource src)
         {
-            Bitmap bmp = new Bitmap(
-              source.PixelWidth,
-              source.PixelHeight,
-              System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            BitmapData data = bmp.LockBits(
-              new Rectangle(System.Drawing.Point.Empty, bmp.Size),
-              ImageLockMode.WriteOnly,
-              System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            source.CopyPixels(
-              Int32Rect.Empty,
-              data.Scan0,
-              data.Height * data.Stride,
-              data.Stride);
-            bmp.UnlockBits(data);
-            return bmp;
+            try
+            {
+                MemoryStream TransportStream = new MemoryStream();
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(src));
+                enc.Save(TransportStream);
+                return new System.Drawing.Bitmap(TransportStream);
+            }
+            catch { MessageBox.Show("failed"); return null; }
         }
+        //Bitmap GetBitmap(BitmapSource source)
+        //{
+        //    Bitmap bmp = new Bitmap(
+        //      source.PixelWidth,
+        //      source.PixelHeight,
+        //      (System.Drawing.Imaging.)source.Format);
+        //    BitmapData data = bmp.LockBits(
+        //      new Rectangle(System.Drawing.Point.Empty, bmp.Size),
+        //      ImageLockMode.WriteOnly,
+        //      System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+        //    source.CopyPixels(
+        //      Int32Rect.Empty,
+        //      data.Scan0,
+        //      data.Height * data.Stride,
+        //      data.Stride);
+        //    bmp.UnlockBits(data);
+        //    return bmp;
+        //}
         public Bitmap getGrayOverlayLBA(Bitmap bmp1, int posX, int posY, int width, int height)
         {
             System.Drawing.Size s1 = bmp1.Size;
@@ -136,18 +146,18 @@ namespace ImageViewer.Model
 
             System.Drawing.Imaging.PixelFormat fmt = new System.Drawing.Imaging.PixelFormat();
             fmt = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-            Bitmap bmp3 = new Bitmap(s1.Width, s1.Height, fmt);
+            Bitmap bmp3 = new Bitmap(width, height, fmt);
 
             Rectangle rect = new Rectangle(posX, posY, width, height);
 
             BitmapData bmp1Data = bmp1.LockBits(rect, ImageLockMode.ReadOnly, fmt1);
-            BitmapData bmp3Data = bmp3.LockBits(rect, ImageLockMode.ReadWrite, fmt);
+            BitmapData bmp3Data = bmp3.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
 
             byte bpp1 = 4;
             byte bpp3 = 4;
 
             if (fmt1 == System.Drawing.Imaging.PixelFormat.Format24bppRgb) bpp1 = 3;
-            else if (fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppArgb) bpp1 = 4; else return null;
+            else if (fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppPArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppRgb) bpp1 = 4; else return null;
 
             int size1 = bmp1Data.Stride * bmp1Data.Height;
             int size3 = bmp3Data.Stride * bmp3Data.Height;
@@ -156,9 +166,9 @@ namespace ImageViewer.Model
             System.Runtime.InteropServices.Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
             System.Runtime.InteropServices.Marshal.Copy(bmp3Data.Scan0, data3, 0, size3);
 
-            for (int y = 0; y < s1.Height; y++)
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < s1.Width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     int index1 = y * bmp1Data.Stride + x * bpp1;
                     int index3 = y * bmp3Data.Stride + x * bpp3;
@@ -172,7 +182,7 @@ namespace ImageViewer.Model
                     data3[index3 + 0] = c1.B;
                     data3[index3 + 1] = c1.G;
                     data3[index3 + 2] = c1.R;
-                    data3[index3 + 3] = A;
+                    data3[index3 + 3] = c1.A;
                 }
             }
 

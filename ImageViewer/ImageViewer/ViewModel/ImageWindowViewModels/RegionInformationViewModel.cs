@@ -12,6 +12,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         string _minValues;
         string _maxValues;
         string _averageValues;
+        string _regionSize;
+
+        public string RegionSize
+        {
+            get
+            {
+                return _regionSize;
+            }
+            set
+            {
+                _regionSize = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public string MinValues
         {
@@ -61,9 +75,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 double[] averages = (double[])parameters["Averages"];
                 byte[] mins = (byte[])parameters["Mins"];
                 byte[] maxs = (byte[])parameters["Maxs"];
-                AverageValues = $"Red:\t{Math.Round(averages[0], 2)}\nGreen:\t{Math.Round(averages[1], 2)}\nBlue:\t{Math.Round(averages[2], 2)}\nAlpha:\t{Math.Round(averages[3], 2)}";
-                MinValues = $"Red:\t{mins[0]}\nGreen:\t{mins[1]}\nBlue:\t{mins[2]}\nAlpha:\t{mins[3]}";
-                MaxValues = $"Red:\t{maxs[0]}\nGreen:\t{maxs[1]}\nBlue:\t{maxs[2]}\nAlpha:\t{maxs[3]}";
+                int regionWidth = (int)parameters["Width"];
+                int regionHeight = (int)parameters["Height"];
+                AverageValues = $"R:  {Math.Round(averages[0], 2)}\nG:  {Math.Round(averages[1], 2)}\nB:  {Math.Round(averages[2], 2)}\nA:  {Math.Round(averages[3], 2)}";
+                MinValues = $"R:  {mins[0]}\nG:  {mins[1]}\nB:  {mins[2]}\nA:  {mins[3]}";
+                MaxValues = $"R:  {maxs[0]}\nG:  {maxs[1]}\nB:  {maxs[2]}\nA:  {maxs[3]}";
+                RegionSize = $"Region size:\t{regionWidth} x {regionHeight}";
             }
             catch (KeyNotFoundException)
             {

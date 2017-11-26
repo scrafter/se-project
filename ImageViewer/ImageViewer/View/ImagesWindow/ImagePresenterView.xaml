@@ -51,6 +51,9 @@
                         </Image.RenderTransform>
                     </Image>
                     <Rectangle StrokeThickness="1" Width="{Binding BoundingBoxWidth}" Height="{Binding BoundingBoxHeight}" Fill="Transparent" Margin="{Binding BoundingBoxLocation}" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Rectangle.ToolTip>
+                            <local:RegionInformationView/>
+                        </Rectangle.ToolTip>
                         <Rectangle.Stroke>
                             <LinearGradientBrush x:Name="StrokeColor" StartPoint="0,0" EndPoint="0.005, 0.005" SpreadMethod="Reflect">
                                 <GradientStop Color="Black" Offset="1"/>

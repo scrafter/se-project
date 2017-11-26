@@ -18,13 +18,31 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" Grid.Column="0" Text="Average" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="0" Grid.Column="1" Text="Min" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBox Grid.Row="0" Grid.Column="2" Text="Max" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0"/>
-        <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding AverageValues}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MinValues}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0"/>
-        <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding MaxValues}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0"/>
+        
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0, 0, 0, 1" BorderBrush="Gray">
+            <TextBox Text="{Binding RegionSize}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Margin="5"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="0" BorderThickness="0, 1, 1, 1" BorderBrush="Gray">
+            <TextBox Text="Average" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Margin="5"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" BorderBrush="Gray">
+            <TextBox Text="Min" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Margin="5"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="2" BorderThickness="1, 1, 0, 1" BorderBrush="Gray">
+            <TextBox Text="Max" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Margin="5"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="0" BorderThickness="0, 1, 1, 0" BorderBrush="Gray">
+            <TextBox Text="{Binding AverageValues}" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="0" Margin="5"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="1" BorderThickness="1, 1, 1, 0" BorderBrush="Gray">
+            <TextBox Text="{Binding MinValues}" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="0" Margin="5"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="2" BorderThickness="1, 1, 0, 0" BorderBrush="Gray">
+            <TextBox Text="{Binding MaxValues}" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" BorderThickness="0" Margin="5"/>
+        </Border>
+        
     </Grid>
 </UserControl>
