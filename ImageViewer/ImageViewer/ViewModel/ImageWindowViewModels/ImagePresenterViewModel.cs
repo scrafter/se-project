@@ -22,7 +22,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private int _mouseX;
         private int _mouseY;
         private Point _mouseClickPosition;
-        private Point _regionLocation;
+        private Thickness _regionLocation;
         private int _regionWidth;
         private int _regionHeight;
         private Image _displayedImage;
@@ -140,11 +140,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return new Thickness(_regionLocation.X, _regionLocation.Y, 0, 0);
+                return _regionLocation;
             }
             set
             {
-                RegionLocation = value;
+                _regionLocation = value;
                 NotifyPropertyChanged();
             }
         }
@@ -163,6 +163,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 Tool = item;
             });
             _aggregator.GetEvent<SendRegionNameEvent>().Subscribe(SaveRegion);
+            _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
+            {
+                RegionLocation = new Thickness(region.Position.X * 96.0 / region.DpiX, region.Position.Y * 96.0 / region.DpiY, 0, 0);
+                RegionWidth = (int)(region.Size.Width * 96.0 / region.DpiX);
+                RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
+                CalculateRegionProperties();
+            });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
@@ -173,8 +180,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void SaveRegion(String name)
         {
-            Point point = new Point(_regionLocation.X * ImageSource.DpiY / 96.0, _regionLocation.Y * ImageSource.DpiY / 96.0);
-            Region region = new Region(point , new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name);
+            Point point = new Point(RegionLocation.Left * ImageSource.DpiY / 96.0, RegionLocation.Top * ImageSource.DpiY / 96.0);
+            Region region = new Region(point , new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY));
             region.Save();
             _aggregator.GetEvent<SendRegionEvent>().Publish(region);
         }
@@ -190,11 +197,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
             if (_toolType == Tools.RegionSelection)
             {
-                _regionLocation.X = _mouseX;
-                _regionLocation.Y = _mouseY;
+                RegionLocation = new Thickness(_mouseX, _mouseY, 0, 0);
                 RegionWidth = 0;
                 RegionHeight = 0;
-                NotifyPropertyChanged("RegionLocation");
                 isDragged = true;
             }
             return;
@@ -204,19 +209,19 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             if (isDragged)
             {
                 RegionWidth = _mouseX - (int)_mouseClickPosition.X;
+                int x = (int)RegionLocation.Left, y = (int)RegionLocation.Top;
                 if(RegionWidth < 0)
                 {
                     RegionWidth = Math.Abs(RegionWidth);
-                    _regionLocation.X = _mouseX;
-                    NotifyPropertyChanged("RegionLocation");
+                    x = _mouseX;
                 }
                 RegionHeight = _mouseY - (int)_mouseClickPosition.Y;
                 if (RegionHeight < 0)
                 {
                     RegionHeight = Math.Abs(RegionHeight);
-                    _regionLocation.Y = _mouseY;
-                    NotifyPropertyChanged("RegionLocation");
+                    y = _mouseY;
                 }
+                RegionLocation = new Thickness(x, y, 0, 0);
             }
         }
 
@@ -276,6 +281,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         throw e;
                     }
                 }));
+        }
+        private void CalculateRegionProperties()
+        {
+            Dictionary<String, Object> parameters = new Dictionary<string, object>();
+            parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
+            parameters.Add("RegionWidth", RegionWidth);
+            parameters.Add("RegionHeight", RegionHeight);
+            parameters.Add("BitmapSource", ImageSource);
+            ITool tool = new CreateRegion();
+            tool.AffectImage(parameters);
         }
     }
 }

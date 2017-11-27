@@ -15,6 +15,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     {
         private ObservableCollection<Region> _regionList = new ObservableCollection<Region>();
         public RelayCommand RemoveRegionCommand { get; set; }
+        public RelayCommand DoubleClickCommand { get; set; }
         public ObservableCollection<Region> RegionList
         {
             get
@@ -30,6 +31,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         public RegionExplorerViewModel()
         {
+            DoubleClickCommand = new RelayCommand(DoubleClickExecute);
             RemoveRegionCommand = new RelayCommand(RemoveRegion);
             _aggregator.GetEvent<SendRegionEvent>().Subscribe(AddRegion);
         }
@@ -49,6 +51,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     RegionList.Remove(region);
                 }));
             }
+        }
+        private void DoubleClickExecute(object obj)
+        {
+            Region region = (Region)obj;
+            if (region != null)
+            {
+                _aggregator.GetEvent<LoadRegionEvent>().Publish(region);
+            }
+
         }
     }
 }

@@ -14,8 +14,10 @@ namespace ImageViewer.Model
         public Image Image { get; set; }
         public Point Position { get; set; }
         public Size Size { get; set; }
+        public int DpiX { get; set;}
+        public int DpiY { get; set; }
 
-        public Region(Point position, Size size, string name) 
+        public Region(Point position, Size size, string name, Vector Dpi) 
         {
             Position = position;
             Size = size;
@@ -23,6 +25,8 @@ namespace ImageViewer.Model
             Image.Extension = ".png";
             Image.FileName = name;
             Image.FilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions\" + Image.FileName + Image.Extension;
+            DpiX = (int)Dpi.X;
+            DpiY = (int)Dpi.Y;
         }
 
         public void Save()
