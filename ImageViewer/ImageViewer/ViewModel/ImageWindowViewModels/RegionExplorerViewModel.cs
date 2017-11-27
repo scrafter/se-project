@@ -3,11 +3,13 @@ using ImageViewer.Model;
 using ImageViewer.Model.Event;
 using ImageViewer.View;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -34,8 +36,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             DoubleClickCommand = new RelayCommand(DoubleClickExecute);
             RemoveRegionCommand = new RelayCommand(RemoveRegion);
             _aggregator.GetEvent<SendRegionEvent>().Subscribe(AddRegion);
+            _aggregator.GetEvent<ImageListRemovedEvent>().Subscribe(RemoveRegionOnListRemoval);
         }
-
+        private void RemoveRegionOnListRemoval(ObservableCollection<ObservableCollection<Image>> imageList)
+        {
+            var list  = _regionList.Where(x => imageList.Contains(x.ImageList));
+            var regionList = new ObservableCollection<Region>();
+            foreach (var x in list)
+            {
+                regionList.Add(x);
+            }
+            RegionList = regionList;
+        }
         private void AddRegion(Region region)
         {
             RegionList.Add(region);

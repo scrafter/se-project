@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace ImageViewer.Model
 {
@@ -16,8 +17,10 @@ namespace ImageViewer.Model
         public Size Size { get; set; }
         public int DpiX { get; set;}
         public int DpiY { get; set; }
+        public ObservableCollection<Image> ImageList { get; set; }
+        public Image AttachedImage { get; set; }
 
-        public Region(Point position, Size size, string name, Vector Dpi) 
+        public Region(Point position, Size size, string name, Vector Dpi, ObservableCollection<Image> imageList, Image image) 
         {
             Position = position;
             Size = size;
@@ -27,6 +30,8 @@ namespace ImageViewer.Model
             Image.FilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions\" + Image.FileName + Image.Extension;
             DpiX = (int)Dpi.X;
             DpiY = (int)Dpi.Y;
+            ImageList = imageList;
+            AttachedImage = image;
         }
 
         public void Save()

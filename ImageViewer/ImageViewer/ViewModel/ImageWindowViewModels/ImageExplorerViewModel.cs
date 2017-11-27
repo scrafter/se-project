@@ -54,7 +54,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 if (ImageList.Contains(item) == false)
                     ImageList.Add(item);
             });
-            _aggregator.GetEvent<SendImageList>().Subscribe( item => { ImageList = item;  });
+            _aggregator.GetEvent<SendImageList>().Subscribe( item => 
+            {
+                ImageList = item;
+                _aggregator.GetEvent<ImageListRemovedEvent>().Publish(ImageList);
+            });
         }
 
         private void DialogExecute(object obj)
@@ -86,6 +90,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     ImageList.Remove(image);
+                    _aggregator.GetEvent<ImageListRemovedEvent>().Publish(ImageList);
                 }));
             }
         }

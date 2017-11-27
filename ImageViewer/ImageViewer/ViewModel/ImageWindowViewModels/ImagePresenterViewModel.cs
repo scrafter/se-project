@@ -165,10 +165,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<SendRegionNameEvent>().Subscribe(SaveRegion);
             _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
             {
+                _imageList = region.ImageList;
+                DisplayedImage = region.ImageList.First(x => x == region.AttachedImage );
                 RegionLocation = new Thickness(region.Position.X * 96.0 / region.DpiX, region.Position.Y * 96.0 / region.DpiY, 0, 0);
                 RegionWidth = (int)(region.Size.Width * 96.0 / region.DpiX);
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
                 CalculateRegionProperties();
+            });
+            _aggregator.GetEvent<ImageListRemovedEvent>().Subscribe(item =>
+            {
+                _imageList = item[0];
+                _imageIndex = 0;
+                DisplayedImage = _imageList[0];
             });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
@@ -181,7 +189,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void SaveRegion(String name)
         {
             Point point = new Point(RegionLocation.Left * ImageSource.DpiY / 96.0, RegionLocation.Top * ImageSource.DpiY / 96.0);
-            Region region = new Region(point , new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY));
+            Region region = new Region(point , new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage);
             region.Save();
             _aggregator.GetEvent<SendRegionEvent>().Publish(region);
         }
