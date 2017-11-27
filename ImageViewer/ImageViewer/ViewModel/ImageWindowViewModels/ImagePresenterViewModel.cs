@@ -18,7 +18,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
-        private bool isDragged = false;
+        private bool _isDragged = false;
+        private bool _escapeClicked = false;
         private int _mouseX;
         private int _mouseY;
         private Point _mouseClickPosition;
@@ -32,6 +33,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
+        public RelayCommand EscapeCommand { get; set; }
         public RelayCommand SaveRegionCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
@@ -175,18 +177,31 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
                 CalculateRegionProperties();
             });
-            _aggregator.GetEvent<ImageListRemovedEvent>().Subscribe(item =>
+            _aggregator.GetEvent<SendImageList>().Subscribe(item =>
             {
-                _imageList = item[0];
-                _imageIndex = 0;
-                DisplayedImage = _imageList[0];
+                if (!item.Any(x => x == _imageList))
+                {
+                    _imageList = item[0];
+                    _imageIndex = 0;
+                    DisplayedImage = _imageList[0];
+                }
             });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
             SaveRegionCommand = new RelayCommand(OpenSaveRegionWindow);
+            EscapeCommand = new RelayCommand(EscapeClicked);
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
+        }
+
+        private void EscapeClicked(Object obj)
+        {
+            _escapeClicked = true;
+            _isDragged = false;
+            RegionLocation = new Thickness(0, 0, 0, 0);
+            RegionHeight = 0;
+            RegionWidth = 0;
         }
 
         private void SaveRegion(String name)
@@ -210,29 +225,30 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionLocation = new Thickness(_mouseX, _mouseY, 0, 0);
                 RegionWidth = 0;
                 RegionHeight = 0;
-                isDragged = true;
+                _isDragged = true;
             }
             return;
         }
         private void MouseMove(RoutedEventArgs args)
         {
-            if (isDragged)
-            {
-                RegionWidth = _mouseX - (int)_mouseClickPosition.X;
-                int x = (int)RegionLocation.Left, y = (int)RegionLocation.Top;
-                if(RegionWidth < 0)
+            if (!_escapeClicked)
+                if (_isDragged)
                 {
-                    RegionWidth = Math.Abs(RegionWidth);
-                    x = _mouseX;
+                    RegionWidth = _mouseX - (int)_mouseClickPosition.X;
+                    int x = (int)RegionLocation.Left, y = (int)RegionLocation.Top;
+                    if(RegionWidth < 0)
+                    {
+                        RegionWidth = Math.Abs(RegionWidth);
+                        x = _mouseX;
+                    }
+                    RegionHeight = _mouseY - (int)_mouseClickPosition.Y;
+                    if (RegionHeight < 0)
+                    {
+                        RegionHeight = Math.Abs(RegionHeight);
+                        y = _mouseY;
+                    }
+                    RegionLocation = new Thickness(x, y, 0, 0);
                 }
-                RegionHeight = _mouseY - (int)_mouseClickPosition.Y;
-                if (RegionHeight < 0)
-                {
-                    RegionHeight = Math.Abs(RegionHeight);
-                    y = _mouseY;
-                }
-                RegionLocation = new Thickness(x, y, 0, 0);
-            }
         }
 
         private void PreviousImage(Object obj)
@@ -248,49 +264,60 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
-            if(_tool != null)
-                App.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    Dictionary<String, Object> parameters = new Dictionary<string, object>();
-                    switch (Tool.GetToolEnum())
+            if (!_escapeClicked)
+            {
+                if (_tool != null)
+                    App.Current.Dispatcher.Invoke(new Action(() =>
                     {
-                        case Tools.None:
-                            break;
-                        case Tools.RegionSelection:
+                        Dictionary<String, Object> parameters = new Dictionary<string, object>();
+                        switch (Tool.GetToolEnum())
+                        {
+                            case Tools.None:
+                                break;
+                            case Tools.RegionSelection:
+                                {
+                                    _isDragged = false;
+                                    parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
+                                    parameters.Add("RegionWidth", RegionWidth);
+                                    parameters.Add("RegionHeight", RegionHeight);
+                                    parameters.Add("BitmapSource", ImageSource);
+                                }
+                                break;
+                            case Tools.Magnifier:
+                                break;
+                            case Tools.PixelInformations:
+                                {
+                                    PixelInformationView piv = new PixelInformationView();
+                                    piv.Show();
+                                    _aggregator.GetEvent<SendPixelInformationViewEvent>().Publish(piv);
+                                    parameters.Add("MouseX", _mouseX);
+                                    parameters.Add("MouseY", _mouseY);
+                                    parameters.Add("BitmapSource", ImageSource);
+                                }
+                                break;
+                            case Tools.RegionTransformation:
+                                break;
+                            default:
+                                return;
+                        }
+                        try
+                        {
+                            App.Current.Dispatcher.Invoke(new Action(() =>
                             {
-                                isDragged = false;
-                                parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
-                                parameters.Add("RegionWidth", RegionWidth);
-                                parameters.Add("RegionHeight", RegionHeight);
-                                parameters.Add("BitmapSource", ImageSource);
-                            }
-                            break;
-                        case Tools.Magnifier:
-                            break;
-                        case Tools.PixelInformations:
-                            {
-                                PixelInformationView piv = new PixelInformationView();
-                                piv.Show();
-                                _aggregator.GetEvent<SendPixelInformationViewEvent>().Publish(piv);
-                                parameters.Add("MouseX", _mouseX);
-                                parameters.Add("MouseY", _mouseY);
-                                parameters.Add("BitmapSource", ImageSource);
-                            }
-                            break;
-                        case Tools.RegionTransformation:
-                            break;
-                        default:
-                            return;
-                    }
-                    try
-                    {
-                        _tool.AffectImage(parameters);
-                    }
-                    catch (Exception e)
-                    {
-                        throw e;
-                    }
-                }));
+                                _tool.AffectImage(parameters);
+                            }));
+                        }
+                        catch (Exception e)
+                        {
+                            throw e;
+                        }
+                    }));
+            }
+            else
+            {
+                _escapeClicked = false;
+            }
+
         }
         private void CalculateRegionProperties()
         {

@@ -24,6 +24,7 @@
         <ScrollViewer.InputBindings>
             <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
             <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
+            <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
         </ScrollViewer.InputBindings>
         <Grid>
             <Grid.RowDefinitions>

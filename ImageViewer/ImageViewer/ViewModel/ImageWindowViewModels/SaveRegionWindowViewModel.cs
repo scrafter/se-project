@@ -45,7 +45,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     return;
                 }
                 _aggregator.GetEvent<SendRegionNameEvent>().Publish(Name);
-                SaveRegionWindow.Instance.Close();
             }));
             
         }

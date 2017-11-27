@@ -57,7 +57,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<SendImageList>().Subscribe( item => 
             {
                 ImageList = item;
-                _aggregator.GetEvent<ImageListRemovedEvent>().Publish(ImageList);
             });
         }
 
@@ -90,7 +89,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     ImageList.Remove(image);
-                    _aggregator.GetEvent<ImageListRemovedEvent>().Publish(ImageList);
+                    _aggregator.GetEvent<SendImageList>().Publish(ImageList);
                 }));
             }
         }

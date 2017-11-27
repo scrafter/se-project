@@ -27,6 +27,10 @@
     <Controls:MetroWindow.DataContext>
         <models:SaveRegionWindowViewModel/>
     </Controls:MetroWindow.DataContext>
+    <Controls:MetroWindow.InputBindings>
+        <KeyBinding Key="Esc" Modifiers="" Command="{Binding CancelCommand}"/>
+        <KeyBinding Key="Enter" Modifiers="" Command="{Binding SaveCommand}"/>
+    </Controls:MetroWindow.InputBindings>
     <Border BorderBrush="#FF4B6828" BorderThickness="3" Background="#FFE7E7E7">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -34,7 +38,7 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="inputBox" Grid.Column="0" Margin="8" Width="150" Text="{Binding Path=Name, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" BorderThickness="1" BorderBrush="#FF8BC34A"/>
+            <TextBox x:Name="inputBox" Grid.Column="0" Margin="8" Width="150" Text="{Binding Path=Name, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" BorderThickness="1" BorderBrush="#FF8BC34A" MaxLength="20"/>
             <Button Grid.Column="1" Content="Save" Command="{Binding SaveCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">

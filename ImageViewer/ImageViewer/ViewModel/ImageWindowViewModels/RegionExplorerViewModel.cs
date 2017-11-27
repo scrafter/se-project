@@ -2,6 +2,7 @@
 using ImageViewer.Model;
 using ImageViewer.Model.Event;
 using ImageViewer.View;
+using ImageViewer.View.ImagesWindow;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,9 +39,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             DoubleClickCommand = new RelayCommand(DoubleClickExecute);
             RemoveRegionCommand = new RelayCommand(RemoveRegion);
             _aggregator.GetEvent<SendRegionEvent>().Subscribe(AddRegion);
-            _aggregator.GetEvent<ImageListRemovedEvent>().Subscribe(RemoveRegionOnListRemoval);
+            _aggregator.GetEvent<SendImageList>().Subscribe(RemoveRegionBasingOnLoadedLists);
         }
-        private void RemoveRegionOnListRemoval(ObservableCollection<ObservableCollection<Image>> imageList)
+        private void RemoveRegionBasingOnLoadedLists(ObservableCollection<ObservableCollection<Image>> imageList)
         {
             var list  = _regionList.Where(x => imageList.Contains(x.ImageList));
             var regionList = new ObservableCollection<Region>();
@@ -52,10 +53,37 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void AddRegion(Region region)
         {
-            if (region.Save())
+            if (_regionList.Any(x => x.Image.FileName == region.Image.FileName))
             {
-                RegionList.Add(region);
-                NotifyPropertyChanged("RegionList");
+                if(MessageBox.Show("A region with this name already exists. Do you want to overwrite it?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        RegionList.Remove(RegionList.First(x => x.Image.FileName == region.Image.FileName));
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        NotifyPropertyChanged("RegionList");
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    if (region.Save())
+                    {
+                        RegionList.Add(region);
+                        NotifyPropertyChanged("RegionList");
+                        SaveRegionWindow.Instance.Close();
+                    }
+                }
+            }
+            else
+            {
+                if (region.Save())
+                {
+                    RegionList.Add(region);
+                    NotifyPropertyChanged("RegionList");
+                    SaveRegionWindow.Instance.Close();
+                }
             }
         }
         private void RemoveRegion(Object obj)
