@@ -23,7 +23,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private double _left;
         private Prism.Events.SubscriptionToken _token;
 #endregion
-        #region Properties
+#region Properties
         public Brush PixelColor
         {
             get

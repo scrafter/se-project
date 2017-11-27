@@ -87,6 +87,7 @@ namespace ImageViewer.ViewModel
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
                     ImageList.Remove(image);
+                    SynchronizeImageExplorer();
                 }));
             }
         }

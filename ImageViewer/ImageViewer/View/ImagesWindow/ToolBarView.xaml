@@ -193,9 +193,6 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </TabItem.Header>
-                <Grid>
-                    <local:ImageExplorerView ClipToBounds="True"/>
-                </Grid>
                 <TabItem.Style>
                     <Style TargetType="TabItem">
                         <Setter Property="Background" Value="White"/>
@@ -206,6 +203,9 @@
                         </Style.Triggers>
                     </Style>
                 </TabItem.Style>
+                <Grid>
+                    <local:ImageExplorerView ClipToBounds="True"/>
+                </Grid>
             </TabItem>
             <TabItem>
                 <TabItem.Header>
@@ -222,13 +222,6 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </TabItem.Header>
-                <Label>
-                    <Label.Content>
-                        <Rectangle>
-
-                        </Rectangle>
-                    </Label.Content>
-                </Label>
                 <TabItem.Style>
                     <Style TargetType="TabItem">
                         <Setter Property="Background" Value="White"/>
@@ -239,6 +232,9 @@
                         </Style.Triggers>
                     </Style>
                 </TabItem.Style>
+                <Grid>
+                    <local:RegionExplorerView ClipToBounds="True"/>
+                </Grid>
             </TabItem>
         </TabControl>
         <Button Command="{Binding HideToolBarCommand}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Foreground="White" Width="50" Height="20" VerticalAlignment="Bottom">

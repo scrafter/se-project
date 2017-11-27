@@ -24,9 +24,9 @@ namespace ImageViewer.Model
             try
             {
                 BitmapSource bitmapSource = (BitmapSource)args["BitmapSource"];
-                System.Windows.Point regionLocation = (System.Windows.Point)args["BoundingBoxLocation"];
-                int regionWidth = (int)args["BoundingBoxWidth"];
-                int regionHeight = (int)args["BoundingBoxHeight"];
+                System.Windows.Point regionLocation = (System.Windows.Point)args["RegionLocation"];
+                int regionWidth = (int)args["RegionWidth"];
+                int regionHeight = (int)args["RegionHeight"];
                 if (regionWidth <= 0 || regionHeight <= 0)
                     return;
                 int stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
@@ -37,14 +37,12 @@ namespace ImageViewer.Model
                 Bitmap bitmap;
                 using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
                 {
-                    double pixelWidth = (graphics.DpiX / bitmapSource.DpiX);
-                    double pixelHeight = (graphics.DpiY / bitmapSource.DpiY);
                     bitmap = GetBitmap(bitmapSource);
                     bitmap = GetBitmapFragment(bitmap, (int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * bitmapSource.DpiY / 96.0));
                 }
 
 
-                bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\bitmap.png", ImageFormat.Png);
+                bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
                 bitmapSource = Convert(bitmap);
                 stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
                 size = regionHeight * stride;
@@ -123,7 +121,10 @@ namespace ImageViewer.Model
                 BitmapEncoder enc = new BmpBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(src));
                 enc.Save(TransportStream);
-                return new System.Drawing.Bitmap(TransportStream);
+                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(TransportStream);
+                TransportStream.Close();
+                TransportStream.Dispose();
+                return bmp;
             }
             catch { MessageBox.Show("failed"); return null; }
         }

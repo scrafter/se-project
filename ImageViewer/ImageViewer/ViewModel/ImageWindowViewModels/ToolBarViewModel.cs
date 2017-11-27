@@ -14,7 +14,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     public class ToolBarViewModel : BaseViewModel
     {
         private Tools _tool = Tools.None;
-
         public RelayCommand HideToolBarCommand { get; set; }
         public RelayCommand CreateMagnifyingGlassToolCommand { get; set; }
         public RelayCommand CreateRegionToolCommand { get; set; }
