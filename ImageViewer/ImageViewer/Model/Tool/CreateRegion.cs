@@ -121,7 +121,10 @@ namespace ImageViewer.Model
                 BitmapEncoder enc = new BmpBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(src));
                 enc.Save(TransportStream);
-                return new System.Drawing.Bitmap(TransportStream);
+                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(TransportStream);
+                TransportStream.Close();
+                TransportStream.Dispose();
+                return bmp;
             }
             catch { MessageBox.Show("failed"); return null; }
         }

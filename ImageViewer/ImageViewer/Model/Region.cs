@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Collections.ObjectModel;
+using ImageViewer.View;
 
 namespace ImageViewer.Model
 {
@@ -34,11 +35,12 @@ namespace ImageViewer.Model
             AttachedImage = image;
         }
 
-        public void Save()
+        public bool Save()
         {
-            BitmapSource source = new BitmapImage(new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png"));
             try
             {
+                BitmapSource source = new BitmapImage(new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png"));
+
                 if(!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions"))
                 {
                     Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions");
@@ -49,11 +51,15 @@ namespace ImageViewer.Model
                 enc.Save(TransportStream);
                 System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(TransportStream);
                 bmp.Save(Image.FilePath);
+                TransportStream.Close();
+                TransportStream.Dispose();
+                
+                return true;
             }
-            catch(Exception)
+            catch(Exception e)
             {
                 MessageBox.Show("Save failed");
-                return;
+                return false;
             }
         }
     }

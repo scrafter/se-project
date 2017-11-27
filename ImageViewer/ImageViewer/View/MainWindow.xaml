@@ -43,8 +43,6 @@
     <Window.DataContext>
         <model:MainWindowViewModel/>
     </Window.DataContext>
-
-
     <Grid>
         <local:MainView Height="Auto" Width="Auto" HorizontalAlignment="Stretch"/>
     </Grid>

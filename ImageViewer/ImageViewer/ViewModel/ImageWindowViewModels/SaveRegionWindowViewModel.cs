@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -38,6 +39,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
+                if (Name == String.Empty)
+                {
+                    MessageBox.Show("The name must not be empty!");
+                    return;
+                }
                 _aggregator.GetEvent<SendRegionNameEvent>().Publish(Name);
                 SaveRegionWindow.Instance.Close();
             }));

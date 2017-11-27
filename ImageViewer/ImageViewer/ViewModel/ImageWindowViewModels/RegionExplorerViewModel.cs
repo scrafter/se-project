@@ -6,9 +6,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
@@ -50,8 +52,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void AddRegion(Region region)
         {
-            RegionList.Add(region);
-            NotifyPropertyChanged("RegionList");
+            if (region.Save())
+            {
+                RegionList.Add(region);
+                NotifyPropertyChanged("RegionList");
+            }
         }
         private void RemoveRegion(Object obj)
         {
