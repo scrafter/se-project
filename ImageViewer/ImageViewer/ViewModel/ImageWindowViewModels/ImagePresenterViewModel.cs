@@ -181,9 +181,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 if (!item.Any(x => x == _imageList))
                 {
-                    _imageList = item[0];
-                    _imageIndex = 0;
-                    DisplayedImage = _imageList[0];
+                    try{
+                        _imageList = item[0];
+                        _imageIndex = 0;
+                        DisplayedImage = _imageList[0];
+                    }
+                    catch
+                    {
+                        _imageList.Clear();
+                    }
+                    
                 }
             });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
