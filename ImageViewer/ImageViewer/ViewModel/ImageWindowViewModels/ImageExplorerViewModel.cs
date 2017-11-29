@@ -23,7 +23,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand DialogCommand { get; set; }
         public ObservableCollection<ObservableCollection<Image>> ImageList
         {
-            get => _imageList;
+            get
+            {
+                return _imageList;
+            }
             set
             {
                 _imageList = value;
