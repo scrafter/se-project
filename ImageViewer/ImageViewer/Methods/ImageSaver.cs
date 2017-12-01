@@ -7,70 +7,86 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 public static class ImageSaver
 {
     public static void SafeToText(ObservableCollection<ObservableCollection<Image>> list)
     {
         string directory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer";
-        string filename = @"\ImagesKeeper.txt";
+        string filename = @"\ImagesKeeper.xml";
         string path = directory + filename;
         try
         {
             System.IO.File.WriteAllBytes(path, new byte[0]);
         }
-        catch(DirectoryNotFoundException e)
+        catch (DirectoryNotFoundException e)
         {
             Directory.CreateDirectory(directory);
             if (!File.Exists(path))
                 File.Create(path).Close();
         }
+
         finally
         {
-            StreamWriter sw = File.AppendText(path);
+            XDocument xdoc = new XDocument(
+                     new XDeclaration("1.0", "utf-8", "yes"),
+                     new XElement("Images"));
+            XElement items = xdoc.Root;
+         
             foreach (ObservableCollection<Image> x in list)
             {
+                XElement parent = new XElement("ImageList");
+              
                 foreach (var image in x)
                 {
-                    sw.WriteLine(image.Extension);
-                    sw.WriteLine(image.FilePath);
-                    sw.WriteLine(image.FileName);
+
+                    XElement person = new XElement("Image",
+                    new XElement("Extension", image.Extension),
+                    new XElement("FilePath", image.FilePath),
+                    new XElement("FileName", image.FileName));
+                    parent.Add(person);
+                   
+
                 }
-                sw.WriteLine();
+                items.Add(parent);
             }
-            sw.Close();
+            xdoc.Save(path);
         }
     }
+
+
     public static void SendTheLoadedImages(ObservableCollection<ObservableCollection<Image>> list)
     {
 
-        string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\ImagesKeeper.txt";
+        string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\ImagesKeeper.xml";
         try
         {
-            var lineCount = File.ReadLines(path).Count();
-            String[] f = System.IO.File.ReadAllLines(path).Take(lineCount).ToArray();
             ObservableCollection<Image> imageList = new ObservableCollection<Image>();
-            for (int i = 0; i < lineCount; i += 3)
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(path);
+            XmlElement root = xmlDoc.DocumentElement;
+            XmlNodeList nodes = root.SelectNodes("//Images/ImageList");
+
+            foreach (XmlNode node in nodes )
             {
-                if (f[i] == "")
+               
+                foreach (XmlNode node2 in node)
                 {
-                    list.Add(imageList);
-                    imageList = new ObservableCollection<Image>();
-                    i -= 2;
-                }
-                else
-                {
-                    Image image = new Image
-                    {
-                        FileName = f[i + 2],
-                        FilePath = f[i + 1],
-                        Extension = (f[i])
-                    };
+                    Image image = new Image();
+                     image.Extension = node2["Extension"].InnerText;
+                       image.FileName = node2["FileName"].InnerText;
+                      image.FilePath = node2["FilePath"].InnerText;
                     imageList.Add(image);
+                    
                 }
+                list.Add(imageList);
+                imageList = new ObservableCollection<Image>();
             }
         }
-        catch(FileNotFoundException e)
+        catch (FileNotFoundException e)
         {
             return;
         }
@@ -79,4 +95,7 @@ public static class ImageSaver
             return;
         }
     }
+
+   
+
 }
