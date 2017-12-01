@@ -19,13 +19,13 @@ namespace ImageViewer.ViewModel
         public RelayCommand DoubleClickCommand { get; set; }
         public RelayCommand RemoveImageCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<DragEventArgs> DragEnterCommand { get; set; }
-        public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG",".JPEG",".TIF",".ICO" };
+        public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG", ".JPEG", ".TIF", ".ICO" };
 
         public int TiledViewRows
         {
             get
             {
-                return _imageList.Count > 15 ? _imageList.Count / 5 + 1 : 3;  
+                return _imageList.Count > 15 ? _imageList.Count / 5 + 1 : 3;
             }
             set { }
         }
@@ -52,7 +52,7 @@ namespace ImageViewer.ViewModel
             ImageList = new ObservableCollection<ObservableCollection<Image>>();
             ImageSaver.SendTheLoadedImages(ImageList);
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
-            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item => 
+            _aggregator.GetEvent<FileDialogEvent>().Subscribe(item =>
             {
                 App.Current.Dispatcher.Invoke(new Action(() =>
                 {
@@ -63,7 +63,7 @@ namespace ImageViewer.ViewModel
                     }
                     foreach (var image in item)
                     {
-                        if(!list.Contains(image))
+                        if (!list.Contains(image))
                             list.Add(image);
                     }
                     ImageList = list;
@@ -75,7 +75,7 @@ namespace ImageViewer.ViewModel
                     ImageList.Add(item);
             });
         }
-         ~TiledWindowViewModel()
+        ~TiledWindowViewModel()
         {
             ImageSaver.SafeToText(ImageList);
         }
@@ -100,14 +100,14 @@ namespace ImageViewer.ViewModel
         private void DoubleClickExecute(object obj)
         {
             ObservableCollection<Image> image = (ObservableCollection<Image>)obj;
-            if(image !=null)
+            if (image != null)
             {
                 DisplayImageWindow displayImageWindow = DisplayImageWindow.Instance;
                 displayImageWindow.Show();
                 _aggregator.GetEvent<DisplayImage>().Publish(image);
                 SynchronizeImageExplorer();
             }
-            
+
         }
         private void SynchronizeImageExplorer()
         {
@@ -119,19 +119,21 @@ namespace ImageViewer.ViewModel
         }
 
         private void FileDragFromWindows(DragEventArgs obj)
-            {
-           
+        {
+
             string[] files = (string[])obj.Data.GetData(System.Windows.DataFormats.FileDrop);
-            Image image = new Image();
+
+            ObservableCollection<Image> temp = new ObservableCollection<Image>();
             foreach (string path in files)
                 try
                 {
+                    Image image = new Image();
                     image.FilePath = path;
                     image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
                     image.Extension = Path.GetExtension(path);
                     if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
                     {
-                        ObservableCollection<Image> temp = new ObservableCollection<Image>();
+
                         temp.Add(image);
                         _aggregator.GetEvent<SendImage>().Publish(temp);
                     }
@@ -143,6 +145,7 @@ namespace ImageViewer.ViewModel
                 }
         }
 
+
         public void Clear()
         {
             Task.Run(() => ClearAll());
@@ -150,7 +153,7 @@ namespace ImageViewer.ViewModel
 
         private void ClearAll()
         {
-           ImageList = new ObservableCollection<ObservableCollection<Image>>();
+            ImageList = new ObservableCollection<ObservableCollection<Image>>();
         }
     }
 }
