@@ -70,7 +70,8 @@ namespace ImageViewer.ViewModel
                     SynchronizeImageExplorer();
                 }));
             });
-            _aggregator.GetEvent<SendImage>().Subscribe(item => {
+            _aggregator.GetEvent<SendImage>().Subscribe(item =>
+            {
                 if (ImageList.Contains(item) == false)
                     ImageList.Add(item);
             });
@@ -124,27 +125,71 @@ namespace ImageViewer.ViewModel
             string[] files = (string[])obj.Data.GetData(System.Windows.DataFormats.FileDrop);
 
             ObservableCollection<Image> temp = new ObservableCollection<Image>();
-            foreach (string path in files)
-                try
-                {
-                    Image image = new Image();
-                    image.FilePath = path;
-                    image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
-                    image.Extension = Path.GetExtension(path);
-                    if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
-                    {
+            if (files == null)
+            {
 
-                        temp.Add(image);
-                        _aggregator.GetEvent<SendImage>().Publish(temp);
+                TreeViewItemImage tr = (TreeViewItemImage)obj.Data.GetData("ImageViewer.Model.TreeViewItemImage");
+                if (Path.GetExtension(tr.Header.ToString()) != String.Empty)
+                {
+
+                    Image image = new Image();
+                    image.FilePath = tr.Tag.ToString();
+                    image.FileName = System.Text.RegularExpressions.Regex.Match(tr.Tag.ToString(), @".*\\([^\\]+$)").Groups[1].Value;
+                    image.Extension = Path.GetExtension(tr.Header.ToString());
+                    temp.Add(image);
+                    _aggregator.GetEvent<SendImage>().Publish(temp);
+                }
+                else
+                {
+                    foreach (string path in Directory.GetFiles(tr.Tag.ToString()))
+                    {
+                        try
+                        {
+                            Image image = new Image();
+                            image.FilePath = path;
+                            image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
+                            image.Extension = Path.GetExtension(path);
+                            if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
+                            {
+
+                                temp.Add(image);
+                                _aggregator.GetEvent<SendImage>().Publish(temp);
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+
                     }
                 }
-                catch (Exception)
-                {
 
-                    throw;
-                }
+            }
+            else
+            {
+                foreach (string path in files)
+                    try
+                    {
+                        Image image = new Image();
+                        image.FilePath = path;
+                        image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
+                        image.Extension = Path.GetExtension(path);
+                        if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
+                        {
+
+                            temp.Add(image);
+                            _aggregator.GetEvent<SendImage>().Publish(temp);
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+            }
+
         }
-
 
         public void Clear()
         {
