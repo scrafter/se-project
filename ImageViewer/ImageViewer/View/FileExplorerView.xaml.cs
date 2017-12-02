@@ -48,7 +48,7 @@ namespace ImageViewer.View
 
             try
             {
-                List<string> dirs = Directory.GetDirectories(folderName).Where(x => // tutaj tag foldere name 
+                List<string> dirs = Directory.GetDirectories(folderName).Where(x => 
                 {
                     DirectoryInfo di = new DirectoryInfo(x);
                     return !di.Attributes.HasFlag(FileAttributes.ReparsePoint) && !di.Attributes.HasFlag(FileAttributes.Hidden);
