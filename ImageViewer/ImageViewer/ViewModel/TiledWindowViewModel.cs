@@ -143,24 +143,7 @@ namespace ImageViewer.ViewModel
                 {
                     foreach (string path in Directory.GetFiles(tr.Tag.ToString()))
                     {
-                        try
-                        {
-                            Image image = new Image();
-                            image.FilePath = path;
-                            image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
-                            image.Extension = Path.GetExtension(path);
-                            if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
-                            {
-
-                                temp.Add(image);
-                                _aggregator.GetEvent<SendImage>().Publish(temp);
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                            throw;
-                        }
+                        LoadFiles(temp, path);
 
                     }
                 }
@@ -169,26 +152,31 @@ namespace ImageViewer.ViewModel
             else
             {
                 foreach (string path in files)
-                    try
-                    {
-                        Image image = new Image();
-                        image.FilePath = path;
-                        image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
-                        image.Extension = Path.GetExtension(path);
-                        if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
-                        {
-
-                            temp.Add(image);
-                            _aggregator.GetEvent<SendImage>().Publish(temp);
-                        }
-                    }
-                    catch (Exception)
-                    {
-
-                        throw;
-                    }
+                    LoadFiles(temp, path);
             }
 
+        }
+
+        private void LoadFiles(ObservableCollection<Image> temp, string path)
+        {
+            try
+            {
+                Image image = new Image();
+                image.FilePath = path;
+                image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
+                image.Extension = Path.GetExtension(path);
+                if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
+                {
+
+                    temp.Add(image);
+                    _aggregator.GetEvent<SendImage>().Publish(temp);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public void Clear()
