@@ -9,7 +9,7 @@
         xmlns:local="clr-namespace:ImageViewer.View"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"                    
-        Title="Image Viewer 1.0" Height="450" Width="725"  
+        Title="Image Viewer 1.0" Height="600" Width="900"  
         ResizeMode="CanResizeWithGrip" 
         ShowInTaskbar="True" 
         BorderBrush="#8BC34A"
@@ -43,8 +43,6 @@
     <Window.DataContext>
         <model:MainWindowViewModel/>
     </Window.DataContext>
-
-
     <Grid>
         <local:MainView Height="Auto" Width="Auto" HorizontalAlignment="Stretch"/>
     </Grid>

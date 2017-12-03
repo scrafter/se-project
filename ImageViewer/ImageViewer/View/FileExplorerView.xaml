@@ -63,10 +63,11 @@
             </Button>
         </Grid>
 
-        <TreeView x:Name="FolderTreeView" Grid.Row="2" Grid.Column="1" Margin="2, 1, 0, 1">
+        <TreeView x:Name="FolderTreeView" Grid.Row="2" Grid.Column="1" Margin="2, 1, 0, 1" AllowDrop="True">
             <TreeView.Resources>
                 <Style TargetType="{x:Type model:TreeViewItemImage}">
                     <EventSetter Event="MouseDoubleClick" Handler="TreeView_PreviewMouseDoubleClick"/>
+                    <EventSetter Event="MouseMove" Handler="TreeViewItemImage_MouseMove"/>
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>
