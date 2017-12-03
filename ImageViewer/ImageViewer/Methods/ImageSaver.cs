@@ -35,11 +35,11 @@ public static class ImageSaver
                      new XDeclaration("1.0", "utf-8", "yes"),
                      new XElement("Images"));
             XElement items = xdoc.Root;
-         
+
             foreach (ObservableCollection<Image> x in list)
             {
                 XElement parent = new XElement("ImageList");
-              
+
                 foreach (var image in x)
                 {
 
@@ -48,7 +48,7 @@ public static class ImageSaver
                     new XElement("FilePath", image.FilePath),
                     new XElement("FileName", image.FileName));
                     parent.Add(person);
-                   
+
 
                 }
                 items.Add(parent);
@@ -70,17 +70,17 @@ public static class ImageSaver
             XmlElement root = xmlDoc.DocumentElement;
             XmlNodeList nodes = root.SelectNodes("//Images/ImageList");
 
-            foreach (XmlNode node in nodes )
+            foreach (XmlNode node in nodes)
             {
-               
+
                 foreach (XmlNode node2 in node)
                 {
                     Image image = new Image();
-                     image.Extension = node2["Extension"].InnerText;
-                       image.FileName = node2["FileName"].InnerText;
-                      image.FilePath = node2["FilePath"].InnerText;
+                    image.Extension = node2["Extension"].InnerText;
+                    image.FileName = node2["FileName"].InnerText;
+                    image.FilePath = node2["FilePath"].InnerText;
                     imageList.Add(image);
-                    
+
                 }
                 list.Add(imageList);
                 imageList = new ObservableCollection<Image>();
@@ -90,12 +90,12 @@ public static class ImageSaver
         {
             return;
         }
-        catch(DirectoryNotFoundException e)
+        catch (DirectoryNotFoundException e)
         {
             return;
         }
     }
 
-   
+
 
 }
