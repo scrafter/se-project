@@ -179,12 +179,17 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
             {
-                if (!item.Any(x => x == _imageList))
+                if (item.Count != 0)
                 {
-                    _imageList = item[0];
-                    _imageIndex = 0;
-                    DisplayedImage = _imageList[0];
+                    if (!item.Any(x => x == _imageList))
+                    {
+                        _imageList = item[0];
+                        _imageIndex = 0;
+                        DisplayedImage = _imageList[0];
+                    }
                 }
+                else
+                    DisplayedImage = null;
             });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);

@@ -154,7 +154,7 @@ namespace ImageViewer.ViewModel
                 foreach (string path in files)
                     LoadFiles(temp, path);
             }
-
+            NotifyPropertyChanged("TiledViewRows");
         }
 
         private void LoadFiles(ObservableCollection<Image> temp, string path)
@@ -187,6 +187,7 @@ namespace ImageViewer.ViewModel
         private void ClearAll()
         {
             ImageList = new ObservableCollection<ObservableCollection<Image>>();
+            SynchronizeImageExplorer();
         }
     }
 }
