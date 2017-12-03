@@ -19,7 +19,7 @@ namespace ImageViewer.ViewModel
         public RelayCommand DoubleClickCommand { get; set; }
         public RelayCommand RemoveImageCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<DragEventArgs> DragEnterCommand { get; set; }
-        public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG", ".JPEG", ".TIF", ".ICO" };
+        public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG", ".JPEG", ".TIFF", ".ICO" };
 
         public int TiledViewRows
         {
