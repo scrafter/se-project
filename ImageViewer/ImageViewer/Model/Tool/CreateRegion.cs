@@ -113,7 +113,7 @@ namespace ImageViewer.Model
 
             }
         }
-        System.Drawing.Bitmap GetBitmap(BitmapSource src)
+        public static System.Drawing.Bitmap GetBitmap(BitmapSource src)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace ImageViewer.Model
             deviations[3] = Math.Sqrt(variances[3]);
 
         }
-        private Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height)
+        public static Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height)
         {
             System.Drawing.Size s1 = bmp1.Size;
             System.Drawing.Imaging.PixelFormat fmt1 = bmp1.PixelFormat;
