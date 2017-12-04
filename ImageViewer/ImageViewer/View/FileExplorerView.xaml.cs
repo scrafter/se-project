@@ -238,14 +238,21 @@ namespace ImageViewer.View
         }
         private void TreeViewItemImage_MouseMove(object sender, MouseEventArgs e)
         {
-            TreeViewItemImage tr = sender as TreeViewItemImage;
-            if (tr != null && e.LeftButton == MouseButtonState.Pressed)
+            try
             {
-                var hit = e.OriginalSource as DependencyObject;
-                while (hit != null && !(hit is TreeViewItemImage))
-                    hit = VisualTreeHelper.GetParent(hit);
+                TreeViewItemImage tr = sender as TreeViewItemImage;
+                if (tr != null && e.LeftButton == MouseButtonState.Pressed)
+                {
+                    var hit = e.OriginalSource as DependencyObject;
+                    while (hit != null && !(hit is TreeViewItemImage))
+                        hit = VisualTreeHelper.GetParent(hit);
 
-                DragDrop.DoDragDrop(tr,hit,DragDropEffects.Copy);
+                    DragDrop.DoDragDrop(tr, hit, DragDropEffects.Copy);
+                }
+            }
+            catch (Exception)
+            {
+                return;
             }
         }
         #endregion

@@ -21,7 +21,6 @@ namespace ImageViewer.Model
         public int DpiY { get; set; }
         public ObservableCollection<Image> ImageList { get; set; }
         public Image AttachedImage { get; set; }
-        public BitmapImage Bitmap { get; set; }
 
         public Region(Point position, Size size, string name, Vector Dpi, ObservableCollection<Image> imageList, Image image) 
         {
@@ -64,13 +63,13 @@ namespace ImageViewer.Model
                     encoder.Save(fileStream);
                     fileStream.Close();
                 }
-                
-                Bitmap = new BitmapImage();
-                Bitmap.BeginInit();
-                Bitmap.UriSource = new Uri(Image.FilePath);
-                Bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                Bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                Bitmap.EndInit();
+
+                Image.Bitmap = new BitmapImage();
+                Image.Bitmap.BeginInit();
+                Image.Bitmap.UriSource = new Uri(Image.FilePath);
+                Image.Bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                Image.Bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                Image.Bitmap.EndInit();
 
                 return true;
             }

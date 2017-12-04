@@ -80,7 +80,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 _displayedImage = value;
                 if (_displayedImage != null)
-                    ImageSource = new BitmapImage(new Uri(_displayedImage.FilePath));
+                    ImageSource = DisplayedImage.Bitmap;
                 else
                 {
                     ImageSource = null;
