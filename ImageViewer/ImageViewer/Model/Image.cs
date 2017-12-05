@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace ImageViewer.Model
@@ -23,10 +24,20 @@ namespace ImageViewer.Model
             {
                 _filePath = value;
                 if(_filePath!= null)
-                    Bitmap = new BitmapImage(new Uri(_filePath));
+                {
+                    OriginalBitmap = new BitmapImage(new Uri(_filePath));
+                    Bitmap = OriginalBitmap.Clone();
+                }
             }
         }
         public string Extension { get ; set; }
-        public BitmapImage Bitmap { get; set; }
+        public BitmapSource Bitmap { get; set; }
+        public BitmapSource OriginalBitmap { get; set; }
+        public Thickness Position { get; set; }
+
+        public Image()
+        {
+            Position = new Thickness(0, 0, 0, 0);
+        }
     }
 }

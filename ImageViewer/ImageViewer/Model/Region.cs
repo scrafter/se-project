@@ -64,12 +64,13 @@ namespace ImageViewer.Model
                     fileStream.Close();
                 }
 
-                Image.Bitmap = new BitmapImage();
-                Image.Bitmap.BeginInit();
-                Image.Bitmap.UriSource = new Uri(Image.FilePath);
-                Image.Bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                Image.Bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                Image.Bitmap.EndInit();
+                BitmapImage bi = new BitmapImage();
+                bi.BeginInit();
+                bi.UriSource = new Uri(Image.FilePath);
+                bi.CacheOption = BitmapCacheOption.OnLoad;
+                bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                bi.EndInit();
+                Image.Bitmap = bi;
 
                 return true;
             }
