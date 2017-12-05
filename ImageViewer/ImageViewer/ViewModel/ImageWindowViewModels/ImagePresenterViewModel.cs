@@ -18,6 +18,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
+#region Variables
         private bool _isDragged = false;
         private bool _escapeClicked = false;
         private int _mouseX;
@@ -34,11 +35,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
         public RelayCommand EscapeCommand { get; set; }
+        public RelayCommand SelectAllCommand{ get; set; }
         public RelayCommand SaveRegionCommand { get; set; }
+        public RelayCommand SerializeOutputFromListCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
         private  ITool _tool = null;
         private Tools _toolType = Tools.None;
+        #endregion
+
+#region Properties
         public  ITool Tool
         {
             get
@@ -48,7 +54,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             set
             {
                 _tool = value;
-                ToolType = _tool.GetToolEnum();
+                ToolType = _tool == null ? Tools.None : _tool.GetToolEnum();
                 NotifyPropertyChanged();
             }
         }
@@ -73,11 +79,17 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             set
             {
                 _displayedImage = value;
-                NotifyPropertyChanged();
-                if(_displayedImage != null)
-                    ImageSource = new BitmapImage(new Uri(_displayedImage.FilePath));
+                if (_displayedImage != null)
+                    ImageSource = DisplayedImage.Bitmap;
+                else
+                {
+                    ImageSource = null;
+                }
+
                 RegionWidth = 0;
                 RegionHeight = 0;
+                RegionLocation = new Thickness(0, 0, 0, 0);
+                NotifyPropertyChanged();
             }
         }
         public BitmapSource ImageSource
@@ -150,6 +162,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
+        #endregion
 
         public ImagePresenterViewModel()
         {
@@ -179,27 +192,47 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
             {
-                if (!item.Any(x => x == _imageList))
+                if (item.Count != 0)
                 {
-                    try{
+                    if (!item.Any(x => x == _imageList))
+                    {
                         _imageList = item[0];
                         _imageIndex = 0;
                         DisplayedImage = _imageList[0];
                     }
-                    catch
-                    {
-                        _imageList.Clear();
-                    }
-                    
+                }
+                else
+                {
+                    DisplayedImage = null;
+                    _imageList = null;
                 }
             });
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
             SaveRegionCommand = new RelayCommand(OpenSaveRegionWindow);
+            SerializeOutputFromListCommand = new RelayCommand(SerializeOutputFromList);
             EscapeCommand = new RelayCommand(EscapeClicked);
+            SelectAllCommand = new RelayCommand(SelectAll);
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
+        }
+#region Private methods
+        private void SerializeOutputFromList(Object obj)
+        {
+            OutputSerializer serializer = new OutputSerializer();
+            serializer.SerializeList(_imageList, RegionWidth, RegionHeight, RegionLocation);
+        }
+
+        private void SelectAll(Object obj)
+        {
+            RegionLocation = new Thickness(0, 0, 0, 0);
+            RegionWidth = (int)ImageSource.Width;
+            RegionHeight = (int)ImageSource.Height;
+            ITool tempTool = Tool;
+            Tool = new CreateRegion();
+            ImageClickExecute(null);
+            Tool = tempTool;
         }
 
         private void EscapeClicked(Object obj)
@@ -338,3 +371,4 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
     }
 }
+#endregion

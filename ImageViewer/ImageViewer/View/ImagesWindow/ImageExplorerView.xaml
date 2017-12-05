@@ -7,7 +7,7 @@
              xmlns:model="clr-namespace:ImageViewer.ViewModel.ImageWindowViewModels"  
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="500">
+             d:DesignHeight="100" d:DesignWidth="800">
 
     <UserControl.DataContext>
         <model:ImageExplorerViewModel/>
@@ -48,13 +48,13 @@
             <ItemsControl x:Name="imageList" ItemsSource="{Binding Path=ImageList}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Margin="0" Rows="1"  ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                        <UniformGrid Margin="0" Rows="1" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                         </UniformGrid>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="5" CornerRadius="8" Background="White" MaxWidth="300" MinWidth="150">
+                        <Border Margin="5" CornerRadius="8" Background="White" Width="150" ClipToBounds="True" HorizontalAlignment="Left">
                             <Border.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Remove image" Command="{Binding Path=DataContext.RemoveImageCommand, Source={x:Reference Name=imageList}}" CommandParameter="{Binding}"/>

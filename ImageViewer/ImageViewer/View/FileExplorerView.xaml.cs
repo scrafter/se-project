@@ -48,7 +48,7 @@ namespace ImageViewer.View
 
             try
             {
-                List<string> dirs = Directory.GetDirectories(folderName).Where(x =>
+                List<string> dirs = Directory.GetDirectories(folderName).Where(x => 
                 {
                     DirectoryInfo di = new DirectoryInfo(x);
                     return !di.Attributes.HasFlag(FileAttributes.ReparsePoint) && !di.Attributes.HasFlag(FileAttributes.Hidden);
@@ -236,6 +236,25 @@ namespace ImageViewer.View
 
             return hit as TreeViewItemImage;
         }
-#endregion
+        private void TreeViewItemImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                TreeViewItemImage tr = sender as TreeViewItemImage;
+                if (tr != null && e.LeftButton == MouseButtonState.Pressed)
+                {
+                    var hit = e.OriginalSource as DependencyObject;
+                    while (hit != null && !(hit is TreeViewItemImage))
+                        hit = VisualTreeHelper.GetParent(hit);
+
+                    DragDrop.DoDragDrop(tr, hit, DragDropEffects.Copy);
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+        #endregion
     }
 }
