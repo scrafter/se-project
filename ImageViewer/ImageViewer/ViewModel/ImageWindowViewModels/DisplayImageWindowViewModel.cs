@@ -20,7 +20,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private Visibility toolBarVisibility;
         public Visibility ToolbarVisibility
         {
-            get => toolBarVisibility;
+            get
+            {
+                return toolBarVisibility;
+            }
             set
             {
                 toolBarVisibility = value;

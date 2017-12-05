@@ -71,6 +71,14 @@
                             <Border.InputBindings>
                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
                             </Border.InputBindings>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <Command:EventToCommand Command="{Binding  DataContext.DropCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseLeftButtonDown">
+                                    <Command:EventToCommand Command="{Binding  DataContext.DragCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
