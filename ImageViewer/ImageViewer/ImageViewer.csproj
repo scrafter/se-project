@@ -33,6 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ToolbarIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Caliburn.Micro, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.Core.3.2.0\lib\net45\Caliburn.Micro.dll</HintPath>
@@ -46,6 +49,15 @@
     <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.1\lib\net45\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -57,10 +69,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -98,19 +113,78 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Methods\AttachedProperties.cs" />
     <Compile Include="Methods\FileDialogMethod.cs" />
+    <Compile Include="Methods\ImageSaver.cs" />
+    <Compile Include="Methods\OutputSerializer.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
+    <Compile Include="Model\Event\LoadRegionEvent.cs" />
+    <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
+    <Compile Include="Methods\MouseManagement.cs" />
+    <Compile Include="Model\Event\SendPixelInformationViewEvent.cs" />
+    <Compile Include="Model\Event\SendRegionEvent.cs" />
+    <Compile Include="Model\Event\SendRegionInformationEvent.cs" />
+    <Compile Include="Model\Event\SendRegionNameEvent.cs" />
+    <Compile Include="Model\Event\SendToolEvent.cs" />
+    <Compile Include="Model\Region.cs" />
+    <Compile Include="Model\Tools.cs" />
+    <Compile Include="Model\Tool\ITool.cs" />
+    <Compile Include="Model\Tool\CreateRegion.cs" />
+    <Compile Include="Model\Tool\EditRegion.cs" />
     <Compile Include="Model\Event\ClearEvent.cs" />
+    <Compile Include="Model\Event\CollapseAllEvent.cs" />
+    <Compile Include="Model\Event\CollapseEvent.cs" />
+    <Compile Include="Model\Event\DisplayImage.cs" />
     <Compile Include="Model\Event\FileDialogEvent.cs" />
     <Compile Include="Model\Event\GlobalEvent.cs" />
+    <Compile Include="Model\Event\HideToolbarEvent.cs" />
+    <Compile Include="Model\Event\SendImage.cs" />
+    <Compile Include="Model\Event\SendImageList.cs" />
+    <Compile Include="Model\Event\ShowExplorerCommand.cs" />
     <Compile Include="Model\Image.cs" />
+    <Compile Include="Model\Tool\MagnifyingGlass.cs" />
+    <Compile Include="Model\Tool\PixelPicker.cs" />
+    <Compile Include="Model\TreeViewItemImage.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FileExplorerViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\DisplayImageWindowViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\ImageExplorerViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\ImagePresenterViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\PixelInformationViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\RegionExplorerViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\RegionInformationViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\SaveRegionWindowViewModel.cs" />
+    <Compile Include="ViewModel\ImageWindowViewModels\ToolBarViewModel.cs" />
     <Compile Include="ViewModel\MainMenuViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\TiledWindowViewModel.cs" />
     <Compile Include="View\FooterView.xaml.cs">
       <DependentUpon>FooterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\DisplayImageWindow.xaml.cs">
+      <DependentUpon>DisplayImageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\ImageExplorerView.xaml.cs">
+      <DependentUpon>ImageExplorerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\ImagePresenterView.xaml.cs">
+      <DependentUpon>ImagePresenterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\PixelInformationView.xaml.cs">
+      <DependentUpon>PixelInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\RegionExplorerView.xaml.cs">
+      <DependentUpon>RegionExplorerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\RegionInformationView.xaml.cs">
+      <DependentUpon>RegionInformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\SaveRegionWindow.xaml.cs">
+      <DependentUpon>SaveRegionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ImagesWindow\ToolBarView.xaml.cs">
+      <DependentUpon>ToolBarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainMenuView.xaml.cs">
       <DependentUpon>MainMenuView.xaml</DependentUpon>
@@ -131,6 +205,38 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\FooterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\DisplayImageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\ImageExplorerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\ImagePresenterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\PixelInformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\RegionExplorerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\RegionInformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\SaveRegionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ImagesWindow\ToolBarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -186,6 +292,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -197,12 +304,24 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\WindowsIcons-license.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ToolbarIcon.ico" />
+    <Resource Include="Resources\Images\ImageIcon.png" />
+    <Resource Include="Resources\Images\AlphaBackground.jpg" />
+    <Content Include="Resources\Images\FolderIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Images\DriveIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

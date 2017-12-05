@@ -6,32 +6,89 @@
              xmlns:local="clr-namespace:ImageViewer.View"
              xmlns:model="clr-namespace:ImageViewer.ViewModel"  
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
+
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             AllowDrop="true">
 
     <UserControl.DataContext>
-        <model:TiledWindowViewModel/>
+        <model:TiledWindowViewModel x:Name="Tiled"></model:TiledWindowViewModel>
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <DataTemplate x:Key="ItemTemplate">
-            <StackPanel Orientation="Horizontal">
-                <Image Width="100" Height="100" Stretch="Fill" Source="{Binding FilePath}"/>
-                <Label Content="{Binding FileName}" />
-            </StackPanel>
-        </DataTemplate>
+        
     </UserControl.Resources>
-    <Grid Background="#E0E0E0">
+    
+    <Grid Background="#E0E0E0" VerticalAlignment="Top">
 
-        <ListView ItemTemplate="{StaticResource ItemTemplate}" ItemsSource="{Binding ImageList,UpdateSourceTrigger=PropertyChanged}"/>
-        <!--<ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
-                        <Image Source="{Binding FilePath}" HorizontalAlignment="Center" VerticalAlignment="Top" Height="50" Width="50"/>
-                        <TextBlock Text="{Binding FileName}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl Name="imageList" ItemsSource="{Binding Path=ImageList}" MinHeight="250">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Margin="10" Columns="5" ScrollViewer.HorizontalScrollBarVisibility="Auto" ClipToBounds="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type List}">
+                        <Border Margin="5" CornerRadius="8" Background="White" Width="Auto" Height="150" ClipToBounds="True" BorderThickness="5">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="BorderBrush" Value="#7CB342" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid Margin="0, 10, 0, 0" ClipToBounds="True">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="10*"/>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="0.3*"/>
+                                </Grid.RowDefinitions>
+                                <Image Name="image" Source="{Binding Path=FilePath}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Remove Image" Command="{Binding Path=DataContext.RemoveImageCommand, Source={x:Reference Name=imageList}}" CommandParameter="{Binding}"/>
+                                        </ContextMenu>
+                                    </Image.ContextMenu>
+                                </Image>
+                                <!--<TextBlock Text="{Binding Path=Extension}" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="0" TextWrapping="WrapWithOverflow"/>-->
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="1*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Path=Count}" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="0" TextWrapping="WrapWithOverflow" Margin="0, 0, 5, 0"/>
+                                    <TextBlock Text="x" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0"/>
+                                    <Image Source="pack://application:,,,/Resources/Images/ImageIcon.png" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5, 0, 0, 0"/>
+                                </Grid>
+                            </Grid>
+                            <Border.InputBindings>
+                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.DoubleClickCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                            </Border.InputBindings>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <Command:EventToCommand Command="{Binding  DataContext.DropCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseLeftButtonDown">
+                                    <Command:EventToCommand Command="{Binding  DataContext.DragCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Drop">
+                <Command:EventToCommand Command="{Binding DragEnterCommand}" PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
     </Grid>
 </UserControl>
