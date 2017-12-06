@@ -31,7 +31,7 @@ namespace ImageViewer.Methods
             }
             catch { MessageBox.Show("failed"); return null; }
         }
-        public Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height)
+        public Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height, int offsetX, int offsetY)
         {
             System.Drawing.Size s1 = bmp1.Size;
             System.Drawing.Imaging.PixelFormat fmt1 = bmp1.PixelFormat;
@@ -39,11 +39,34 @@ namespace ImageViewer.Methods
             System.Drawing.Imaging.PixelFormat fmt = new System.Drawing.Imaging.PixelFormat();
             fmt = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
             Bitmap bmp3 = new Bitmap(width, height, fmt);
+            BitmapData bmp3Data = bmp3.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
+            posX = posX - offsetX;
+            posY = posY - offsetY;
 
-            Rectangle rect = new Rectangle(posX, posY, width, height);
+            if (posX > bmp1.Width || posY > bmp1.Height)
+                return bmp3;
+            
+            
+            if (posX < 0)
+            {
+                width = width - Math.Abs(posX);
+            }
+            if (posY < 0)
+            {
+                height = height - Math.Abs(posY);
+            }
+            if(posX + width > bmp1.Width)
+            {
+                width = bmp1.Width - posX;
+            }
+            if(posY + height > bmp1.Height)
+            {
+                height = bmp1.Height - posY;
+            }
+            Rectangle rect = new Rectangle(posX < 0 ? 0 : posX, posY < 0 ? 0 : posY, width, height);
 
             BitmapData bmp1Data = bmp1.LockBits(rect, ImageLockMode.ReadOnly, fmt1);
-            BitmapData bmp3Data = bmp3.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
+            
 
             byte bpp1 = 4;
             byte bpp3 = 4;
@@ -55,26 +78,38 @@ namespace ImageViewer.Methods
             int size3 = bmp3Data.Stride * bmp3Data.Height;
             byte[] data1 = new byte[size1];
             byte[] data3 = new byte[size3];
-            System.Runtime.InteropServices.Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
-            System.Runtime.InteropServices.Marshal.Copy(bmp3Data.Scan0, data3, 0, size3);
+            Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
+            Marshal.Copy(bmp3Data.Scan0, data3, 0, size3);
 
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < bmp3Data.Height; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < bmp3Data.Width; x++)
                 {
-                    int index1 = y * bmp1Data.Stride + x * bpp1;
+                    int row = y + (posY > 0 ? 0 : posY);
+                    int column = x + (posX > 0 ? 0 : posX);
                     int index3 = y * bmp3Data.Stride + x * bpp3;
-                    System.Drawing.Color c1;
+                    if (row > height || row < 0 || column > width || column < 0)
+                    {
+                        data3[index3 + 0] = 0;
+                        data3[index3 + 1] = 0;
+                        data3[index3 + 2] = 0;
+                        data3[index3 + 3] = 0;
+                    }
+                    else
+                    {
+                        int index1 = row * bmp1Data.Stride + column * bpp1;
+                        System.Drawing.Color c1;
 
-                    if (bpp1 == 4)
-                        c1 = System.Drawing.Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
-                    else c1 = System.Drawing.Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
+                        if (bpp1 == 4)
+                            c1 = System.Drawing.Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
+                        else c1 = System.Drawing.Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
 
-                    byte A = (byte)(255 * c1.GetBrightness());
-                    data3[index3 + 0] = c1.B;
-                    data3[index3 + 1] = c1.G;
-                    data3[index3 + 2] = c1.R;
-                    data3[index3 + 3] = c1.A;
+                        byte A = (byte)(255 * c1.GetBrightness());
+                        data3[index3 + 0] = c1.B;
+                        data3[index3 + 1] = c1.G;
+                        data3[index3 + 2] = c1.R;
+                        data3[index3 + 3] = c1.A;
+                    }
                 }
             }
 
@@ -135,7 +170,7 @@ namespace ImageViewer.Methods
         {
             Bitmap bitmap = new Bitmap(bmp.Width, bmp.Height, bmp.PixelFormat);
             using (var g = Graphics.FromImage(bitmap))
-            { 
+            {
                 g.Clear(System.Drawing.Color.FromArgb(0, 0, 0, 0));
             }
             return bitmap;

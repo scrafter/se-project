@@ -56,7 +56,10 @@ namespace ImageViewer.Methods
                                         height = bitmap.Height - (int)position.Top;
                                 }
                             }
-                            bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height);
+                            //APPLY OFFSET !!!
+                            //APPLY OFFSET !!!
+                            //APPLY OFFSET !!!
+                            bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)image.Position.Left, (int)image.Position.Top);
                         }
                         String fileName = $"Out_{++counter}.png";
                         String path = dialog.SelectedPath + $"\\{fileName}";

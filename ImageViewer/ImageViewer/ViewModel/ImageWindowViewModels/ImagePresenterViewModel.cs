@@ -248,9 +248,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void SelectAll(Object obj)
         {
-            RegionLocation = new Thickness(0, 0, 0, 0);
-            RegionWidth = (int)ImageSource.Width;
-            RegionHeight = (int)ImageSource.Height;
+            int x = (int)ImagePosition.Left;
+            int y = (int)ImagePosition.Top;
+            if (x < 0)
+                x = 0;
+            else if (x > ImageSource.PixelWidth)
+                return;
+            if (y < 0)
+                y = 0;
+            else if (y > ImageSource.PixelHeight)
+                return;
+
+            RegionLocation = new Thickness(x, y, 0, 0);
+            RegionWidth = (int)(ImageSource.Width - Math.Abs(ImagePosition.Left));
+            RegionHeight = (int)(ImageSource.Height - Math.Abs(ImagePosition.Top));
             ITool tempTool = Tool;
             Tool = new CreateRegion();
             ImageClickExecute(null);
@@ -392,6 +403,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("RegionWidth", RegionWidth);
                                     parameters.Add("RegionHeight", RegionHeight);
                                     parameters.Add("BitmapSource", ImageSource);
+                                    parameters.Add("ImagePosition", ImagePosition);
                                 }
                                 break;
                             case Tools.Magnifier:

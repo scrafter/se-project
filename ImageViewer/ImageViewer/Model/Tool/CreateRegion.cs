@@ -27,20 +27,26 @@ namespace ImageViewer.Model
                 BitmapWorker bw = new BitmapWorker();
                 BitmapSource bitmapSource = (BitmapSource)args["BitmapSource"];
                 System.Windows.Point regionLocation = (System.Windows.Point)args["RegionLocation"];
-                int regionWidth = (int)args["RegionWidth"];
-                int regionHeight = (int)args["RegionHeight"];
+                int regionWidth = (int)((int)args["RegionWidth"] * bitmapSource.DpiX / 96.0);
+                int regionHeight = (int)((int)args["RegionHeight"] * bitmapSource.DpiY / 96.0);
+                Thickness imagePosition = (Thickness)args["ImagePosition"];
+                int imagePosX = (int)(imagePosition.Left * bitmapSource.DpiX / 96.0); 
+                int imagePosY = (int)(imagePosition.Top * bitmapSource.DpiY / 96.0);
+                int posX = (int)(regionLocation.X * bitmapSource.DpiX / 96.0);
+                int posY = (int)(regionLocation.Y * bitmapSource.DpiY / 96.0);
                 if (regionWidth <= 0 || regionHeight <= 0)
                     return;
+
+
+
                 int stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
                 int size = bitmapSource.PixelHeight * stride;
                 byte[] pixels = new byte[size];
-                int posX = (int)regionLocation.X;
-                int posY = (int)regionLocation.Y;
                 Bitmap bitmap;
                 using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
                 {
                     bitmap = bw.GetBitmap(bitmapSource);
-                    bitmap = bw.GetBitmapFragment(bitmap, (int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * bitmapSource.DpiY / 96.0));
+                    bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, (int)(imagePosition.Left * bitmapSource.DpiX / 96.0), (int)(imagePosition.Top * bitmapSource.DpiY / 96.0));
                 }
 
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
