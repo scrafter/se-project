@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace ImageViewer.Methods
@@ -34,17 +33,16 @@ namespace ImageViewer.Methods
         public Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height, int offsetX, int offsetY)
         {
             System.Drawing.Size s1 = bmp1.Size;
-            System.Drawing.Imaging.PixelFormat fmt1 = bmp1.PixelFormat;
+            PixelFormat fmt1 = bmp1.PixelFormat;
 
-            System.Drawing.Imaging.PixelFormat fmt = new System.Drawing.Imaging.PixelFormat();
-            fmt = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-            Bitmap bmp3 = new Bitmap(width, height, fmt);
-            BitmapData bmp3Data = bmp3.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
+            PixelFormat fmt = PixelFormat.Format32bppArgb;
+            Bitmap bmp2 = new Bitmap(width, height, fmt);
+            BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
             posX = posX - offsetX;
             posY = posY - offsetY;
 
             if (posX > bmp1.Width || posY > bmp1.Height)
-                return bmp3;
+                return bmp2;
             
             
             if (posX < 0)
@@ -71,29 +69,37 @@ namespace ImageViewer.Methods
             byte bpp1 = 4;
             byte bpp3 = 4;
 
-            if (fmt1 == System.Drawing.Imaging.PixelFormat.Format24bppRgb) bpp1 = 3;
-            else if (fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppPArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppRgb) bpp1 = 4; else return null;
+            if (fmt1 == PixelFormat.Format24bppRgb) bpp1 = 3;
+            else if (fmt1 == PixelFormat.Format32bppPArgb
+                    || fmt1 == PixelFormat.Format32bppArgb
+                    || fmt1 == PixelFormat.Format32bppRgb)
+                bpp1 = 4;
+            else return bmp2;
 
             int size1 = bmp1Data.Stride * bmp1Data.Height;
-            int size3 = bmp3Data.Stride * bmp3Data.Height;
+            int size2 = bmp2Data.Stride * bmp2Data.Height;
             byte[] data1 = new byte[size1];
-            byte[] data3 = new byte[size3];
-            Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
-            Marshal.Copy(bmp3Data.Scan0, data3, 0, size3);
-
-            for (int y = 0; y < bmp3Data.Height; y++)
+            byte[] data2 = new byte[size2];
+            try
             {
-                for (int x = 0; x < bmp3Data.Width; x++)
+                Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
+                Marshal.Copy(bmp2Data.Scan0, data2, 0, size2);
+            }
+            catch (AccessViolationException e)
+            {
+                return bmp2;
+            }
+
+            for (int y = 0; y < bmp2Data.Height; y++)
+            {
+                for (int x = 0; x < bmp2Data.Width; x++)
                 {
                     int row = y + (posY > 0 ? 0 : posY);
                     int column = x + (posX > 0 ? 0 : posX);
-                    int index3 = y * bmp3Data.Stride + x * bpp3;
-                    if (row > height || row < 0 || column > width || column < 0)
+                    int index3 = y * bmp2Data.Stride + x * bpp3;
+                    if (row >= height || row < 0 || column >= width || column < 0)
                     {
-                        data3[index3 + 0] = 0;
-                        data3[index3 + 1] = 0;
-                        data3[index3 + 2] = 0;
-                        data3[index3 + 3] = 0;
+                        continue;
                     }
                     else
                     {
@@ -101,22 +107,26 @@ namespace ImageViewer.Methods
                         System.Drawing.Color c1;
 
                         if (bpp1 == 4)
-                            c1 = System.Drawing.Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
-                        else c1 = System.Drawing.Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
+                            c1 = Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
+                        else c1 = Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
 
                         byte A = (byte)(255 * c1.GetBrightness());
-                        data3[index3 + 0] = c1.B;
-                        data3[index3 + 1] = c1.G;
-                        data3[index3 + 2] = c1.R;
-                        data3[index3 + 3] = c1.A;
+                        data2[index3 + 0] = c1.B;
+                        data2[index3 + 1] = c1.G;
+                        data2[index3 + 2] = c1.R;
+                        data2[index3 + 3] = c1.A;
                     }
                 }
             }
 
-            System.Runtime.InteropServices.Marshal.Copy(data3, 0, bmp3Data.Scan0, data3.Length);
+            for (int i = 3; i < size2; i += 4)
+                if (data2[i] == 0)
+                    continue;
+
+            Marshal.Copy(data2, 0, bmp2Data.Scan0, data2.Length);
             bmp1.UnlockBits(bmp1Data);
-            bmp3.UnlockBits(bmp3Data);
-            return bmp3;
+            bmp2.UnlockBits(bmp2Data);
+            return bmp2;
         }
         public byte[] BitmapToByteArray(Bitmap bitmap)
         {
@@ -204,7 +214,7 @@ namespace ImageViewer.Methods
                 var bitmapSource = BitmapSource.Create(
                     bitmapData.Width, bitmapData.Height,
                     bitmap.HorizontalResolution, bitmap.VerticalResolution,
-                    PixelFormats.Bgr32, null,
+                    System.Windows.Media.PixelFormats.Bgr32, null,
                     bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
 
                 bitmap.UnlockBits(bitmapData);

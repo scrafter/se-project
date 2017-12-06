@@ -39,14 +39,14 @@ namespace ImageViewer.Model
 
 
 
-                int stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
-                int size = bitmapSource.PixelHeight * stride;
+                int stride = (regionWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
+                int size = regionHeight * stride;
                 byte[] pixels = new byte[size];
                 Bitmap bitmap;
                 using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
                 {
                     bitmap = bw.GetBitmap(bitmapSource);
-                    bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, (int)(imagePosition.Left * bitmapSource.DpiX / 96.0), (int)(imagePosition.Top * bitmapSource.DpiY / 96.0));
+                    bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY);
                 }
 
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
