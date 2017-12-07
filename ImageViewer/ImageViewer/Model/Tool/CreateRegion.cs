@@ -1,4 +1,5 @@
 ﻿using ImageViewer.Model.Event;
+using ImageViewer.Methods;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
@@ -23,30 +24,35 @@ namespace ImageViewer.Model
         {
             try
             {
+                BitmapWorker bw = new BitmapWorker();
                 BitmapSource bitmapSource = (BitmapSource)args["BitmapSource"];
                 System.Windows.Point regionLocation = (System.Windows.Point)args["RegionLocation"];
-                int regionWidth = (int)args["RegionWidth"];
-                int regionHeight = (int)args["RegionHeight"];
+                int regionWidth = (int)((int)args["RegionWidth"] * bitmapSource.DpiX / 96.0);
+                int regionHeight = (int)((int)args["RegionHeight"] * bitmapSource.DpiY / 96.0);
+                Thickness imagePosition = (Thickness)args["ImagePosition"];
+                int imagePosX = (int)(imagePosition.Left * bitmapSource.DpiX / 96.0); 
+                int imagePosY = (int)(imagePosition.Top * bitmapSource.DpiY / 96.0);
+                int posX = (int)(regionLocation.X * bitmapSource.DpiX / 96.0);
+                int posY = (int)(regionLocation.Y * bitmapSource.DpiY / 96.0);
                 if (regionWidth <= 0 || regionHeight <= 0)
                     return;
-                int stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
-                int size = bitmapSource.PixelHeight * stride;
-                byte[] pixels = new byte[size];
 
-                bitmapSource.CopyPixels(pixels, stride, 0);
+
+
+                int stride = (regionWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
+                int size = regionHeight * stride;
+                byte[] pixels = new byte[size];
                 Bitmap bitmap;
                 using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
                 {
-                    bitmap = GetBitmap(bitmapSource);
-                    bitmap = GetBitmapFragment(bitmap, (int)(regionLocation.X * bitmapSource.DpiX / 96.0), (int)(regionLocation.Y * bitmapSource.DpiY / 96.0), (int)(regionWidth * bitmapSource.DpiX / 96.0), (int)(regionHeight * bitmapSource.DpiY / 96.0));
+                    bitmap = bw.GetBitmap(bitmapSource);
+                    bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY);
                 }
 
-
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
-                bitmapSource = Convert(bitmap);
+                bitmapSource = bw.BitmapToSource(bitmap);
                 stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
                 size = regionHeight * stride;
-                pixels = BitmapToByteArray(bitmap); ;
                 bitmapSource.CopyPixels(pixels, stride, 0);
 
                 List<byte> alphas = new List<byte>();
@@ -113,21 +119,6 @@ namespace ImageViewer.Model
 
             }
         }
-        public static System.Drawing.Bitmap GetBitmap(BitmapSource src)
-        {
-            try
-            {
-                MemoryStream TransportStream = new MemoryStream();
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(src));
-                enc.Save(TransportStream);
-                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(TransportStream);
-                TransportStream.Close();
-                TransportStream.Dispose();
-                return bmp;
-            }
-            catch { MessageBox.Show("failed"); return null; }
-        }
         private void GetVarianceAndDeviation(ref double[] variances, ref double[] deviations, double[] averages, List<byte> reds, List<byte> greens, List<byte> blues, List<byte> alphas)
         {
             double sum;
@@ -163,105 +154,6 @@ namespace ImageViewer.Model
             }
             variances[3] = sum / alphas.Count;
             deviations[3] = Math.Sqrt(variances[3]);
-
-        }
-        public static Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height)
-        {
-            System.Drawing.Size s1 = bmp1.Size;
-            System.Drawing.Imaging.PixelFormat fmt1 = bmp1.PixelFormat;
-
-            System.Drawing.Imaging.PixelFormat fmt = new System.Drawing.Imaging.PixelFormat();
-            fmt = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-            Bitmap bmp3 = new Bitmap(width, height, fmt);
-
-            Rectangle rect = new Rectangle(posX, posY, width, height);
-
-            BitmapData bmp1Data = bmp1.LockBits(rect, ImageLockMode.ReadOnly, fmt1);
-            BitmapData bmp3Data = bmp3.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
-
-            byte bpp1 = 4;
-            byte bpp3 = 4;
-
-            if (fmt1 == System.Drawing.Imaging.PixelFormat.Format24bppRgb) bpp1 = 3;
-            else if (fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppPArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppRgb) bpp1 = 4; else return null;
-
-            int size1 = bmp1Data.Stride * bmp1Data.Height;
-            int size3 = bmp3Data.Stride * bmp3Data.Height;
-            byte[] data1 = new byte[size1];
-            byte[] data3 = new byte[size3];
-            System.Runtime.InteropServices.Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
-            System.Runtime.InteropServices.Marshal.Copy(bmp3Data.Scan0, data3, 0, size3);
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    int index1 = y * bmp1Data.Stride + x * bpp1;
-                    int index3 = y * bmp3Data.Stride + x * bpp3;
-                    System.Drawing.Color c1, c2;
-
-                    if (bpp1 == 4)
-                        c1 = System.Drawing.Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
-                    else c1 = System.Drawing.Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
-
-                    byte A = (byte)(255 * c1.GetBrightness());
-                    data3[index3 + 0] = c1.B;
-                    data3[index3 + 1] = c1.G;
-                    data3[index3 + 2] = c1.R;
-                    data3[index3 + 3] = c1.A;
-                }
-            }
-
-            System.Runtime.InteropServices.Marshal.Copy(data3, 0, bmp3Data.Scan0, data3.Length);
-            bmp1.UnlockBits(bmp1Data);
-            bmp3.UnlockBits(bmp3Data);
-            return bmp3;
-        }
-        private BitmapSource Convert(System.Drawing.Bitmap bitmap)
-        {
-            try
-            {
-                var bitmapData = bitmap.LockBits(
-                    new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                    System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
-
-                var bitmapSource = BitmapSource.Create(
-                    bitmapData.Width, bitmapData.Height,
-                    bitmap.HorizontalResolution, bitmap.VerticalResolution,
-                    PixelFormats.Bgr32, null,
-                    bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
-
-                bitmap.UnlockBits(bitmapData);
-                return bitmapSource;
-            }
-            catch(Exception e)
-            {
-
-                return null;
-            }
-        }
-
-        private static byte[] BitmapToByteArray(Bitmap bitmap)
-        {
-
-            BitmapData bmpdata = null;
-
-            try
-            {
-                bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-                int numbytes = bmpdata.Stride * bitmap.Height;
-                byte[] bytedata = new byte[numbytes];
-                IntPtr ptr = bmpdata.Scan0;
-
-                Marshal.Copy(ptr, bytedata, 0, numbytes);
-
-                return bytedata;
-            }
-            finally
-            {
-                if (bmpdata != null)
-                    bitmap.UnlockBits(bmpdata);
-            }
 
         }
 

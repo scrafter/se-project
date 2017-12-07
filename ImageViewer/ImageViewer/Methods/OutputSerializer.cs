@@ -29,7 +29,7 @@ namespace ImageViewer.Methods
                     System.Windows.Forms.DialogResult result = dialog.ShowDialog();
                     if (result == System.Windows.Forms.DialogResult.Cancel || result == System.Windows.Forms.DialogResult.None)
                         return;
-
+                    BitmapWorker bw = new BitmapWorker();
                     foreach (ImageViewer.Model.Image image in list)
                     {
                         BitmapSource bitmapSource = new BitmapImage(new Uri(image.FilePath));
@@ -40,7 +40,7 @@ namespace ImageViewer.Methods
                             int height = regionHeight;
                             Thickness position = regionPosition;
                             Normalize(ref width, ref height, ref position, bitmapSource);
-                            bitmap = CreateRegion.GetBitmap(bitmapSource);
+                            bitmap = bw.GetBitmap(bitmapSource);
                             if ((int)position.Left + width > bitmap.Width || (int)position.Top + height > bitmap.Height)
                             {
                                 isWarned = true;
@@ -56,7 +56,10 @@ namespace ImageViewer.Methods
                                         height = bitmap.Height - (int)position.Top;
                                 }
                             }
-                            bitmap = CreateRegion.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height);
+                            //APPLY OFFSET !!!
+                            //APPLY OFFSET !!!
+                            //APPLY OFFSET !!!
+                            bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)image.Position.Left, (int)image.Position.Top);
                         }
                         String fileName = $"Out_{++counter}.png";
                         String path = dialog.SelectedPath + $"\\{fileName}";

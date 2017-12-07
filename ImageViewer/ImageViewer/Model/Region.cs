@@ -14,7 +14,7 @@ namespace ImageViewer.Model
 {
     public class Region
     {
-        public Image Image { get; set; }
+        public RegionImage Image { get; set; }
         public Point Position { get; set; }
         public Size Size { get; set; }
         public int DpiX { get; set;}
@@ -26,10 +26,8 @@ namespace ImageViewer.Model
         {
             Position = position;
             Size = size;
-            Image = new Image();
-            Image.Extension = ".png";
-            Image.FileName = name;
-            Image.FilePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions\" + Image.FileName + Image.Extension;
+            Image = new RegionImage();
+            Image = new RegionImage(name, Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions\" + name + ".png", ".png");
             DpiX = (int)Dpi.X;
             DpiY = (int)Dpi.Y;
             ImageList = imageList;
@@ -40,7 +38,6 @@ namespace ImageViewer.Model
         {
             try
             {
-
                 if(File.Exists(Image.FilePath))
                 {
                     File.Delete(Image.FilePath);
@@ -54,7 +51,7 @@ namespace ImageViewer.Model
                 bitmap.BeginInit();
                 bitmap.UriSource = new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png");
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                bitmap.CreateOptions = BitmapCreateOptions.None;
                 bitmap.EndInit();
                 BitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(bitmap));
@@ -63,19 +60,11 @@ namespace ImageViewer.Model
                     encoder.Save(fileStream);
                     fileStream.Close();
                 }
-
-                Image.Bitmap = new BitmapImage();
-                Image.Bitmap.BeginInit();
-                Image.Bitmap.UriSource = new Uri(Image.FilePath);
-                Image.Bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                Image.Bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                Image.Bitmap.EndInit();
-
                 return true;
             }
             catch(Exception e)
             {
-                MessageBox.Show("Save failed.");
+                MessageBox.Show("Save failed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }
