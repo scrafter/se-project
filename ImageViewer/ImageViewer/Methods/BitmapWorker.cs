@@ -40,32 +40,25 @@ namespace ImageViewer.Methods
             BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
             posX = posX - offsetX;
             posY = posY - offsetY;
-            bool isOutOfRange = false;
             if (posX > bmp1.Width || posY > bmp1.Height)
                 return bmp2;
 
             if (posX < 0)
             {
-                isOutOfRange = true;
                 width = width - Math.Abs(posX);
             }
             if (posY < 0)
             {
-                isOutOfRange = true;
                 height = height - Math.Abs(posY);
             }
             if (posX + width > bmp1.Width)
             {
-                isOutOfRange = true;
                 width = bmp1.Width - posX;
             }
             if (posY + height > bmp1.Height)
             {
-                isOutOfRange = true;
                 height = bmp1.Height - posY;
             }
-            if(isOutOfRange)
-                MessageBox.Show("The region exceeds the image. Its properties may be incorrect.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
 
             Rectangle rect = new Rectangle(posX < 0 ? 0 : posX, posY < 0 ? 0 : posY, width, height);
             BitmapData bmp1Data = bmp1.LockBits(rect, ImageLockMode.ReadOnly, fmt1);
