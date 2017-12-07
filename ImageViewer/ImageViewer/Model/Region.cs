@@ -64,7 +64,7 @@ namespace ImageViewer.Model
             }
             catch(Exception e)
             {
-                MessageBox.Show("Save failed.");
+                MessageBox.Show("Save failed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }

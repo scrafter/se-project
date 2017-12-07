@@ -50,7 +50,7 @@ namespace ImageViewer.Model
                 }
 
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
-                bitmapSource = bw.Convert(bitmap);
+                bitmapSource = bw.BitmapToSource(bitmap);
                 stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
                 size = regionHeight * stride;
                 bitmapSource.CopyPixels(pixels, stride, 0);

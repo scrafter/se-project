@@ -23,7 +23,7 @@ namespace ImageViewer.Methods
                 BitmapEncoder enc = new BmpBitmapEncoder();
                 enc.Frames.Add(BitmapFrame.Create(src));
                 enc.Save(TransportStream);
-                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(TransportStream);
+                Bitmap bmp = new Bitmap(TransportStream);
                 TransportStream.Close();
                 TransportStream.Dispose();
                 return bmp;
@@ -40,31 +40,35 @@ namespace ImageViewer.Methods
             BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
             posX = posX - offsetX;
             posY = posY - offsetY;
-
+            bool isOutOfRange = false;
             if (posX > bmp1.Width || posY > bmp1.Height)
                 return bmp2;
-            
-            
+
             if (posX < 0)
             {
+                isOutOfRange = true;
                 width = width - Math.Abs(posX);
             }
             if (posY < 0)
             {
+                isOutOfRange = true;
                 height = height - Math.Abs(posY);
             }
-            if(posX + width > bmp1.Width)
+            if (posX + width > bmp1.Width)
             {
+                isOutOfRange = true;
                 width = bmp1.Width - posX;
             }
-            if(posY + height > bmp1.Height)
+            if (posY + height > bmp1.Height)
             {
+                isOutOfRange = true;
                 height = bmp1.Height - posY;
             }
-            Rectangle rect = new Rectangle(posX < 0 ? 0 : posX, posY < 0 ? 0 : posY, width, height);
+            if(isOutOfRange)
+                MessageBox.Show("The region exceeds the image. Its properties may be incorrect.", "Error", MessageBoxButton.OK, MessageBoxImage.Information);
 
+            Rectangle rect = new Rectangle(posX < 0 ? 0 : posX, posY < 0 ? 0 : posY, width, height);
             BitmapData bmp1Data = bmp1.LockBits(rect, ImageLockMode.ReadOnly, fmt1);
-            
 
             byte bpp1 = 4;
             byte bpp3 = 4;
@@ -77,20 +81,14 @@ namespace ImageViewer.Methods
             else return bmp2;
 
             //int size1 = bmp1Data.Stride * bmp1Data.Height;
-            int size1 = (height-1 )* bmp1Data.Stride + width*bpp1;
+            int size1 = (height - 1) * bmp1Data.Stride + width * bpp1;
             int size = bmp1Data.Stride * bmp1Data.Height;
             int size2 = bmp2Data.Stride * bmp2Data.Height;
             byte[] data1 = new byte[size1];
             byte[] data2 = new byte[size2];
-            try
-            {
-                Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
-                Marshal.Copy(bmp2Data.Scan0, data2, 0, size2);
-            }
-            catch (AccessViolationException e)
-            {
-                return bmp2;
-            }
+
+            Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
+            Marshal.Copy(bmp2Data.Scan0, data2, 0, size2);
 
             for (int y = 0; y < bmp2Data.Height; y++)
             {
@@ -125,82 +123,7 @@ namespace ImageViewer.Methods
             bmp2.UnlockBits(bmp2Data);
             return bmp2;
         }
-        public byte[] BitmapToByteArray(Bitmap bitmap)
-        {
-
-            BitmapData bmpdata = null;
-
-            try
-            {
-                bmpdata = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-                int numbytes = bmpdata.Stride * bitmap.Height;
-                byte[] bytedata = new byte[numbytes];
-                IntPtr ptr = bmpdata.Scan0;
-
-                Marshal.Copy(ptr, bytedata, 0, numbytes);
-
-                return bytedata;
-            }
-            finally
-            {
-                if (bmpdata != null)
-                    bitmap.UnlockBits(bmpdata);
-            }
-
-        }
-        public BitmapImage ByteArrayToBitmapImage(ref byte[] array)
-        {
-            try
-            {
-                // PropertyChanged method
-                BitmapImage bmpi = new BitmapImage();
-                bmpi.BeginInit();
-                bmpi.StreamSource = new MemoryStream(array);
-                bmpi.EndInit();
-                return bmpi;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-        public Bitmap Superimpose(Bitmap largeBmp, Bitmap smallBmp, int x, int y)
-        {
-            Graphics g = Graphics.FromImage(largeBmp);
-            smallBmp.MakeTransparent();
-            g.CompositingMode = CompositingMode.SourceOver;
-            g.DrawImage(smallBmp, new System.Drawing.Point(x, y));
-            return largeBmp;
-        }
-
-        public Bitmap ClearBitmap(Bitmap bmp)
-        {
-            Bitmap bitmap = new Bitmap(bmp.Width, bmp.Height, bmp.PixelFormat);
-            using (var g = Graphics.FromImage(bitmap))
-            {
-                g.Clear(System.Drawing.Color.FromArgb(0, 0, 0, 0));
-            }
-            return bitmap;
-        }
-        public BitmapSource BitmapToBitmapSource(Bitmap bitmap)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                bitmap.Save(stream, ImageFormat.Bmp);
-
-                stream.Position = 0;
-                BitmapImage result = new BitmapImage();
-                result.BeginInit();
-                // According to MSDN, "The default OnDemand cache option retains access to the stream until the image is needed."
-                // Force the bitmap to load right now so we can dispose the stream.
-                result.CacheOption = BitmapCacheOption.OnLoad;
-                result.StreamSource = stream;
-                result.EndInit();
-                result.Freeze();
-                return result;
-            }
-        }
-        public BitmapSource Convert(System.Drawing.Bitmap bitmap)
+        public BitmapSource BitmapToSource(System.Drawing.Bitmap bitmap)
         {
             try
             {
