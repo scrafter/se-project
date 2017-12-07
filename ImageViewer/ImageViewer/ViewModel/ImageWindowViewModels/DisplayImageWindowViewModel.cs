@@ -110,10 +110,46 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
 
         #endregion
+        private List<BaseViewModel> _imagePresenterList;
         private int _imageCounter = 0;
         private List<PixelInformationView> _pivList = new List<PixelInformationView>();
         public RelayCommand ClosePIVsCommand { get; set; }
         public RelayCommand ShowToolbarCommand { get; set; }
+        private GridStatusEvent.GridStatus _gridStatus;
+        public GridStatusEvent.GridStatus GridStatus
+        {
+            get { return _gridStatus; }
+            set
+            {
+                _gridStatus = value;
+                NotifyPropertyChanged();
+                if(_gridStatus == GridStatusEvent.GridStatus.OneToOne)
+                {
+                    CurrentViewModel2 = null;
+                    CurrentViewModel3 = null;
+                    CurrentViewModel4 = null;
+                    ClearImagePresenter();
+                    if (_imageCounter > 1)
+                        _imageCounter = 1;
+
+                }
+                if (_gridStatus == GridStatusEvent.GridStatus.OneToTwo)
+                {
+                    CurrentViewModel3 = null;
+                    CurrentViewModel4 = null;
+                    ClearImagePresenter();
+                    if (_imageCounter > 2)
+                        _imageCounter = 2;
+
+                }
+                if (_gridStatus == GridStatusEvent.GridStatus.TwoToTwo)
+                {
+                    ClearImagePresenter();
+                    if (_imageCounter > 4)
+                        _imageCounter = 4;
+                }
+            }
+        }
         private Visibility toolBarVisibility;
         public Visibility ToolbarVisibility
         {
@@ -125,8 +161,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
         }
         private ObservableCollection<Image> _imageList;
-
-
 
         public DisplayImageWindowViewModel()
         {
@@ -140,38 +174,62 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 _imageCounter++;
                 CreateMultiView(_imageList);
             });
+            GridStatus = GridStatusEvent.GridStatus.OneToOne;
+            _aggregator.GetEvent<GridStatusEvent>().Subscribe((item) =>
+            {
+                GridStatus = item;
+            });
         }
 
         private void CreateMultiView(ObservableCollection<Image> _imageList)
         {
-            switch(_imageCounter)
+            switch (GridStatus)
+            {
+                case GridStatusEvent.GridStatus.OneToOne:
+                    GetImagePresentersFor1x1();
+                    break;
+                case GridStatusEvent.GridStatus.OneToTwo:
+                    GetImagePresentersFor1x2();
+                    break;
+                case GridStatusEvent.GridStatus.TwoToTwo:
+                    GetImagePresentersFor2x2();
+                    break;
+                case GridStatusEvent.GridStatus.ThreeToThree:
+                    GetImagePresentersFor3x3();
+                    break;
+            }
+        }
+
+        private void GetImagePresentersFor3x3()
+        {
+            switch (_imageCounter)
             {
                 case 1:
-                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList,1);
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
                     break;
                 case 2:
-                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList,2);
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2);
                     break;
                 case 3:
-                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList,3);
+                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3);
                     break;
                 case 4:
-                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList,4);
+                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4);
                     break;
                 case 5:
-                    CurrentViewModel5 = new ImagePresenterViewModel(_imageList,5);
+                    CurrentViewModel5 = new ImagePresenterViewModel(_imageList, 5);
                     break;
                 case 6:
-                    CurrentViewModel6 = new ImagePresenterViewModel(_imageList,6);
+                    CurrentViewModel6 = new ImagePresenterViewModel(_imageList, 6);
                     break;
                 case 7:
-                    CurrentViewModel7 = new ImagePresenterViewModel(_imageList,7);
+                    CurrentViewModel7 = new ImagePresenterViewModel(_imageList, 7);
                     break;
                 case 8:
-                    CurrentViewModel8 = new ImagePresenterViewModel(_imageList,8);
+                    CurrentViewModel8 = new ImagePresenterViewModel(_imageList, 8);
                     break;
                 case 9:
-                    CurrentViewModel9 = new ImagePresenterViewModel(_imageList,9);
+                    CurrentViewModel9 = new ImagePresenterViewModel(_imageList, 9);
                     break;
                 default:
                     _imageCounter = 1;
@@ -180,6 +238,56 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
         }
 
+        private void GetImagePresentersFor2x2()
+        {
+            switch (_imageCounter)
+            {
+                case 1:
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
+                    break;
+                case 2:
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2);
+                    break;
+                case 3:
+                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3);
+                    break;
+                case 4:
+                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4);
+                    break;
+                default:
+                    _imageCounter = 1;
+                    CreateMultiView(_imageList);
+                    break;
+            }         
+        }
+
+        private void GetImagePresentersFor1x2()
+        {
+            switch (_imageCounter)
+            {
+                case 1:
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
+                    break;
+                case 2:
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2);
+                    break;
+                default:
+                    _imageCounter = 1;
+                    CreateMultiView(_imageList);
+                    break;
+            }
+        }
+
+        private void GetImagePresentersFor1x1()
+        {
+            CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
+            _imageCounter = 0;
+        }
+
+        private void ClearImagePresenterList(int startingIndex)
+        {
+            
+        }
         public void ClosePIVs(object obj)
         {
             App.Current.Dispatcher.Invoke(new Action(() =>
@@ -198,6 +306,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void ShowToolbar(object obj)
         {
             ToolbarVisibility = Visibility.Visible;
+        }
+    
+        private void ClearImagePresenter()
+        {
+            CurrentViewModel5 = null;
+            CurrentViewModel6 = null;
+            CurrentViewModel7 = null;
+            CurrentViewModel8 = null;
+            CurrentViewModel9 = null;
         }
     }
 }

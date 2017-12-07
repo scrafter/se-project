@@ -40,6 +40,19 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <Style TargetType="UniformGrid" x:Key="UniformStyle">
+            <Setter Property="Grid.Row" Value="2"/>
+            <Setter Property="Grid.RowSpan" Value="1"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ToolbarVisibility}" Value="Collapsed">
+                    <Setter Property="Grid.Row" Value="1"/>
+                    <Setter Property="Grid.RowSpan" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+
         <DataTemplate DataType="{x:Type model:ImagePresenterViewModel}">
             <local:ImagePresenterView/>
         </DataTemplate>
@@ -111,19 +124,73 @@
             <ContentControl Content="{Binding CurrentViewModel8,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
             <ContentControl Content="{Binding CurrentViewModel9,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
             <UniformGrid.Style>
-                <Style TargetType="UniformGrid">
+                <Style TargetType="UniformGrid" BasedOn="{StaticResource UniformStyle}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding GridStatus}" Value="ThreeToThree">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </UniformGrid.Style>
+        </UniformGrid>
+
+        <UniformGrid>
+            <ContentControl Content="{Binding CurrentViewModel1,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
+            <ContentControl Content="{Binding CurrentViewModel2,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
+            <ContentControl Content="{Binding CurrentViewModel3,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
+            <ContentControl Content="{Binding CurrentViewModel4,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
+            <UniformGrid.Style>
+                <Style TargetType="UniformGrid" BasedOn="{StaticResource UniformStyle}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding GridStatus}" Value="TwoToTwo">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </UniformGrid.Style>
+        </UniformGrid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions >
+            <ContentControl Grid.Column="0" Content="{Binding CurrentViewModel1,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
+            <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel2,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
+            <Grid.Style>
+                <Style TargetType="Grid">
                     <Setter Property="Grid.Row" Value="2"/>
                     <Setter Property="Grid.RowSpan" Value="1"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding GridStatus}" Value="OneToTwo">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding ToolbarVisibility}" Value="Collapsed">
                             <Setter Property="Grid.Row" Value="1"/>
                             <Setter Property="Grid.RowSpan" Value="2"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
+            </Grid.Style>
+        </Grid>
+
+        <UniformGrid>
+            <ContentControl Content="{Binding CurrentViewModel1,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ContentControlStyle}"/>
+            <UniformGrid.Style>
+                <Style TargetType="UniformGrid" BasedOn="{StaticResource UniformStyle}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding GridStatus}" Value="OneToOne">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
             </UniformGrid.Style>
-            <!--<local:ImagePresenterView/>-->
         </UniformGrid>
-        
+
+
     </Grid>
 </Controls:MetroWindow>
