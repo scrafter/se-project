@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class SendImageList : PubSubEvent<ObservableCollection<ObservableCollection<Image>>>
+    public class SendImageList : PubSubEvent<ObservableCollection<ObservableCollection<Image>>>
     {
 
     }

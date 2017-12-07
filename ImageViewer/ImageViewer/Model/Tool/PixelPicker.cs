@@ -62,8 +62,8 @@ namespace ImageViewer.Model
                 pixelInformation.Add("Green", green);
                 pixelInformation.Add("Blue", blue);
 
-                IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
-                _aggregator.GetEvent<SendPixelInformationEvent>().Publish(pixelInformation);
+                IEventAggregator aggregator = GlobalEvent.GetEventAggregator();
+                aggregator.GetEvent<SendPixelInformationEvent>().Publish(pixelInformation);
             }
             catch (KeyNotFoundException)
             {

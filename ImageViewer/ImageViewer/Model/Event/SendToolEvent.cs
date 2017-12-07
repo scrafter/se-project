@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class SendToolEvent : PubSubEvent<ITool>
+    public class SendToolEvent : PubSubEvent<ITool>
     {
     }
 }

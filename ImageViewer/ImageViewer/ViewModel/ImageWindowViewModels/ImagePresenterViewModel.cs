@@ -17,8 +17,9 @@ using System.Windows;
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
-    {
+    {   
         #region Variables
+        public int ViewModelID;
         private bool _isDragged = false;
         private bool _escapeClicked = false;
         private int _mouseX;
@@ -87,7 +88,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 {
                     ImageSource = null;
                 }
-
                 RegionWidth = 0;
                 RegionHeight = 0;
                 RegionLocation = new Thickness(0, 0, 0, 0);
@@ -181,9 +181,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         #endregion
 
-        public ImagePresenterViewModel()
+        public ImagePresenterViewModel(ObservableCollection<Image> image,int viewModelID)
         {
+            ViewModelID = viewModelID;
             _imageList = new ObservableCollection<Image>();
+            _imageList = image;
+            _imageIndex = 0;
+            DisplayedImage = _imageList[_imageIndex];
             _aggregator.GetEvent<DisplayImage>().Subscribe(item =>
             {
                 _imageList = item;
@@ -239,6 +243,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
         }
+        
         #region Private methods
         private void SerializeOutputFromList(Object obj)
         {

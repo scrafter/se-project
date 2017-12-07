@@ -114,12 +114,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Methods\AttachedProperties.cs" />
     <Compile Include="Methods\BitmapWorker.cs" />
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\ImageSaver.cs" />
     <Compile Include="Methods\OutputSerializer.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
+    <Compile Include="Model\Event\GridStatusEvent.cs" />
     <Compile Include="Model\Event\LoadRegionEvent.cs" />
     <Compile Include="Model\Event\SendDisplayedImage.cs" />
     <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
@@ -315,6 +317,7 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\ImageKeeper.txt" />
     <Resource Include="ToolbarIcon.ico" />
     <Resource Include="Resources\Images\ImageIcon.png" />
     <Resource Include="Resources\Images\AlphaBackground.jpg" />

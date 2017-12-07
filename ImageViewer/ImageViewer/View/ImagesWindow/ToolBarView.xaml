@@ -12,17 +12,139 @@
     <UserControl.DataContext>
         <models:ToolBarViewModel/>
     </UserControl.DataContext>
-    
+
     <Grid Background="#616161">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="8*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
+        <Border Grid.Row="2" Margin="20, 20, 20, 0" Background="#E0E0E0" BorderBrush="DarkGray" BorderThickness="3">
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Content="1x1" FontWeight="Bold" Command="{Binding GridOneCommand}"  Grid.Column="0" Margin="10" ToolTip="Region selection">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GridStatus}" Value="OneToOne">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="1x2" FontWeight="Bold" Command="{Binding GridOneToTwoCommand}"  Grid.Column="1" Margin="10" ToolTip="Region selection">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GridStatus}" Value="OneToTwo">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="2x2" FontWeight="Bold" Command="{Binding GridTwoToTwoCommand}"  Grid.Column="2" Margin="10" ToolTip="Region selection">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GridStatus}" Value="TwoToTwo">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="3x3" FontWeight="Bold" Command="{Binding GridThreeToTreeCommand}"  Grid.Column="3" Margin="10" ToolTip="Region selection">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border CornerRadius="6" Background="{TemplateBinding Background}" BorderThickness="0" BorderBrush="#FF8BC34A">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding GridStatus}" Value="ThreeToThree">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </Border>
         <Border Grid.Row="0" Grid.Column="0" Margin="20, 20, 20, 0" Background="#E0E0E0" BorderBrush="DarkGray" BorderThickness="3">
             <Grid >
                 <Grid.ColumnDefinitions>
@@ -177,7 +299,9 @@
                 </Button>
             </Grid>
         </Border>
-        <TabControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Margin="20, 20, 20, 10">
+
+
+        <TabControl Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Margin="20, 20, 20, 10">
             <TabItem >
                 <TabItem.Header>
                     <TextBlock Text="Images" Foreground="#FF8BC34A" VerticalAlignment="Center" HorizontalAlignment="Center">

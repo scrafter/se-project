@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class HideToolbarEvent : PubSubEvent
+    public class HideToolbarEvent : PubSubEvent
     {
     }
 }
