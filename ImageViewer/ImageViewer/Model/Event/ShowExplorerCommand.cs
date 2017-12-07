@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class ShowExplorerCommand : PubSubEvent
+    public class ShowExplorerCommand : PubSubEvent
     {
     }
 }

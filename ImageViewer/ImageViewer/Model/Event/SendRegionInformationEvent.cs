@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class SendRegionInformationEvent : PubSubEvent<Dictionary<string, Object>>
+    public class SendRegionInformationEvent : PubSubEvent<Dictionary<string, Object>>
     {
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class SendPixelInformationEvent : PubSubEvent<Dictionary<string, int>>
+    public class SendPixelInformationEvent : PubSubEvent<Dictionary<string, int>>
     {
 
     }

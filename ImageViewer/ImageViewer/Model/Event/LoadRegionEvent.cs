@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class LoadRegionEvent : PubSubEvent<Region>
+    public class LoadRegionEvent : PubSubEvent<Region>
     {
     }
 }

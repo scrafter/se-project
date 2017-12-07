@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Methods\AttachedProperties.cs" />
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\ImageSaver.cs" />

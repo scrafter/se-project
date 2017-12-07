@@ -18,6 +18,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
+        public int ViewModelID;
         private bool _isDragged = false;
         private bool _escapeClicked = false;
         private int _mouseX;
@@ -37,9 +38,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand SaveRegionCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
-        private  ITool _tool = null;
+        private ITool _tool = null;
         private Tools _toolType = Tools.None;
-        public  ITool Tool
+        public ITool Tool
         {
             get
             {
@@ -74,7 +75,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 _displayedImage = value;
                 NotifyPropertyChanged();
-                if(_displayedImage != null)
+                if (_displayedImage != null)
                     ImageSource = new BitmapImage(new Uri(_displayedImage.FilePath));
                 RegionWidth = 0;
                 RegionHeight = 0;
@@ -87,13 +88,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 return _imageSource;
             }
             set
-            { 
+            {
                 _imageSource = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public int MouseX { get{ return _mouseX; }
+        public int MouseX
+        {
+            get { return _mouseX; }
             set
             {
                 if (_mouseX == value)
@@ -151,15 +154,17 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
         }
 
-        public ImagePresenterViewModel()
+        public ImagePresenterViewModel(ObservableCollection<Image> image,int viewModelID)
         {
+            ViewModelID = viewModelID;
+            //DisplayedImage = image;
             _imageList = new ObservableCollection<Image>();
-            _aggregator.GetEvent<DisplayImage>().Subscribe(item => 
-            { 
-                _imageList = item;
-                _imageIndex = 0;
-                DisplayedImage = _imageList[_imageIndex];
-            });
+            //_aggregator.GetEvent<DisplayImage>().Subscribe(item => 
+            //{ 
+            _imageList = image;
+            _imageIndex = 0;
+            DisplayedImage = _imageList[_imageIndex];
+            //});
             _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
             {
                 Tool = item;
@@ -199,6 +204,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
         }
+        //public ImagePresenterViewModel()
+        //{
+
+        //}
 
         private void EscapeClicked(Object obj)
         {
@@ -212,7 +221,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void SaveRegion(String name)
         {
             Point point = new Point(RegionLocation.Left * ImageSource.DpiY / 96.0, RegionLocation.Top * ImageSource.DpiY / 96.0);
-            Region region = new Region(point , new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage);
+            Region region = new Region(point, new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage);
             _aggregator.GetEvent<SendRegionEvent>().Publish(region);
         }
         private void OpenSaveRegionWindow(Object obj)
@@ -241,7 +250,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 {
                     RegionWidth = _mouseX - (int)_mouseClickPosition.X;
                     int x = (int)RegionLocation.Left, y = (int)RegionLocation.Top;
-                    if(RegionWidth < 0)
+                    if (RegionWidth < 0)
                     {
                         RegionWidth = Math.Abs(RegionWidth);
                         x = _mouseX;
@@ -263,7 +272,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void NextImage(Object obj)
         {
-            _imageIndex = _imageIndex == (_imageList.Count - 1 ) ? 0 : (_imageIndex + 1);
+            _imageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
             DisplayedImage = _imageList[_imageIndex];
         }
 

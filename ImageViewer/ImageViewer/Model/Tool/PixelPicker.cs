@@ -44,8 +44,8 @@ namespace ImageViewer.Model
                 pixelInformation.Add("MouseX", mouseX);
                 pixelInformation.Add("MouseY", mouseY);
 
-                IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
-                _aggregator.GetEvent<SendPixelInformationEvent>().Publish(pixelInformation);
+                IEventAggregator aggregator = GlobalEvent.GetEventAggregator();
+                aggregator.GetEvent<SendPixelInformationEvent>().Publish(pixelInformation);
             }
             catch (KeyNotFoundException)
             {

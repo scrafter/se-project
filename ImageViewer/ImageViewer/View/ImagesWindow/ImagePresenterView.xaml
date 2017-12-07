@@ -15,9 +15,9 @@
              Focusable="True"
              >
 
-    <UserControl.DataContext>
-        <models:ImagePresenterViewModel/>
-    </UserControl.DataContext>
+    <!--<UserControl.DataContext>
+        --><!--<models:ImagePresenterViewModel/>--><!--
+    </UserControl.DataContext>-->
 
     <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" Margin="0" 
                       VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" VirtualizingPanel.VirtualizationMode="Recycling">

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class CollapseAllEvent : PubSubEvent
+    public class CollapseAllEvent : PubSubEvent
     {
 
     }

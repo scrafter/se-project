@@ -8,7 +8,7 @@ using ImageViewer.View.ImagesWindow;
 
 namespace ImageViewer.Model.Event
 {
-    class SendPixelInformationViewEvent : PubSubEvent<PixelInformationView>
+    public class SendPixelInformationViewEvent : PubSubEvent<PixelInformationView>
     {
     }
 }
