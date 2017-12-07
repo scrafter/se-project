@@ -76,7 +76,9 @@ namespace ImageViewer.Methods
                 bpp1 = 4;
             else return bmp2;
 
-            int size1 = bmp1Data.Stride * bmp1Data.Height;
+            //int size1 = bmp1Data.Stride * bmp1Data.Height;
+            int size1 = (height-1 )* bmp1Data.Stride + width*bpp1;
+            int size = bmp1Data.Stride * bmp1Data.Height;
             int size2 = bmp2Data.Stride * bmp2Data.Height;
             byte[] data1 = new byte[size1];
             byte[] data2 = new byte[size2];
@@ -110,7 +112,6 @@ namespace ImageViewer.Methods
                             c1 = Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
                         else c1 = Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
 
-                        byte A = (byte)(255 * c1.GetBrightness());
                         data2[index3 + 0] = c1.B;
                         data2[index3 + 1] = c1.G;
                         data2[index3 + 2] = c1.R;
@@ -118,10 +119,6 @@ namespace ImageViewer.Methods
                     }
                 }
             }
-
-            for (int i = 3; i < size2; i += 4)
-                if (data2[i] == 0)
-                    continue;
 
             Marshal.Copy(data2, 0, bmp2Data.Scan0, data2.Length);
             bmp1.UnlockBits(bmp1Data);

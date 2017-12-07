@@ -205,8 +205,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 if (_imageList != region.ImageList)
                 {
                     _imageList = region.ImageList;
-                    DisplayedImage = region.ImageList.First(x => x == region.AttachedImage);
                 }
+                DisplayedImage = region.ImageList.First(x => x == region.AttachedImage);
                 RegionLocation = new Thickness(region.Position.X * 96.0 / region.DpiX, region.Position.Y * 96.0 / region.DpiY, 0, 0);
                 RegionWidth = (int)(region.Size.Width * 96.0 / region.DpiX);
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);

@@ -91,16 +91,18 @@ namespace ImageViewer.ViewModel
         {
 
             ObservableCollection<Image> targetList = (ObservableCollection<Image>)obj;
-            if (ListBeingDragged.Equals(targetList))
+            if (ListBeingDragged == null)
+                return;
+            else if (ListBeingDragged.Equals(targetList))
                 return;
 
-            foreach (var element in ListBeingDragged)
+                foreach (var element in ListBeingDragged)
             {
                 targetList.Add(element);
             }
 
             ImageList.Remove(ListBeingDragged);
-
+            ListBeingDragged = null;
         }
         private void RemoveImageExecute(object obj)
         {
@@ -166,7 +168,6 @@ namespace ImageViewer.ViewModel
                     foreach (string path in Directory.GetFiles(tr.Tag.ToString()))
                     {
                         LoadFiles(temp, path);
-
                     }
                 }
 
