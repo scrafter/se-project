@@ -13,6 +13,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +33,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ToolbarIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Caliburn.Micro, Version=3.2.0.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
@@ -112,11 +116,14 @@
     </ApplicationDefinition>
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Methods\AttachedProperties.cs" />
+    <Compile Include="Methods\BitmapWorker.cs" />
     <Compile Include="Methods\FileDialogMethod.cs" />
     <Compile Include="Methods\ImageSaver.cs" />
+    <Compile Include="Methods\OutputSerializer.cs" />
     <Compile Include="Methods\RelayCommand.cs" />
     <Compile Include="Model\Event\GridStatusEvent.cs" />
     <Compile Include="Model\Event\LoadRegionEvent.cs" />
+    <Compile Include="Model\Event\SendDisplayedImage.cs" />
     <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
     <Compile Include="Methods\MouseManagement.cs" />
     <Compile Include="Model\Event\SendPixelInformationViewEvent.cs" />
@@ -124,11 +131,12 @@
     <Compile Include="Model\Event\SendRegionInformationEvent.cs" />
     <Compile Include="Model\Event\SendRegionNameEvent.cs" />
     <Compile Include="Model\Event\SendToolEvent.cs" />
+    <Compile Include="Model\RegionImage.cs" />
     <Compile Include="Model\Region.cs" />
     <Compile Include="Model\Tools.cs" />
     <Compile Include="Model\Tool\ITool.cs" />
     <Compile Include="Model\Tool\CreateRegion.cs" />
-    <Compile Include="Model\Tool\EditRegion.cs" />
+    <Compile Include="Model\Tool\PanImage.cs" />
     <Compile Include="Model\Event\ClearEvent.cs" />
     <Compile Include="Model\Event\CollapseAllEvent.cs" />
     <Compile Include="Model\Event\CollapseEvent.cs" />
@@ -310,6 +318,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ImageKeeper.txt" />
+    <Resource Include="ToolbarIcon.ico" />
     <Resource Include="Resources\Images\ImageIcon.png" />
     <Resource Include="Resources\Images\AlphaBackground.jpg" />
     <Content Include="Resources\Images\FolderIcon.png">

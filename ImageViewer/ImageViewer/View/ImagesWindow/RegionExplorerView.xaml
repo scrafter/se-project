@@ -47,7 +47,7 @@
                                     <RowDefinition Height="40"/>
                                     <RowDefinition Height="0.3*"/>
                                 </Grid.RowDefinitions>
-                                <Image Name="image" Source="{Binding Bitmap}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Image Name="image" Source="{Binding Image.FilePath}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 <Grid Grid.Row="1">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="1*"/>

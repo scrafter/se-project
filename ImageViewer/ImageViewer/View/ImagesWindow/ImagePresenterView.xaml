@@ -25,6 +25,7 @@
             <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
             <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
             <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
+            <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
         </ScrollViewer.InputBindings>
         <Grid>
             <Grid.RowDefinitions>
@@ -38,7 +39,7 @@
                 <ColumnDefinition Width="0.1*"/>
             </Grid.ColumnDefinitions>
             <Grid x:Name="ImageGrid" x:FieldModifier="public" Grid.Row="1" Grid.Column="1" Background="Black">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True">
                     <Grid.Background>
                         <ImageBrush Stretch="UniformToFill">
                             <ImageBrush.ImageSource>
@@ -46,7 +47,7 @@
                             </ImageBrush.ImageSource>
                         </ImageBrush>
                     </Grid.Background>
-                    <Image Source="{Binding ImageSource}" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Fill">
+                    <Image Source="{Binding ImageSource}" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Fill" Margin="{Binding ImagePosition}">
                         <Image.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Image.RenderTransform>
@@ -60,6 +61,7 @@
                         <Rectangle.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Save region" Command="{Binding SaveRegionCommand}" CommandParameter="{Binding}"/>
+                                <MenuItem Header="Serialize output" Command="{Binding SerializeOutputFromListCommand}" CommandParameter="{Binding}"/>
                             </ContextMenu>
                         </Rectangle.ContextMenu>
                         <Rectangle.Stroke>

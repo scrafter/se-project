@@ -261,7 +261,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Command="{Binding CreateEditRegionToolCommand}" Grid.Column="3" Margin="10" ToolTip="Region transformation">
+                <Button Command="{Binding PanImageToolCommand}" Grid.Column="3" Margin="10" ToolTip="Region transformation">
                     <StackPanel>
                         <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
@@ -282,7 +282,7 @@
                                 </Setter.Value>
                             </Setter>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Tool}" Value="RegionTransformation">
+                                <DataTrigger Binding="{Binding Tool}" Value="ImagePan">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="Button">

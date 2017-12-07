@@ -18,8 +18,12 @@ namespace ImageViewer.ViewModel
         private ObservableCollection<ObservableCollection<Image>> _imageList;
         public RelayCommand DoubleClickCommand { get; set; }
         public RelayCommand RemoveImageCommand { get; set; }
+        public RelayCommand DragCommand { get; set; }
+        public RelayCommand DropCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<DragEventArgs> DragEnterCommand { get; set; }
         public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG", ".JPEG", ".TIFF", ".ICO" };
+
+        private ObservableCollection<Image> ListBeingDragged;
 
         public int TiledViewRows
         {
@@ -48,6 +52,8 @@ namespace ImageViewer.ViewModel
         {
             DoubleClickCommand = new Methods.RelayCommand(DoubleClickExecute, DoubleClickCanExecute);
             RemoveImageCommand = new Methods.RelayCommand(RemoveImageExecute, RemoveImageCanExecute);
+            DragCommand = new Methods.RelayCommand(x => ListBeingDragged = (ObservableCollection<Image>)x);
+            DropCommand = new Methods.RelayCommand(MergeListsExecute);
             DragEnterCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.DragEventArgs>(FileDragFromWindows);
             ImageList = new ObservableCollection<ObservableCollection<Image>>();
             ImageSaver.SendTheLoadedImages(ImageList);
@@ -79,6 +85,24 @@ namespace ImageViewer.ViewModel
         ~TiledWindowViewModel()
         {
             ImageSaver.SafeToText(ImageList);
+        }
+
+        private void MergeListsExecute(object obj)
+        {
+
+            ObservableCollection<Image> targetList = (ObservableCollection<Image>)obj;
+            if (ListBeingDragged == null)
+                return;
+            else if (ListBeingDragged.Equals(targetList))
+                return;
+
+                foreach (var element in ListBeingDragged)
+            {
+                targetList.Add(element);
+            }
+
+            ImageList.Remove(ListBeingDragged);
+            ListBeingDragged = null;
         }
         private void RemoveImageExecute(object obj)
         {
@@ -144,7 +168,6 @@ namespace ImageViewer.ViewModel
                     foreach (string path in Directory.GetFiles(tr.Tag.ToString()))
                     {
                         LoadFiles(temp, path);
-
                     }
                 }
 

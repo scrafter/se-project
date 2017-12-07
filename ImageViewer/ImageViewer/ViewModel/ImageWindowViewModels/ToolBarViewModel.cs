@@ -17,26 +17,25 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand HideToolBarCommand { get; set; }
         public RelayCommand CreateMagnifyingGlassToolCommand { get; set; }
         public RelayCommand CreateRegionToolCommand { get; set; }
-        public RelayCommand CreateEditRegionToolCommand { get; set; }
+        public RelayCommand PanImageToolCommand { get; set; }
         public RelayCommand CreatePixelPickerToolCommand { get; set; }
-
         public RelayCommand GridOneCommand { get; set; }
         public RelayCommand GridOneToTwoCommand { get; set; }
         public RelayCommand GridTwoToTwoCommand { get; set; }
         public RelayCommand GridThreeToTreeCommand { get; set; }
 
-        public Tools Tool {
+        public Tools Tool 
+        {
             get
             {
                 return _tool;
             }
-             set
+            set
             {
                 _tool = value;
                 NotifyPropertyChanged();
             }
         }
-
         private GridStatusEvent.GridStatus _gridStatus;
         public GridStatusEvent.GridStatus GridStatus
         {
@@ -47,12 +46,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-
         public ToolBarViewModel()
         {
             HideToolBarCommand = new RelayCommand(HideToolBarExecute);
             CreateMagnifyingGlassToolCommand = new RelayCommand(CreateMagnifyingGlassTool);
-            CreateEditRegionToolCommand = new RelayCommand(CreateEditRegionTool);
+            PanImageToolCommand = new RelayCommand(PanImageTool);
             CreateRegionToolCommand = new RelayCommand(CreateRegionTool);
             CreatePixelPickerToolCommand = new RelayCommand(CreatePixelPickerTool);
             GridOneCommand = new RelayCommand(GridOneExecute);
@@ -97,10 +95,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             Tool = Tools.Magnifier;
         }
 
-        private void CreateEditRegionTool(object obj)
+        private void PanImageTool(object obj)
         {
-            _aggregator.GetEvent<SendToolEvent>().Publish(new EditRegion());
-            Tool = Tools.RegionTransformation;
+            _aggregator.GetEvent<SendToolEvent>().Publish(new PanImage());
+            Tool = Tools.ImagePan;
         }
 
         private void CreateRegionTool(object obj)

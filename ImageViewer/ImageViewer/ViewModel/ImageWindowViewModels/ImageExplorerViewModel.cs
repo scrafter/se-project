@@ -20,10 +20,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private ObservableCollection<ObservableCollection<Image>> _imageList;
         public RelayCommand DoubleClickCommand { get; set; }
         public RelayCommand RemoveImageCommand { get; set; }
-        public RelayCommand DialogCommand { get; set; }
+        public RelayCommand DialogCommandList { get; set; }
+        public RelayCommand DialogCommandImage { get; set; }
         public ObservableCollection<ObservableCollection<Image>> ImageList
         {
-            get => _imageList;
+            get
+            {
+                return _imageList;
+            }
             set
             {
                 _imageList = value;
@@ -46,7 +50,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             DoubleClickCommand = new RelayCommand(DoubleClickExecute, DoubleClickCanExecute);
             RemoveImageCommand = new RelayCommand(RemoveImageExecute, RemoveImageCanExecute);
-            DialogCommand = new RelayCommand(DialogExecute);
+            DialogCommandList = new RelayCommand(DialogExecuteList);
+            DialogCommandImage = new RelayCommand(DialogExecuteImage);
             ImageList = new ObservableCollection<ObservableCollection<Image>>();
 
             _aggregator.GetEvent<ClearEvent>().Subscribe(Clear);
@@ -60,12 +65,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
         }
 
-        private void DialogExecute(object obj)
+        private void DialogExecuteList(object obj)
         {
-            Task.Run(() => DialogMethod());
+            Task.Run(() => DialogMethodAddListImage());
         }
 
-        public void DialogMethod()
+        private void DialogExecuteImage(object obj)
+        {
+            Task.Run(() => DialogMethodAddImage());
+        }
+
+
+        public void DialogMethodAddListImage()
         {
             ObservableCollection<Image> list = new ObservableCollection<Image>();
             FileDialogMethod fdm = new FileDialogMethod();
@@ -76,6 +87,29 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 ImageList.Add(list);
                 _aggregator.GetEvent<FileDialogEvent>().Publish(ImageList);
+                }
+            }));
+        }
+
+        public void DialogMethodAddImage()
+        {
+            ObservableCollection<Image> list = new ObservableCollection<Image>();
+            FileDialogMethod fdm = new FileDialogMethod();
+            fdm.ReturnFilesFromDialog(list);
+            App.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                if (list.Count != 0)
+                {
+                    foreach(var image in list)
+                    {
+                        var temp = new ObservableCollection<Image>();
+                        temp.Add(image);
+
+                        ImageList.Add(temp);
+                    }
+
+                    _aggregator.GetEvent<FileDialogEvent>().Publish(ImageList);
+
                 }
             }));
         }
