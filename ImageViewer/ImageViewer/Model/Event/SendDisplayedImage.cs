@@ -8,7 +8,9 @@ using System.Windows.Media.Imaging;
 
 namespace ImageViewer.Model.Event
 {
-    class SendDisplayedImage : PubSubEvent<Image>
+    class SendDisplayedImage : PubSubEvent<SendDisplayedImage>
     {
+        public Image Image { get; set; }
+        public int PresenterID { get; set; }
     }
 }

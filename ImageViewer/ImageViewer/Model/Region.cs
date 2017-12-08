@@ -21,8 +21,9 @@ namespace ImageViewer.Model
         public int DpiY { get; set; }
         public ObservableCollection<Image> ImageList { get; set; }
         public Image AttachedImage { get; set; }
+        public int PresenterID { get; set; }
 
-        public Region(Point position, Size size, string name, Vector Dpi, ObservableCollection<Image> imageList, Image image) 
+        public Region(Point position, Size size, string name, Vector Dpi, ObservableCollection<Image> imageList, Image image, int id) 
         {
             Position = position;
             Size = size;
@@ -32,6 +33,7 @@ namespace ImageViewer.Model
             DpiY = (int)Dpi.Y;
             ImageList = imageList;
             AttachedImage = image;
+            PresenterID = id;
         }
 
         public bool Save()
@@ -49,7 +51,7 @@ namespace ImageViewer.Model
                 }
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
-                bitmap.UriSource = new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png");
+                bitmap.UriSource = new Uri(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp" + PresenterID.ToString() + ".png");
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.CreateOptions = BitmapCreateOptions.None;
                 bitmap.EndInit();

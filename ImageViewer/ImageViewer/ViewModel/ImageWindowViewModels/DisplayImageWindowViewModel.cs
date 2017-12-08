@@ -116,6 +116,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand ClosePIVsCommand { get; set; }
         public RelayCommand ShowToolbarCommand { get; set; }
         private GridStatusEvent.GridStatus _gridStatus;
+        public static Tools Tool = Tools.None;
         public GridStatusEvent.GridStatus GridStatus
         {
             get { return _gridStatus; }
@@ -148,6 +149,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     if (_imageCounter > 4)
                         _imageCounter = 4;
                 }
+            }
+        }
+        public int ImageCounter
+        {
+            get
+            {
+                return _imageCounter;
             }
         }
         private Visibility toolBarVisibility;
@@ -208,31 +216,31 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             switch (_imageCounter)
             {
                 case 1:
-                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
                     break;
                 case 2:
-                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2);
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool);
                     break;
                 case 3:
-                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3);
+                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool);
                     break;
                 case 4:
-                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4);
+                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4, Tool);
                     break;
                 case 5:
-                    CurrentViewModel5 = new ImagePresenterViewModel(_imageList, 5);
+                    CurrentViewModel5 = new ImagePresenterViewModel(_imageList, 5, Tool);
                     break;
                 case 6:
-                    CurrentViewModel6 = new ImagePresenterViewModel(_imageList, 6);
+                    CurrentViewModel6 = new ImagePresenterViewModel(_imageList, 6, Tool);
                     break;
                 case 7:
-                    CurrentViewModel7 = new ImagePresenterViewModel(_imageList, 7);
+                    CurrentViewModel7 = new ImagePresenterViewModel(_imageList, 7, Tool);
                     break;
                 case 8:
-                    CurrentViewModel8 = new ImagePresenterViewModel(_imageList, 8);
+                    CurrentViewModel8 = new ImagePresenterViewModel(_imageList, 8, Tool);
                     break;
                 case 9:
-                    CurrentViewModel9 = new ImagePresenterViewModel(_imageList, 9);
+                    CurrentViewModel9 = new ImagePresenterViewModel(_imageList, 9, Tool);
                     break;
                 default:
                     _imageCounter = 1;
@@ -246,16 +254,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             switch (_imageCounter)
             {
                 case 1:
-                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
                     break;
                 case 2:
-                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2);
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool);
                     break;
                 case 3:
-                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3);
+                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool);
                     break;
                 case 4:
-                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4);
+                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4, Tool);
                     break;
                 default:
                     _imageCounter = 1;
@@ -269,10 +277,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             switch (_imageCounter)
             {
                 case 1:
-                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
                     break;
                 case 2:
-                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2);
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool);
                     break;
                 default:
                     _imageCounter = 1;
@@ -283,7 +291,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void GetImagePresentersFor1x1()
         {
-            CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1);
+           CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
             _imageCounter = 0;
         }
 

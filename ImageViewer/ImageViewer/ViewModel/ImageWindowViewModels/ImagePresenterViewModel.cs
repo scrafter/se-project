@@ -19,6 +19,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     public class ImagePresenterViewModel : BaseViewModel
     {   
         #region Variables
+        private bool _isSaving = false;
         public int ViewModelID;
         private bool _isDragged = false;
         private bool _escapeClicked = false;
@@ -48,6 +49,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         #endregion
 
         #region Properties
+
+        public bool IsFocused { get; set; }
         public ITool Tool
         {
             get
@@ -83,7 +86,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 _displayedImage = value;
                 if (_displayedImage != null)
+                {
                     ImageSource = DisplayedImage.Bitmap;
+                    ImagePosition = DisplayedImage.Position;
+                }
                 else
                 {
                     ImageSource = null;
@@ -181,23 +187,45 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         #endregion
 
-        public ImagePresenterViewModel(ObservableCollection<Image> image,int viewModelID)
+        public ImagePresenterViewModel(ObservableCollection<Image> image,int viewModelID, Tools tool)
         {
+            switch (tool)
+            {
+                case Tools.None:
+                    break;
+                case Tools.RegionSelection:
+                    Tool = new CreateRegion();
+                    break;
+                case Tools.Magnifier:
+                    Tool = new MagnifyingGlass();
+                    break;
+                case Tools.PixelInformations:
+                    Tool = new PixelPicker();
+                    break;
+                case Tools.RegionTransformation:
+                    break;
+                case Tools.ImagePan:
+                    Tool = new PanImage();
+                    break;
+                default:
+                    break;
+            }
             ViewModelID = viewModelID;
             _imageList = new ObservableCollection<Image>();
             _imageList = image;
             _imageIndex = 0;
             DisplayedImage = _imageList[_imageIndex];
-            _aggregator.GetEvent<DisplayImage>().Subscribe(item =>
-            {
-                _imageList = item;
-                _imageIndex = 0;
-                DisplayedImage = _imageList[_imageIndex];
-            });
+            //_aggregator.GetEvent<DisplayImage>().Subscribe(item =>
+            //{
+            //    _imageList = item;
+            //    _imageIndex = 0;
+            //    DisplayedImage = _imageList[_imageIndex];
+            //});
             _aggregator.GetEvent<SendDisplayedImage>().Subscribe(item =>
             {
-                DisplayedImage = item;
-                NotifyPropertyChanged("DisplayedImage");
+                if (item.PresenterID != ViewModelID)
+                    return;
+                DisplayedImage = item.Image;
             });
             _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
             {
@@ -206,6 +234,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<SendRegionNameEvent>().Subscribe(SaveRegion);
             _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
             {
+                if (region.PresenterID != ViewModelID)
+                    return;
+
                 if (_imageList != region.ImageList)
                 {
                     _imageList = region.ImageList;
@@ -218,6 +249,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
             {
+                if (IsFocused)
+                    return;
+
                 if (item.Count != 0)
                 {
                     if (!item.Any(x => x == _imageList))
@@ -233,6 +267,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     _imageList = null;
                 }
             });
+            _aggregator.GetEvent<SynchronizeRegions>().Subscribe(SynchronizeRegion);
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
@@ -245,6 +280,47 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         
         #region Private methods
+        private void SynchronizeRegion(SynchronizeRegions sr)
+        {
+            if(sr.PresenterID != ViewModelID)
+            {
+                if(sr.Position.Left > ImageSource.Width - 1 || sr.Position.Top > ImageSource.Height)
+                {
+                    RegionLocation = new Thickness(0, 0, 0, 0);
+                    RegionWidth = 0;
+                    RegionHeight = 0;
+                }
+
+                RegionWidth = sr.Width;
+                RegionHeight = sr.Height;
+                int top = (int)sr.Position.Top;
+                int left = (int)sr.Position.Left;
+                if (top < 0)
+                    top = 0;
+                if (left < 0)
+                    left = 0;
+                RegionLocation = new Thickness(left, top, 0, 0);
+                if (left + RegionWidth > ImageSource.Width)
+                    RegionWidth = (int)ImageSource.Width - left;
+                if (top + RegionHeight > ImageSource.Height)
+                    RegionHeight = (int)ImageSource.Height - top;
+
+                if(sr.DoProcessing)
+                {
+                    CreateRegion cr = new CreateRegion();
+                    Dictionary<String, Object> parameters = new Dictionary<string, object>();
+                    parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
+                    parameters.Add("RegionWidth", RegionWidth);
+                    parameters.Add("RegionHeight", RegionHeight);
+                    parameters.Add("BitmapSource", ImageSource);
+                    parameters.Add("ImagePosition", ImagePosition);
+                    parameters.Add("PresenterID", ViewModelID);
+
+                    cr.AffectImage(parameters);
+                }
+            }
+        }
+
         private void SerializeOutputFromList(Object obj)
         {
             OutputSerializer serializer = new OutputSerializer();
@@ -284,12 +360,17 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void SaveRegion(String name)
         {
+            if (!_isSaving)
+                return;
+
             Point point = new Point(RegionLocation.Left * ImageSource.DpiY / 96.0, RegionLocation.Top * ImageSource.DpiY / 96.0);
-            Region region = new Region(point, new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage);
+            Region region = new Region(point, new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage, ViewModelID);
             _aggregator.GetEvent<SendRegionEvent>().Publish(region);
+            _isSaving = false;
         }
         private void OpenSaveRegionWindow(Object obj)
         {
+            _isSaving = true;
             SaveRegionWindow.Instance.Show();
         }
 
@@ -308,6 +389,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         RegionWidth = 0;
                         RegionHeight = 0;
                         _isDragged = true;
+                        SynchronizeRegions sr = new SynchronizeRegions();
+                        sr.PresenterID = ViewModelID;
+                        sr.Position = RegionLocation;
+                        sr.Width = RegionWidth;
+                        sr.Height = RegionHeight;
+                        sr.DoProcessing = false;
+                        _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                     }
                     break;
                 case Tools.Magnifier:
@@ -353,6 +441,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     y = _mouseY;
                                 }
                                 RegionLocation = new Thickness(x, y, 0, 0);
+                                SynchronizeRegions sr = new SynchronizeRegions();
+                                sr.PresenterID = ViewModelID;
+                                sr.Position = RegionLocation;
+                                sr.Width = RegionWidth;
+                                sr.Height = RegionHeight;
+                                sr.DoProcessing = false;
+                                _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                             }
                             break;
                         case Tools.Magnifier:
@@ -409,6 +504,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("RegionHeight", RegionHeight);
                                     parameters.Add("BitmapSource", ImageSource);
                                     parameters.Add("ImagePosition", ImagePosition);
+                                    parameters.Add("PresenterID", ViewModelID);
+                                    SynchronizeRegions sr = new SynchronizeRegions();
+                                    sr.PresenterID = ViewModelID;
+                                    sr.Position = RegionLocation;
+                                    sr.Width = RegionWidth;
+                                    sr.Height = RegionHeight;
+                                    sr.DoProcessing = true;
+                                    _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                                 }
                                 break;
                             case Tools.Magnifier:
@@ -435,6 +538,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("MouseYDelta", _mouseYDelta);
                                     parameters.Add("DisplayedImage", DisplayedImage);
                                     parameters.Add("Position", ImagePosition);
+                                    parameters.Add("PresenterID", ViewModelID);
                                 }
                                 break;
                             default:

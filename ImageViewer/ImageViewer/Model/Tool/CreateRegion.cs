@@ -30,6 +30,7 @@ namespace ImageViewer.Model
                 int regionWidth = (int)((int)args["RegionWidth"] * bitmapSource.DpiX / 96.0);
                 int regionHeight = (int)((int)args["RegionHeight"] * bitmapSource.DpiY / 96.0);
                 Thickness imagePosition = (Thickness)args["ImagePosition"];
+                int ID = (int)args["PresenterID"];
                 int imagePosX = (int)(imagePosition.Left * bitmapSource.DpiX / 96.0); 
                 int imagePosY = (int)(imagePosition.Top * bitmapSource.DpiY / 96.0);
                 int posX = (int)(regionLocation.X * bitmapSource.DpiX / 96.0);
@@ -49,7 +50,7 @@ namespace ImageViewer.Model
                     bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY);
                 }
 
-                bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
+                bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp" + ID.ToString() + ".png", ImageFormat.Png);
                 bitmapSource = bw.BitmapToSource(bitmap);
                 stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
                 size = regionHeight * stride;

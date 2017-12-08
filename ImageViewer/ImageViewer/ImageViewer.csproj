@@ -131,6 +131,7 @@
     <Compile Include="Model\Event\SendRegionInformationEvent.cs" />
     <Compile Include="Model\Event\SendRegionNameEvent.cs" />
     <Compile Include="Model\Event\SendToolEvent.cs" />
+    <Compile Include="Model\Event\SynchronizeRegions.cs" />
     <Compile Include="Model\RegionImage.cs" />
     <Compile Include="Model\Region.cs" />
     <Compile Include="Model\Tools.cs" />
