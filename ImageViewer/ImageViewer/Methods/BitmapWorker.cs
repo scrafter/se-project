@@ -39,10 +39,9 @@ namespace ImageViewer.Methods
             Bitmap bmp2 = new Bitmap(width, height, fmt);
             posX = posX - offsetX;
             posY = posY - offsetY;
-            if (posX > bmp1.Width || posY > bmp1.Height || posX + width < 0 || posY + height < 0)
+            if (posX >= bmp1.Width || posY >= bmp1.Height || posX + width < 0 || posY + height < 0)
                 return bmp2;
             BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
-
             if (posX < 0)
             {
                 width = width - Math.Abs(posX);
