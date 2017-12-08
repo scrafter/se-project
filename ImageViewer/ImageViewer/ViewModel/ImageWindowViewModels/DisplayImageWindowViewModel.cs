@@ -110,7 +110,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
 
         #endregion
-        private List<BaseViewModel> _imagePresenterList;
+       
         private int _imageCounter = 0;
         private List<PixelInformationView> _pivList = new List<PixelInformationView>();
         public RelayCommand ClosePIVsCommand { get; set; }
@@ -244,7 +244,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     break;
                 default:
                     _imageCounter = 1;
-                    CreateMultiView(_imageList);
+                    GetImagePresentersFor3x3();
                     break;
             }
         }
@@ -267,7 +267,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     break;
                 default:
                     _imageCounter = 1;
-                    CreateMultiView(_imageList);
+                    GetImagePresentersFor2x2();
                     break;
             }         
         }
@@ -284,7 +284,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     break;
                 default:
                     _imageCounter = 1;
-                    CreateMultiView(_imageList);
+                    GetImagePresentersFor1x2();
                     break;
             }
         }
@@ -292,7 +292,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void GetImagePresentersFor1x1()
         {
            CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
-            _imageCounter = 0;
+            _imageCounter = 1;
         }
 
         private void ClearImagePresenterList(int startingIndex)

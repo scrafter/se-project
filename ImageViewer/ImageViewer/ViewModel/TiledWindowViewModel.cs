@@ -96,7 +96,7 @@ namespace ImageViewer.ViewModel
             else if (ListBeingDragged.Equals(targetList))
                 return;
 
-                foreach (var element in ListBeingDragged)
+            foreach (var element in ListBeingDragged)
             {
                 targetList.Add(element);
             }
@@ -184,12 +184,13 @@ namespace ImageViewer.ViewModel
         {
             try
             {
-                Image image = new Image();
-                image.FilePath = path;
-                image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
-                image.Extension = Path.GetExtension(path);
-                if (image.Extension != "" && image.Extension != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
+                if (Path.GetExtension(path) != "" && Path.GetExtension(path) != ".tmp" && ImageExtensions.Contains(Path.GetExtension(path).ToUpperInvariant()))
                 {
+                    Image image = new Image();
+                    image.FilePath = path;
+                    image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
+                    image.Extension = Path.GetExtension(path);
+
 
                     temp.Add(image);
                     _aggregator.GetEvent<SendImage>().Publish(temp);

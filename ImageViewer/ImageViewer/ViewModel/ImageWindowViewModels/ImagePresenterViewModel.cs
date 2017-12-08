@@ -113,11 +113,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
+
         public Thickness ImagePosition
         {
             get
             {
-                return DisplayedImage.Position;
+                return DisplayedImage == null ? new Thickness(0, 0, 0, 0) : DisplayedImage.Position;
             }
             set
             {
@@ -249,22 +250,26 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
             {
-                if (IsFocused)
-                    return;
-
-                if (item.Count != 0)
+                try
                 {
-                    if (!item.Any(x => x == _imageList))
+                    if (item.Count != 0)
                     {
-                        _imageList = item[0];
-                        _imageIndex = 0;
-                        DisplayedImage = _imageList[0];
+                        if (!item.Any(x => x == _imageList))
+                        {
+                            _imageList = item[0];
+                            _imageIndex = 0;
+                            DisplayedImage = _imageList[0];
+                        }
+                    }
+                    else
+                    {
+                        DisplayedImage = null;
+                        _imageList = null;
                     }
                 }
-                else
+                catch (Exception)
                 {
-                    DisplayedImage = null;
-                    _imageList = null;
+
                 }
             });
             _aggregator.GetEvent<SynchronizeRegions>().Subscribe(SynchronizeRegion);
@@ -284,7 +289,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if(sr.PresenterID != ViewModelID)
             {
-                if(sr.Position.Left > ImageSource.Width - 1 || sr.Position.Top > ImageSource.Height)
+                if(sr.Position.Left >= ImageSource.Width || sr.Position.Top >= ImageSource.Height)
                 {
                     RegionLocation = new Thickness(0, 0, 0, 0);
                     RegionWidth = 0;
@@ -299,6 +304,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     top = 0;
                 if (left < 0)
                     left = 0;
+                if (left >= ImageSource.Width)
+                    left = (int)ImageSource.Width;
+                if (top >= ImageSource.Height)
+                    top = (int)ImageSource.Height;
                 RegionLocation = new Thickness(left, top, 0, 0);
                 if (left + RegionWidth > ImageSource.Width)
                     RegionWidth = (int)ImageSource.Width - left;
