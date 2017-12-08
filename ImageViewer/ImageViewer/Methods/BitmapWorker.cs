@@ -37,11 +37,11 @@ namespace ImageViewer.Methods
 
             PixelFormat fmt = PixelFormat.Format32bppArgb;
             Bitmap bmp2 = new Bitmap(width, height, fmt);
-            BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
             posX = posX - offsetX;
             posY = posY - offsetY;
             if (posX > bmp1.Width || posY > bmp1.Height)
                 return bmp2;
+            BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
 
             if (posX < 0)
             {
