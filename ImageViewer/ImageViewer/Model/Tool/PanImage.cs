@@ -28,6 +28,7 @@ namespace ImageViewer.Model
                 int mouseYDelta = (int)((int)args["MouseYDelta"]);
                 int mouseClickX = (int)((System.Windows.Point)args["MouseClickPosition"]).X;
                 int mouseClickY = (int)((System.Windows.Point)args["MouseClickPosition"]).Y;
+                int presenterID = (int)args["PresenterID"];
                 Thickness imagePosition = (Thickness)args["Position"];
                 int offsetX = mouseX - mouseClickX;
                 int offsetY = mouseY - mouseClickY;
@@ -36,8 +37,11 @@ namespace ImageViewer.Model
                 imagePosition.Top = imagePosition.Top + offsetY - mouseYDelta;
                 imagePosition.Bottom = -imagePosition.Top;
                 image.Position = imagePosition;
-                IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
-                _aggregator.GetEvent<SendDisplayedImage>().Publish(image);
+                IEventAggregator aggregator = GlobalEvent.GetEventAggregator();
+                SendDisplayedImage sdi = new SendDisplayedImage();
+                sdi.Image = image;
+                sdi.PresenterID = presenterID;
+                aggregator.GetEvent<SendDisplayedImage>().Publish(sdi);
 
             }
             catch (Exception)

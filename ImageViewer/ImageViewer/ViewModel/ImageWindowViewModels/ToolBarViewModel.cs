@@ -93,24 +93,28 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             _aggregator.GetEvent<SendToolEvent>().Publish(new MagnifyingGlass());
             Tool = Tools.Magnifier;
+            DisplayImageWindowViewModel.Tool = Tool;
         }
 
         private void PanImageTool(object obj)
         {
             _aggregator.GetEvent<SendToolEvent>().Publish(new PanImage());
             Tool = Tools.ImagePan;
+            DisplayImageWindowViewModel.Tool = Tool;
         }
 
         private void CreateRegionTool(object obj)
         {
             _aggregator.GetEvent<SendToolEvent>().Publish(new CreateRegion());
             Tool = Tools.RegionSelection;
+            DisplayImageWindowViewModel.Tool = Tool;
         }
 
         private void CreatePixelPickerTool(object obj)
         {
             _aggregator.GetEvent<SendToolEvent>().Publish(new PixelPicker());
             Tool = Tools.PixelInformations;
+            DisplayImageWindowViewModel.Tool = Tool;
         }
     }
 }
