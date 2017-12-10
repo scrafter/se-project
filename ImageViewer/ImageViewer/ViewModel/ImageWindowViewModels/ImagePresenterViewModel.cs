@@ -35,6 +35,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private ObservableCollection<Image> _imageList;
         private int _imageIndex = 0;
         private BitmapSource _imageSource;
+        private double currentZoomScale = 0.5;
+        private double totalZoom = 1;
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
@@ -42,6 +44,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand SelectAllCommand { get; set; }
         public RelayCommand SaveRegionCommand { get; set; }
         public RelayCommand SerializeOutputFromListCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageRightClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
         private ITool _tool = null;
@@ -248,6 +251,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
                 CalculateRegionProperties();
             });
+            _aggregator.GetEvent<SendZoomEvent>().Subscribe(zoomingInfo =>
+            {
+
+                DisplayedImage = zoomingInfo.ImageToBeDisplayed;
+
+            });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
             {
                 try
@@ -282,6 +291,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             SelectAllCommand = new RelayCommand(SelectAll);
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
+            ImageRightClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageRightClickExecute);
         }
         
         #region Private methods
@@ -460,6 +470,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             }
                             break;
                         case Tools.Magnifier:
+
                             break;
                         case Tools.PixelInformations:
                             break;
@@ -483,6 +494,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 }
         }
 
+        private void CorrectZoom()
+        {
+            if (totalZoom > 1)
+            {
+                totalZoom = 1;
+            }
+        }
+
         private void PreviousImage(Object obj)
         {
             _imageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
@@ -492,6 +511,23 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             _imageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
             DisplayedImage = _imageList[_imageIndex];
+        }
+
+        private void ImageRightClickExecute(System.Windows.RoutedEventArgs args)
+        {
+            if(currentZoomScale < 1 && currentZoomScale > 0)
+            {
+                currentZoomScale = 1 / currentZoomScale;
+
+                ImageClickExecute(args);
+
+                totalZoom *= currentZoomScale;
+
+                currentZoomScale = 1 / currentZoomScale;
+            }
+
+            
+
         }
 
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
@@ -524,6 +560,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                 }
                                 break;
                             case Tools.Magnifier:
+                                {
+                                    CorrectZoom();
+                                    totalZoom *= currentZoomScale;
+                                    parameters.Add("ClickPositionX", _mouseX);
+                                    parameters.Add("ClickPositionY", _mouseY);
+                                    parameters.Add("DisplayedImage", DisplayedImage);
+                                    parameters.Add("ImageWidth", _displayedImage.OriginalBitmap.Width);
+                                    parameters.Add("ImageHeight", _displayedImage.OriginalBitmap.Height);
+                                    parameters.Add("ZoomValue", totalZoom);
+                                }
                                 break;
                             case Tools.PixelInformations:
                                 {

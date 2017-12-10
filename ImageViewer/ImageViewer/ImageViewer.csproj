@@ -131,6 +131,7 @@
     <Compile Include="Model\Event\SendRegionInformationEvent.cs" />
     <Compile Include="Model\Event\SendRegionNameEvent.cs" />
     <Compile Include="Model\Event\SendToolEvent.cs" />
+    <Compile Include="Model\Event\SendZoomEvent.cs" />
     <Compile Include="Model\Event\SynchronizeRegions.cs" />
     <Compile Include="Model\RegionImage.cs" />
     <Compile Include="Model\Region.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Model\Tool\MagnifyingGlass.cs" />
     <Compile Include="Model\Tool\PixelPicker.cs" />
     <Compile Include="Model\TreeViewItemImage.cs" />
+    <Compile Include="Model\ZoomingInfo.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FileExplorerViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\DisplayImageWindowViewModel.cs" />

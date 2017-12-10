@@ -86,6 +86,9 @@
                         <i:EventTrigger EventName="MouseLeftButtonUp">
                             <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseRightButtonUp">
+                            <Command:EventToCommand Command="{Binding ImageRightClickCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
                         <i:EventTrigger EventName="MouseLeftButtonDown">
                             <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
