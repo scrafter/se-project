@@ -9,22 +9,40 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     class RegionInformationViewModel : BaseViewModel
     {
-        string _minValues;
-        string _maxValues;
-        string _averageValues;
-        string _regionSize;
-        string _variances;
-        string _deviations;
-
+        string[] _minValues = new string[9];
+        string[]_maxValues = new string[9];
+        string[] _averageValues = new string[9];
+        string[] _regionSize = new string[9];
+        string[] _variances = new string[9];
+        string[]_deviations = new string[9];
+        int _id = 0;
+        
+        public int PresenterID
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+                NotifyPropertyChanged("Deviations");
+                NotifyPropertyChanged("Variances");
+                NotifyPropertyChanged("RegionSize");
+                NotifyPropertyChanged("MinValues");
+                NotifyPropertyChanged("MaxValues");
+                NotifyPropertyChanged("AverageValues");
+            }
+        }
         public string Deviations
         {
             get
             {
-                return _deviations;
+                return _deviations[_id];
             }
             set
             {
-                _deviations = value;
+                _deviations[_id] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -32,11 +50,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return _variances;
+                return _variances[_id];
             }
             set
             {
-                _variances = value;
+                _variances[_id] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -45,11 +63,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return _regionSize;
+                return _regionSize[_id];
             }
             set
             {
-                _regionSize = value;
+                _regionSize[_id] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -58,11 +76,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return _minValues;
+                return _minValues[_id];
             }
             set
             {
-                _minValues = value;
+                _minValues[_id] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -70,11 +88,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return _maxValues;
+                return _maxValues[_id];
             }
             set
             {
-                _maxValues = value;
+                _maxValues[_id] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -82,23 +100,26 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             get
             {
-                return _averageValues;
+                return _averageValues[_id];
             }
             set
             {
-                _averageValues = value;
+                _averageValues[_id] = value;
                 NotifyPropertyChanged();
             }
         }
         public RegionInformationViewModel()
         {
             _aggregator.GetEvent<SendRegionInformationEvent>().Subscribe(SetPixelInformation);
+            _aggregator.GetEvent<SendPresenterIDEvent>().Subscribe((id) => { PresenterID = id-1; });
         }
 
         private void SetPixelInformation(Dictionary<string,Object> parameters)
         {
             try
             {
+                _id = (int)parameters["PresenterID"];
+                _id--;
                 double[] averages = (double[])parameters["Averages"];
                 double[] variances = (double[])parameters["Variances"];
                 double[] deviations = (double[])parameters["Deviations"];

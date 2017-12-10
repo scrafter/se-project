@@ -92,6 +92,9 @@
                         <i:EventTrigger EventName="MouseMove">
                             <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseEnter">
+                            <Command:EventToCommand Command="{Binding MouseOverCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <i:Interaction.Behaviors>
                         <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />

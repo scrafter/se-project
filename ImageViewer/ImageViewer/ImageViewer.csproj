@@ -127,6 +127,7 @@
     <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
     <Compile Include="Methods\MouseManagement.cs" />
     <Compile Include="Model\Event\SendPixelInformationViewEvent.cs" />
+    <Compile Include="Model\Event\SendPresenterIDEvent.cs" />
     <Compile Include="Model\Event\SendRegionEvent.cs" />
     <Compile Include="Model\Event\SendRegionInformationEvent.cs" />
     <Compile Include="Model\Event\SendRegionNameEvent.cs" />
