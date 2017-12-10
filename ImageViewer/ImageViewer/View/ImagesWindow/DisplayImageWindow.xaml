@@ -17,7 +17,7 @@
         BorderBrush="#8BC34A"
         WindowTitleBrush="#8BC34A"
         WindowStartupLocation="CenterScreen"
-        MinHeight="800" MinWidth="800"
+        MinHeight="800" MinWidth="1200"
         Background="Black">
 
     <i:Interaction.Triggers>
@@ -60,8 +60,8 @@
 
     <Grid Margin="0" ClipToBounds="True">
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.2*"/>
-            <RowDefinition Height="1.5*" MinHeight="150"/>
+            <RowDefinition Height="0.2*" MinHeight="30"/>
+            <RowDefinition Height="1.5*"/>
             <RowDefinition Height="8*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.RowSpan="1">
