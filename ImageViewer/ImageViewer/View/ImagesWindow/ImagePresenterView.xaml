@@ -60,7 +60,7 @@
                     </Grid.Background>
                     <Image Source="{Binding ImageSource}" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Fill" Margin="{Binding ImagePosition}">
                         <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            <ScaleTransform ScaleX="2" ScaleY="2"/>
                         </Image.RenderTransform>
                     </Image>
                     <Rectangle StrokeThickness="1" Width="{Binding RegionWidth}" Height="{Binding RegionHeight}" Fill="Transparent" Margin="{Binding RegionLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
