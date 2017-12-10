@@ -28,7 +28,6 @@ public static class ImageSaver
             if (!File.Exists(path))
                 File.Create(path).Close();
         }
-
         finally
         {
             XDocument xdoc = new XDocument(
@@ -48,8 +47,6 @@ public static class ImageSaver
                     new XElement("FilePath", image.FilePath),
                     new XElement("FileName", image.FileName));
                     parent.Add(person);
-
-
                 }
                 items.Add(parent);
             }
@@ -64,7 +61,6 @@ public static class ImageSaver
         string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\ImagesKeeper.xml";
         try
         {
-            ObservableCollection<Image> imageList = new ObservableCollection<Image>();
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(path);
             XmlElement root = xmlDoc.DocumentElement;
@@ -72,18 +68,20 @@ public static class ImageSaver
 
             foreach (XmlNode node in nodes)
             {
-
+                ObservableCollection<Image> imageList = new ObservableCollection<Image>();
                 foreach (XmlNode node2 in node)
                 {
                     Image image = new Image();
                     image.Extension = node2["Extension"].InnerText;
                     image.FileName = node2["FileName"].InnerText;
+                    if (!File.Exists(node2["FilePath"].InnerText))
+                        continue;
                     image.FilePath = node2["FilePath"].InnerText;
                     imageList.Add(image);
 
                 }
-                list.Add(imageList);
-                imageList = new ObservableCollection<Image>();
+                if(imageList.Count > 0)
+                    list.Add(imageList);
             }
         }
         catch (FileNotFoundException e)

@@ -110,6 +110,7 @@ namespace ImageViewer.Model
                 regionInformation.Add("Height", bitmap.Height);
                 regionInformation.Add("Variances", variances);
                 regionInformation.Add("Deviations", deviations);
+                regionInformation.Add("PresenterID", ID);
 
                 IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
                 _aggregator.GetEvent<SendRegionInformationEvent>().Publish(regionInformation);

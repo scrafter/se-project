@@ -17,7 +17,7 @@ using System.Windows;
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
-    {   
+    {
         #region Variables
         private bool _isSaving = false;
         public int ViewModelID;
@@ -35,21 +35,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private ObservableCollection<Image> _imageList;
         private int _imageIndex = 0;
         private BitmapSource _imageSource;
-        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> ImageClickCommand { get; set; }
+        #endregion
+        #region Properties
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
         public RelayCommand EscapeCommand { get; set; }
         public RelayCommand SelectAllCommand { get; set; }
         public RelayCommand SaveRegionCommand { get; set; }
         public RelayCommand SerializeOutputFromListCommand { get; set; }
-        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseLeftClickCommand { get; set; }
-        public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseLeftClickCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseMoveCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseOverCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> ImageClickCommand { get; set; }
         private ITool _tool = null;
         private Tools _toolType = Tools.None;
-        #endregion
-
-        #region Properties
-
         public bool IsFocused { get; set; }
         public ITool Tool
         {
@@ -89,14 +88,41 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 {
                     ImageSource = DisplayedImage.Bitmap;
                     ImagePosition = DisplayedImage.Position;
+                    int top = (int)RegionLocation.Top, left = (int)RegionLocation.Left;
+                    int width = RegionWidth, height = RegionHeight;
+                    if (left >= ImageSource.Width || top >= ImageSource.Height)
+                    {
+                        RegionLocation = new Thickness(0, 0, 0, 0);
+                        RegionWidth = 0;
+                        RegionHeight = 0;
+                    }
+                    else
+                    {
+                        if (top + height < 0)
+                        {
+                            top = 0;
+                        }
+                        if (left + width < 0)
+                        {
+                            left = 0;
+                        }
+                        if (top + height > ImageSource.Height)
+                            height = (int)ImageSource.Height - top;
+                        if (left + width > ImageSource.Width)
+                            width = (int)ImageSource.Width - left;
+
+                        RegionLocation = new Thickness(left, top, 0, 0);
+                        RegionWidth = width;
+                        RegionHeight = height;
+                    }
                 }
                 else
                 {
                     ImageSource = null;
+                    RegionLocation = new Thickness(0, 0, 0, 0);
+                    RegionWidth = 0;
+                    RegionHeight = 0;
                 }
-                RegionWidth = 0;
-                RegionHeight = 0;
-                RegionLocation = new Thickness(0, 0, 0, 0);
                 NotifyPropertyChanged();
                 NotifyPropertyChanged("ImagePosition");
             }
@@ -188,7 +214,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         #endregion
 
-        public ImagePresenterViewModel(ObservableCollection<Image> image,int viewModelID, Tools tool)
+        public ImagePresenterViewModel(ObservableCollection<Image> image, int viewModelID, Tools tool)
         {
             switch (tool)
             {
@@ -216,12 +242,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _imageList = image;
             _imageIndex = 0;
             DisplayedImage = _imageList[_imageIndex];
-            //_aggregator.GetEvent<DisplayImage>().Subscribe(item =>
-            //{
-            //    _imageList = item;
-            //    _imageIndex = 0;
-            //    DisplayedImage = _imageList[_imageIndex];
-            //});
+
             _aggregator.GetEvent<SendDisplayedImage>().Subscribe(item =>
             {
                 if (item.PresenterID != ViewModelID)
@@ -246,6 +267,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionLocation = new Thickness(region.Position.X * 96.0 / region.DpiX, region.Position.Y * 96.0 / region.DpiY, 0, 0);
                 RegionWidth = (int)(region.Size.Width * 96.0 / region.DpiX);
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
+                SynchronizeRegions sr = new SynchronizeRegions();
+                sr.PresenterID = ViewModelID;
+                sr.Position = RegionLocation;
+                sr.Width = RegionWidth;
+                sr.Height = RegionHeight;
+                sr.DoProcessing = false;
+                _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                 CalculateRegionProperties();
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
@@ -282,14 +310,19 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             SelectAllCommand = new RelayCommand(SelectAll);
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
+            MouseOverCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseEnter);
         }
-        
+
         #region Private methods
+        private void MouseEnter(RoutedEventArgs e)
+        {
+            _aggregator.GetEvent<SendPresenterIDEvent>().Publish(ViewModelID);
+        }
         private void SynchronizeRegion(SynchronizeRegions sr)
         {
-            if(sr.PresenterID != ViewModelID)
+            if (sr.PresenterID != ViewModelID)
             {
-                if(sr.Position.Left >= ImageSource.Width || sr.Position.Top >= ImageSource.Height)
+                if (sr.Position.Left >= ImageSource.Width || sr.Position.Top >= ImageSource.Height)
                 {
                     RegionLocation = new Thickness(0, 0, 0, 0);
                     RegionWidth = 0;
@@ -309,12 +342,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 if (top >= ImageSource.Height)
                     top = (int)ImageSource.Height;
                 RegionLocation = new Thickness(left, top, 0, 0);
-                if (left + RegionWidth > ImageSource.Width)
+                if (left + RegionWidth >= ImageSource.Width)
                     RegionWidth = (int)ImageSource.Width - left;
-                if (top + RegionHeight > ImageSource.Height)
+                if (top + RegionHeight >= ImageSource.Height)
                     RegionHeight = (int)ImageSource.Height - top;
 
-                if(sr.DoProcessing)
+                if (sr.DoProcessing)
                 {
                     CreateRegion cr = new CreateRegion();
                     Dictionary<String, Object> parameters = new Dictionary<string, object>();
@@ -469,7 +502,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             {
                                 App.Current.Dispatcher.Invoke(new Action(() =>
                                 {
-                                    ImageClickExecute(null);
+                                    Dictionary<String, Object> parameters = new Dictionary<string, object>();
+                                    parameters.Add("MouseClickPosition", _mouseClickPosition);
+                                    parameters.Add("MouseX", _mouseX);
+                                    parameters.Add("MouseY", _mouseY);
+                                    parameters.Add("MouseXDelta", _mouseXDelta);
+                                    parameters.Add("MouseYDelta", _mouseYDelta);
+                                    parameters.Add("DisplayedImage", DisplayedImage);
+                                    parameters.Add("Position", ImagePosition);
+                                    parameters.Add("PresenterID", ViewModelID);
+                                    Tool.AffectImage(parameters);
                                     _mouseXDelta = _mouseX - (int)_mouseClickPosition.X;
                                     _mouseYDelta = _mouseY - (int)_mouseClickPosition.Y;
                                     _isDragged = true;
@@ -558,6 +600,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             App.Current.Dispatcher.Invoke(new Action(() =>
                             {
                                 _tool.AffectImage(parameters);
+                                if (ToolType == Tools.ImagePan)
+                                    CalculateRegionProperties();
                             }));
                         }
                         catch (Exception e)
@@ -579,6 +623,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             parameters.Add("RegionWidth", RegionWidth);
             parameters.Add("RegionHeight", RegionHeight);
             parameters.Add("BitmapSource", ImageSource);
+            parameters.Add("ImagePosition", ImagePosition);
+            parameters.Add("PresenterID", ViewModelID);
             ITool tool = new CreateRegion();
             tool.AffectImage(parameters);
         }
