@@ -11,7 +11,9 @@ namespace ImageViewer.Model
     class ZoomingInfo
     {
 
-        public Image ImageToBeDisplayed { get; set; }
+        public double ImagePositionX { get; set; }
+        public double ImagePositionY { get; set; }
+        public double ZoomScale { get; set; }
 
     }
 }

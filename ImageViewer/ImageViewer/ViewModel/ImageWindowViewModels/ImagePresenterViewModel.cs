@@ -32,6 +32,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private int _regionWidth;
         private int _regionHeight;
         private Image _displayedImage;
+        private double _scaleX;
+        private double _scaleY;
         private ObservableCollection<Image> _imageList;
         private int _imageIndex = 0;
         private BitmapSource _imageSource;
@@ -49,6 +51,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs> MouseMoveCommand { get; set; }
         private ITool _tool = null;
         private Tools _toolType = Tools.None;
+
         #endregion
 
         #region Properties
@@ -165,6 +168,33 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
+
+        public Double ScaleX
+        {
+            get
+            {
+                return _scaleX;
+            }
+            set
+            {
+                _scaleX = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public Double ScaleY
+        {
+            get
+            {
+                return _scaleY;
+            }
+            set
+            {
+                _scaleY = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public int RegionHeight
         {
             get
@@ -254,7 +284,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<SendZoomEvent>().Subscribe(zoomingInfo =>
             {
 
-                DisplayedImage = zoomingInfo.ImageToBeDisplayed;
+                ScaleX = zoomingInfo.ZoomScale;
+                ScaleY = zoomingInfo.ZoomScale;
+                ImagePosition = new Thickness(zoomingInfo.ImagePositionX, zoomingInfo.ImagePositionY, -zoomingInfo.ImagePositionX, -zoomingInfo.ImagePositionX);
 
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
@@ -292,6 +324,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
             ImageRightClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageRightClickExecute);
+
+            ScaleX = 1;
+            ScaleY = 1;
+
         }
         
         #region Private methods

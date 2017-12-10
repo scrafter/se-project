@@ -49,7 +49,9 @@ namespace ImageViewer.Model
                     aggregator = GlobalEvent.GetEventAggregator();
                     zi = new ZoomingInfo();
                     image.Bitmap = image.OriginalBitmap;
-                    zi.ImageToBeDisplayed = image;
+                    zi.ZoomScale = 1;
+                    zi.ImagePositionX = 0;
+                    zi.ImagePositionY = 0;
                     aggregator.GetEvent<SendZoomEvent>().Publish(zi);
                 }
                 else
@@ -67,12 +69,9 @@ namespace ImageViewer.Model
 
                     Bitmap bitmap;
 
-                    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-                    {
-                        bitmap = GetBitmap(bitmapSource);
-                        bitmap = GetBitmapFragment(bitmap, zoomPositionXBeg, zoomPositionYBeg, width, height, 0, 0);
+                    bitmap = GetBitmap(bitmapSource);
+                    bitmap = GetBitmapFragment(bitmap, zoomPositionXBeg, zoomPositionYBeg, width, height, 0, 0);
 
-                    }
 
                     Bitmap finalBitmap = new Bitmap(bitmap, new System.Drawing.Size( imageWidth, imageHeight));
 
@@ -86,7 +85,9 @@ namespace ImageViewer.Model
 
                     aggregator = GlobalEvent.GetEventAggregator();
                     zi = new ZoomingInfo();
-                    zi.ImageToBeDisplayed = image;
+                    zi.ZoomScale = 1/zoomValue;
+                    zi.ImagePositionX = zoomPositionXBeg;
+                    zi.ImagePositionY = zoomPositionYBeg;
                     aggregator.GetEvent<SendZoomEvent>().Publish(zi);
                 }
 
