@@ -13,7 +13,7 @@
              ClipToBounds="True"
              d:DesignHeight="300" d:DesignWidth="300"
              Focusable="True"
-            >
+             Background="Black">
     <UserControl.Style>
         <Style TargetType="UserControl">
             <Setter Property="Focusable" Value="True"/>
