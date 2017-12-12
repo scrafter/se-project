@@ -28,51 +28,46 @@
         </Style>
     </UserControl.Style>
 
-    <Border BorderThickness="1" BorderBrush="LightGreen" ClipToBounds="True">
-        <model:ResizableGrid RHeight="{Binding GridHeight, Mode=OneWayToSource}" RWidth="{Binding GridWidth, Mode=OneWayToSource}" ClipToBounds="True">
-            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-                <Grid Focusable="True"  Grid.Row="1" Grid.Column="1" ClipToBounds="True" HorizontalAlignment="Stretch">
-                    <Grid.Background>
-                        <ImageBrush Stretch="UniformToFill">
-                            <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
-                    </Grid.Background>
-                    <Image ClipToBounds="True" Focusable="False" Source="{Binding ImageSource}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="{Binding ImagePosition}" >
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                        </Image.RenderTransform>
-                    </Image>
-                    <Rectangle StrokeThickness="1" Width="{Binding RegionWidth}" Height="{Binding RegionHeight}" Fill="Transparent" Margin="{Binding RegionLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
-                        <Rectangle.ToolTip>
-                            <ToolTip>
-                                <local:RegionInformationView Margin="0"/>
-                            </ToolTip>
-                        </Rectangle.ToolTip>
-                        <Rectangle.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Save region" Command="{Binding SaveRegionCommand}" CommandParameter="{Binding}"/>
-                                <MenuItem Header="Serialize output" Command="{Binding SerializeOutputFromListCommand}" CommandParameter="{Binding}"/>
-                            </ContextMenu>
-                        </Rectangle.ContextMenu>
-                        <Rectangle.Stroke>
-                            <LinearGradientBrush x:Name="StrokeColor" StartPoint="0,0" EndPoint="0.005, 0.005" SpreadMethod="Reflect">
-                                <GradientStop Color="Black" Offset="1"/>
-                                <GradientStop Color="White" Offset="0"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Stroke>
-                    </Rectangle>
+    <!--<Border BorderThickness="1" BorderBrush="LightGreen" ClipToBounds="True">-->
+    <model:ResizableGrid x:Name="resizableGrid"  RHeight="{Binding GridHeight, Mode=OneWayToSource}" RWidth="{Binding GridWidth, Mode=OneWayToSource}" BorderThickness="3" BorderBrush="Red">
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+            <Grid Focusable="True"  Grid.Row="1" Grid.Column="1" ClipToBounds="True" HorizontalAlignment="Stretch">
+                <Grid.Background>
+                    <ImageBrush Stretch="UniformToFill">
+                        <ImageBrush.ImageSource>
+                            <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
+                </Grid.Background>
+                <Border BorderBrush="Red" BorderThickness="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid>
+                        <Image ClipToBounds="True" Focusable="False" Source="{Binding ImageSource}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" Margin="{Binding ImagePosition}" >
+                            <Image.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Image.RenderTransform>
+                        </Image>
+
+                        <Rectangle StrokeThickness="1" Width="{Binding RegionWidth}" Height="{Binding RegionHeight}" Fill="Transparent" Margin="{Binding RegionLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
+                            <Rectangle.ToolTip>
+                                <ToolTip>
+                                    <local:RegionInformationView Margin="0"/>
+                                </ToolTip>
+                            </Rectangle.ToolTip>
+                            <Rectangle.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Save region" Command="{Binding SaveRegionCommand}" CommandParameter="{Binding}"/>
+                                    <MenuItem Header="Serialize output" Command="{Binding SerializeOutputFromListCommand}" CommandParameter="{Binding}"/>
+                                </ContextMenu>
+                            </Rectangle.ContextMenu>
+                            <Rectangle.Stroke>
+                                <LinearGradientBrush x:Name="StrokeColor" StartPoint="0,0" EndPoint="0.005, 0.005" SpreadMethod="Reflect">
+                                    <GradientStop Color="Black" Offset="1"/>
+                                    <GradientStop Color="White" Offset="0"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Stroke>
+                        </Rectangle>
+                    </Grid>
                     <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseLeftButtonUp">
-                            <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="MouseLeftButtonDown">
-                            <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="MouseMove">
-                            <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
                         <i:EventTrigger EventName="MouseEnter">
                             <Command:EventToCommand Command="{Binding MouseOverCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
@@ -80,17 +75,29 @@
                             <Command:EventToCommand Command="{Binding MouseWheelCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </Grid>
-                <ScrollViewer.InputBindings>
-                    <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
-                    <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
-                    <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
-                    <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
-                </ScrollViewer.InputBindings>
-            </ScrollViewer>
-            <i:Interaction.Behaviors>
-                <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
-            </i:Interaction.Behaviors>
-        </model:ResizableGrid>
-    </Border>
+                </Border>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseLeftButtonUp">
+                        <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                        <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseMove">
+                        <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Grid>
+            <ScrollViewer.InputBindings>
+                <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
+                <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
+                <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
+                <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
+            </ScrollViewer.InputBindings>
+        </ScrollViewer>
+        <i:Interaction.Behaviors>
+            <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
+        </i:Interaction.Behaviors>
+    </model:ResizableGrid>
+    <!--</Border>-->
 </UserControl>

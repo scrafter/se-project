@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace ImageViewer.Methods.MouseBehaviour
 {
-    public class MouseManagement : System.Windows.Interactivity.Behavior<Panel>
+    public class MouseManagement : System.Windows.Interactivity.Behavior<Border>
     {
         public static readonly DependencyProperty MouseYProperty = DependencyProperty.Register(
             "MouseY", typeof (double), typeof (MouseManagement), new PropertyMetadata(default(double)));

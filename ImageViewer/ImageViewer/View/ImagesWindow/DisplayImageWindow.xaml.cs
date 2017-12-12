@@ -1,4 +1,6 @@
-﻿using MahApps.Metro.Controls;
+﻿using ImageViewer.Model.Event;
+using MahApps.Metro.Controls;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +24,22 @@ namespace ImageViewer.View.ImagesWindow
     {
 
         private static DisplayImageWindow _instance;
+        protected IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
 
         private DisplayImageWindow()
         {
             InitializeComponent();
             Closed += new System.EventHandler(MyWindow_Closed);
+            _aggregator.GetEvent<SizeChangedEvent>().Subscribe(LayoutUpdate);
         }
 
+        private void LayoutUpdate()
+        {
+            //this.Measure(RenderSize);
+            //this.Arrange(new Rect(RenderSize));
+            this.WindowState = WindowState.Normal;
+            this.WindowState = WindowState.Maximized;
+        }
         public static DisplayImageWindow Instance
         {
             get
@@ -43,7 +54,7 @@ namespace ImageViewer.View.ImagesWindow
 
         void MyWindow_Closed(object sender, System.EventArgs e)
         {
-            
+
             _instance = null;
         }
     }

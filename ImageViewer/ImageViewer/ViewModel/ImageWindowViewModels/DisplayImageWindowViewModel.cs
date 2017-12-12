@@ -184,11 +184,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 _imageList = item;
                 _imageCounter++;
                 CreateMultiView(_imageList);
+                _aggregator.GetEvent<SizeChangedEvent>().Publish();
             });
             GridStatus = GridStatusEvent.GridStatus.OneToOne;
             _aggregator.GetEvent<GridStatusEvent>().Subscribe((item) =>
             {
                 GridStatus = item;
+                _aggregator.GetEvent<SizeChangedEvent>().Publish();
             });
         }
 

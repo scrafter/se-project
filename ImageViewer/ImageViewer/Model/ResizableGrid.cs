@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace ImageViewer.Model
 {
-    class ResizableGrid : Grid
+    class ResizableGrid : Border
     {
         public double RHeight
         {
@@ -36,6 +36,7 @@ namespace ImageViewer.Model
         {
             this.SizeChanged += ResizableGrid_SizeChanged;
         }
+
         private void ResizableGrid_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
         {
             RHeight = e.NewSize.Height;

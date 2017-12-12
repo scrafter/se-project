@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Prism.Events;
+using ImageViewer.Model.Event;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ImageViewer.Model;
+using System.Windows.Threading;
 
 namespace ImageViewer.View.ImagesWindow
 {
@@ -20,9 +24,23 @@ namespace ImageViewer.View.ImagesWindow
     /// </summary>
     public partial class ImagePresenterView : UserControl
     {
+        protected IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
+        private ResizableGrid _resizableGrid;
         public ImagePresenterView()
         {
             InitializeComponent();
+            _resizableGrid = (ResizableGrid)this.FindName("resizableGrid");
+            _aggregator.GetEvent<SizeChangedEvent>().Subscribe(LayoutUpdate);
         }
+        private void LayoutUpdate()
+        {
+
+        }
+        //private void SetSize()
+        //{
+        //    _resizableGrid.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => { }));
+        //    //_resizableGrid.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+        //    //_resizableGrid.Arrange(new Rect(_resizableGrid.DesiredSize));
+        //}
     }
 }

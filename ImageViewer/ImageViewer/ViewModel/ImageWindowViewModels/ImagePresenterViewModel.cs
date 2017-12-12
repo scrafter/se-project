@@ -21,6 +21,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     public class ImagePresenterViewModel : BaseViewModel
     {
         #region Variables
+        private ImagePresenterView _ipv;
         private bool _isSaving = false;
         public int ViewModelID;
         private bool _isDragged = false;
@@ -30,6 +31,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private int _mouseXDelta = 0;
         private int _mouseYDelta = 0;
         private Point _mouseClickPosition;
+        private Point _ImageOffset;
         private Thickness _regionLocation;
         private int _regionWidth;
         private int _regionHeight;
@@ -55,6 +57,23 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public bool IsFocused { get; set; }
         public double GridWidth { get; set; }
         public double GridHeight { get; set; }
+        //public Point ImageOffset
+        //{
+        //    get
+        //    {
+        //        int x;
+        //        if (ImageSource.Width > GridWidth)
+        //            x = 0;
+        //        else
+        //            x = (int)(GridWidth - ImageSource.Width) / 2;
+        //        int y;
+        //        if (ImageSource.Height > GridHeight)
+        //            y = 0;
+        //        else
+        //            y = (int)(GridHeight - ImageSource.Height) / 2;
+        //        return new Point(x, y);
+        //    }
+        //}
         public ITool Tool
         {
             get
@@ -157,14 +176,30 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
+        public Point MouseClickPositionNormalized
+        {
+            get
+            {
+                double x, y;
+                x = _mouseClickPosition.X /*- ImageOffset.X*/ - ImagePosition.Left;
+                y = _mouseClickPosition.Y /*- ImageOffset.Y*/ - ImagePosition.Top;
+                return new Point(x, y);
+
+            }
+        }
         public int MouseXNormalized
         {
-            get { return _mouseX - (int)(GridWidth - ImageSource.Width) / 2 - (int)ImagePosition.Left; }
+            get
+            {
+                return _mouseX /*- (int)(ImageOffset.X - ImagePosition.Left)*/;
+            }
         }
 
         public int MouseYNormalized
         {
-            get { return _mouseY - (int)(GridHeight - ImageSource.Height) / 2 - (int)ImagePosition.Top; }
+            get
+            {
+                return _mouseY /*- (int)(ImageOffset.Y - ImagePosition.Top)*/; }
             set
             {
                 _mouseY = value;
@@ -177,6 +212,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             set
             {
                 _mouseX = value;
+                //Debug.Write($"{_mouseX}, {_mouseY}\n");
                 NotifyPropertyChanged();
             }
         }
@@ -334,7 +370,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if ((int)parameters["PresenterID"] == ViewModelID)
                 return;
-            //Debug.Write($"ID: {ViewModelID}\nPosition: {ImagePosition}\nMouseX: {(int)parameters["MouseX"]}\nMouseY: {(int)parameters["MouseY"]}\nDeltaX: {(int)parameters["MouseXDelta"]}\nDeltaY: {(int)parameters["MouseYDelta"]}\n\n");
             Dictionary<String, Object> args = new Dictionary<String, Object>(parameters);
             args["DisplayedImage"] = DisplayedImage;
             args["Position"] = ImagePosition;
@@ -403,16 +438,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void SelectAll(Object obj)
         {
-            int x = (int)ImagePosition.Left;
-            int y = (int)ImagePosition.Top;
+            int x = (int)(ImagePosition.Left /*+ ImageOffset.X*/);
+            int y = (int)(ImagePosition.Top/* + ImageOffset.Y*/);
             if (x < 0)
                 x = 0;
-            else if (x > ImageSource.PixelWidth)
-                return;
             if (y < 0)
                 y = 0;
-            else if (y > ImageSource.PixelHeight)
-                return;
 
             RegionLocation = new Thickness(x, y, 0, 0);
             RegionWidth = (int)(ImageSource.Width - Math.Abs(ImagePosition.Left));
@@ -493,6 +524,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void MouseMove(RoutedEventArgs args)
         {
+            Debug.Write($"{GridWidth}, {GridHeight}\n");
             if (!_escapeClicked)
                 if (_isDragged)
                 {
