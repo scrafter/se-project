@@ -13,6 +13,8 @@ using ImageViewer.View;
 using ImageViewer.View.ImagesWindow;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Input;
+using System.Diagnostics;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -47,9 +49,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseMoveCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseOverCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> ImageClickCommand { get; set; }
+        public GalaSoft.MvvmLight.Command.RelayCommand<MouseWheelEventArgs> MouseWheelCommand { get; set; }
         private ITool _tool = null;
         private Tools _toolType = Tools.None;
         public bool IsFocused { get; set; }
+        public double GridWidth { get; set; }
+        public double GridHeight { get; set; }
         public ITool Tool
         {
             get
@@ -152,14 +157,25 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
+        public int MouseXNormalized
+        {
+            get { return _mouseX - (int)(GridWidth - ImageSource.Width) / 2 - (int)ImagePosition.Left; }
+        }
 
+        public int MouseYNormalized
+        {
+            get { return _mouseY - (int)(GridHeight - ImageSource.Height) / 2 - (int)ImagePosition.Top; }
+            set
+            {
+                _mouseY = value;
+                NotifyPropertyChanged();
+            }
+        }
         public int MouseX
         {
             get { return _mouseX; }
             set
             {
-                if (_mouseX == value)
-                    return;
                 _mouseX = value;
                 NotifyPropertyChanged();
             }
@@ -167,11 +183,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         public int MouseY
         {
-            get { return _mouseY; }
+            get { return _mouseY; ; }
             set
             {
-                if (_mouseY == value)
-                    return;
                 _mouseY = value;
                 NotifyPropertyChanged();
             }
@@ -300,20 +314,38 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
                 }
             });
+            _aggregator.GetEvent<SynchronizeImagePositions>().Subscribe(SynchronizeImagePosition);
             _aggregator.GetEvent<SynchronizeRegions>().Subscribe(SynchronizeRegion);
-            ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(ImageClickExecute);
+            ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
             SaveRegionCommand = new RelayCommand(OpenSaveRegionWindow);
             SerializeOutputFromListCommand = new RelayCommand(SerializeOutputFromList);
             EscapeCommand = new RelayCommand(EscapeClicked);
             SelectAllCommand = new RelayCommand(SelectAll);
-            MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseLeftClick);
-            MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<System.Windows.RoutedEventArgs>(MouseMove);
+            MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseLeftClick);
+            MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseMove);
             MouseOverCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseEnter);
+            MouseWheelCommand = new GalaSoft.MvvmLight.Command.RelayCommand<MouseWheelEventArgs>(MouseWheel);
         }
 
         #region Private methods
+        private void SynchronizeImagePosition(Dictionary<String, Object> parameters)
+        {
+            if ((int)parameters["PresenterID"] == ViewModelID)
+                return;
+            //Debug.Write($"ID: {ViewModelID}\nPosition: {ImagePosition}\nMouseX: {(int)parameters["MouseX"]}\nMouseY: {(int)parameters["MouseY"]}\nDeltaX: {(int)parameters["MouseXDelta"]}\nDeltaY: {(int)parameters["MouseYDelta"]}\n\n");
+            Dictionary<String, Object> args = new Dictionary<String, Object>(parameters);
+            args["DisplayedImage"] = DisplayedImage;
+            args["Position"] = ImagePosition;
+            args["PresenterID"] = ViewModelID;
+            PanImage pi = new PanImage();
+            pi.AffectImage(args);
+        }
+        private void MouseWheel(MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+        }
         private void MouseEnter(RoutedEventArgs e)
         {
             _aggregator.GetEvent<SendPresenterIDEvent>().Publish(ViewModelID);
@@ -418,6 +450,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void MouseLeftClick(System.Windows.RoutedEventArgs args)
         {
+            Debug.Write($"GridWidth: {(int)GridWidth}\nBitmapWidth: {(int)ImageSource.Width}\nX: {MouseX}\nY: {MouseY}\n Xnorm: {MouseXNormalized}\nYnorm: {MouseYNormalized}\n\n");
             _mouseClickPosition.X = _mouseX;
             _mouseClickPosition.Y = _mouseY;
 
@@ -504,13 +537,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                 {
                                     Dictionary<String, Object> parameters = new Dictionary<string, object>();
                                     parameters.Add("MouseClickPosition", _mouseClickPosition);
-                                    parameters.Add("MouseX", _mouseX);
-                                    parameters.Add("MouseY", _mouseY);
+                                    parameters.Add("MouseX", MouseX);
+                                    parameters.Add("MouseY", MouseY);
                                     parameters.Add("MouseXDelta", _mouseXDelta);
                                     parameters.Add("MouseYDelta", _mouseYDelta);
                                     parameters.Add("DisplayedImage", DisplayedImage);
                                     parameters.Add("Position", ImagePosition);
                                     parameters.Add("PresenterID", ViewModelID);
+                                    _aggregator.GetEvent<SynchronizeImagePositions>().Publish(parameters);
                                     Tool.AffectImage(parameters);
                                     _mouseXDelta = _mouseX - (int)_mouseClickPosition.X;
                                     _mouseYDelta = _mouseY - (int)_mouseClickPosition.Y;
@@ -572,8 +606,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     PixelInformationView piv = new PixelInformationView();
                                     piv.Show();
                                     _aggregator.GetEvent<SendPixelInformationViewEvent>().Publish(piv);
-                                    parameters.Add("MouseX", _mouseX);
-                                    parameters.Add("MouseY", _mouseY);
+                                    parameters.Add("MouseX", MouseXNormalized);
+                                    parameters.Add("MouseY", MouseYNormalized);
                                     parameters.Add("BitmapSource", ImageSource);
                                     parameters.Add("ImagePosition", ImagePosition);
                                 }
@@ -583,8 +617,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             case Tools.ImagePan:
                                 {
                                     parameters.Add("MouseClickPosition", _mouseClickPosition);
-                                    parameters.Add("MouseX", _mouseX);
-                                    parameters.Add("MouseY", _mouseY);
+                                    parameters.Add("MouseX", MouseX);
+                                    parameters.Add("MouseY", MouseY);
                                     parameters.Add("MouseXDelta", _mouseXDelta);
                                     parameters.Add("MouseYDelta", _mouseYDelta);
                                     parameters.Add("DisplayedImage", DisplayedImage);
