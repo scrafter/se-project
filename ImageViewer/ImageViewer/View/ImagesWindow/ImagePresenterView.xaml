@@ -8,12 +8,14 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:Command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
              xmlns:mouse="clr-namespace:ImageViewer.Methods.MouseBehaviour"
+             xmlns:model="clr-namespace:ImageViewer.Model"
              xmlns:methods="clr-namespace:ImageViewer.Methods"
              mc:Ignorable="d" 
              ClipToBounds="True"
              d:DesignHeight="300" d:DesignWidth="300"
              Focusable="True"
-             Background="Black">
+             Background="Black"
+             >
     <UserControl.Style>
         <Style TargetType="UserControl">
             <Setter Property="Focusable" Value="True"/>
@@ -26,43 +28,34 @@
         </Style>
     </UserControl.Style>
 
-    <!--<UserControl.DataContext>
-        <models:ImagePresenterViewModel/>
-    </UserControl.DataContext>-->
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0" 
-                      VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" VirtualizingPanel.VirtualizationMode="Recycling">
-        <ScrollViewer.InputBindings>
-            <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
-            <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
-            <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
-            <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
-        </ScrollViewer.InputBindings>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="0.2*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="0.2*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.1*"/>
-                <ColumnDefinition Width="25*"/>
-                <ColumnDefinition Width="0.1*"/>
-            </Grid.ColumnDefinitions>
-            <Grid x:Name="ImageGrid" x:FieldModifier="public" Grid.Row="1" Grid.Column="1" Background="Transparent">
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True">
-                    <Grid.Background>
-                        <ImageBrush Stretch="UniformToFill">
-                            <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
-                    </Grid.Background>
-                    <Image Source="{Binding ImageSource}" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Fill" Margin="{Binding ImagePosition}">
+    <!--<Border BorderThickness="1" BorderBrush="LightGreen" ClipToBounds="True">-->
+    <Border x:Name="border"  BorderThickness="3">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="LightGreen"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsSynchronized}" Value="False">
+                        <Setter Property="BorderBrush" Value="Red"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+            <Grid Focusable="True"  Grid.Row="1" Grid.Column="1" ClipToBounds="True" HorizontalAlignment="Stretch">
+                <Grid.Background>
+                    <ImageBrush Stretch="UniformToFill">
+                        <ImageBrush.ImageSource>
+                            <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
+                </Grid.Background>
+                <Grid>
+                    <Image ClipToBounds="True" Focusable="False" Source="{Binding ImageSource}" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" Margin="{Binding ImagePosition}" >
                         <Image.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Image.RenderTransform>
                     </Image>
+
                     <Rectangle StrokeThickness="1" Width="{Binding RegionWidth}" Height="{Binding RegionHeight}" Fill="Transparent" Margin="{Binding RegionLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
                         <Rectangle.ToolTip>
                             <ToolTip>
@@ -83,24 +76,36 @@
                         </Rectangle.Stroke>
                     </Rectangle>
                     <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseLeftButtonUp">
-                            <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="MouseLeftButtonDown">
-                            <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="MouseMove">
-                            <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
-                        </i:EventTrigger>
                         <i:EventTrigger EventName="MouseEnter">
                             <Command:EventToCommand Command="{Binding MouseOverCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseWheel">
+                            <Command:EventToCommand Command="{Binding MouseWheelCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <i:Interaction.Behaviors>
-                        <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
-                    </i:Interaction.Behaviors>
                 </Grid>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseLeftButtonUp">
+                        <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                        <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseMove">
+                        <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </Grid>
-        </Grid>
-    </ScrollViewer>
+            <ScrollViewer.InputBindings>
+                <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
+                <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
+                <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
+                <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
+            </ScrollViewer.InputBindings>
+        </ScrollViewer>
+        <i:Interaction.Behaviors>
+            <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
+        </i:Interaction.Behaviors>
+    </Border>
+    <!--</Border>-->
 </UserControl>
