@@ -25,6 +25,17 @@
             <Command:EventToCommand Command="{Binding ClosePIVsCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding Key="D1" Command="{Binding DesynchronizationCommand}" CommandParameter="1"/>
+        <KeyBinding Key="D2" Command="{Binding DesynchronizationCommand}" CommandParameter="2"/>
+        <KeyBinding Key="D3" Command="{Binding DesynchronizationCommand}" CommandParameter="3"/>
+        <KeyBinding Key="D4" Command="{Binding DesynchronizationCommand}" CommandParameter="4"/>
+        <KeyBinding Key="D5" Command="{Binding DesynchronizationCommand}" CommandParameter="5"/>
+        <KeyBinding Key="D6" Command="{Binding DesynchronizationCommand}" CommandParameter="6"/>
+        <KeyBinding Key="D7" Command="{Binding DesynchronizationCommand}" CommandParameter="7"/>
+        <KeyBinding Key="D8" Command="{Binding DesynchronizationCommand}" CommandParameter="8"/>
+        <KeyBinding Key="D9" Command="{Binding DesynchronizationCommand}" CommandParameter="9"/>
+    </Window.InputBindings>
     
     <Window.DataContext>
         <model:DisplayImageWindowViewModel/>

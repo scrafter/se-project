@@ -30,17 +30,6 @@ namespace ImageViewer.View.ImagesWindow
         {
             InitializeComponent();
             _resizableGrid = (ResizableGrid)this.FindName("resizableGrid");
-            _aggregator.GetEvent<SizeChangedEvent>().Subscribe(LayoutUpdate);
         }
-        private void LayoutUpdate()
-        {
-
-        }
-        //private void SetSize()
-        //{
-        //    _resizableGrid.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => { }));
-        //    //_resizableGrid.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
-        //    //_resizableGrid.Arrange(new Rect(_resizableGrid.DesiredSize));
-        //}
     }
 }

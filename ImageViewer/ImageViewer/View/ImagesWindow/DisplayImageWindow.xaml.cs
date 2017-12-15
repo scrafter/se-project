@@ -30,15 +30,6 @@ namespace ImageViewer.View.ImagesWindow
         {
             InitializeComponent();
             Closed += new System.EventHandler(MyWindow_Closed);
-            _aggregator.GetEvent<SizeChangedEvent>().Subscribe(LayoutUpdate);
-        }
-
-        private void LayoutUpdate()
-        {
-            //this.Measure(RenderSize);
-            //this.Arrange(new Rect(RenderSize));
-            this.WindowState = WindowState.Normal;
-            this.WindowState = WindowState.Maximized;
         }
         public static DisplayImageWindow Instance
         {
