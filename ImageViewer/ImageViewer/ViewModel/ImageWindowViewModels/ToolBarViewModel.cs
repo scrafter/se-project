@@ -26,7 +26,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand SerializeOutputFromPresenters { get; set; }
         public RelayCommand CreateRotateImageToolCommand { get; set; }
 
-        public Tools Tool 
+        public Tools Tool
         {
             get
             {
@@ -34,14 +34,37 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
             set
             {
-                _tool = value;
+                if (_tool == value)
+                    _tool = Tools.None;
+                else
+                    _tool = value;
+
+                switch (_tool)
+                {
+                    case Tools.RegionSelection:
+                        _aggregator.GetEvent<SendToolEvent>().Publish(new CreateRegion());
+                        break;
+                    case Tools.PixelInformations:
+                        _aggregator.GetEvent<SendToolEvent>().Publish(new PixelPicker());
+                        break;
+                    case Tools.ImagePan:
+                        _aggregator.GetEvent<SendToolEvent>().Publish(new PanImage());
+                        break;
+                    case Tools.Rotate:
+                        _aggregator.GetEvent<SendToolEvent>().Publish(new Rotate());
+                        break;
+                    default:
+                        _aggregator.GetEvent<SendToolEvent>().Publish(null);
+                        break;
+                }
+                DisplayImageWindowViewModel.Tool = Tool;
                 NotifyPropertyChanged();
             }
         }
         private GridStatusEvent.GridStatus _gridStatus;
         public GridStatusEvent.GridStatus GridStatus
         {
-            get { return _gridStatus;  }
+            get { return _gridStatus; }
             set
             {
                 _gridStatus = value;
@@ -108,38 +131,28 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void CreateMagnifyingGlassTool(object obj)
         {
-            _aggregator.GetEvent<SendToolEvent>().Publish(new MagnifyingGlass());
             Tool = Tools.Magnifier;
-            DisplayImageWindowViewModel.Tool = Tool;
         }
 
         private void PanImageTool(object obj)
         {
-            _aggregator.GetEvent<SendToolEvent>().Publish(new PanImage());
             Tool = Tools.ImagePan;
-            DisplayImageWindowViewModel.Tool = Tool;
         }
 
         private void CreateRotateImageTool(object obj)
         {
-            _aggregator.GetEvent<SendToolEvent>().Publish(new Rotate());
             Tool = Tools.Rotate;
-            DisplayImageWindowViewModel.Tool = Tool;
         }
 
 
         private void CreateRegionTool(object obj)
         {
-            _aggregator.GetEvent<SendToolEvent>().Publish(new CreateRegion());
             Tool = Tools.RegionSelection;
-            DisplayImageWindowViewModel.Tool = Tool;
         }
 
         private void CreatePixelPickerTool(object obj)
         {
-            _aggregator.GetEvent<SendToolEvent>().Publish(new PixelPicker());
             Tool = Tools.PixelInformations;
-            DisplayImageWindowViewModel.Tool = Tool;
         }
     }
 }
