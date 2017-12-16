@@ -7,7 +7,19 @@ using System.Threading.Tasks;
 
 namespace ImageViewer.Model.Event
 {
-    class NextPreviousImageEvent : PubSubEvent<bool>
+    public class NextPreviousImageEvent : PubSubEvent<NextPreviousImageEvent>
     {
+        public bool ToNext { get; set; }
+        public int PresenterID { get; set; }
+
+        public NextPreviousImageEvent()
+        {
+
+        }
+        public NextPreviousImageEvent(bool toNext, int id)
+        {
+            ToNext = toNext;
+            PresenterID = id;
+        }
     }
 }
