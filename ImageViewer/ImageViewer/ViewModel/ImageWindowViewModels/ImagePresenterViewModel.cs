@@ -27,6 +27,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private bool _isDragged = false;
         private bool _escapeClicked = false;
         private int ViewModelID;
+        private int MaxWindows;
         private int _mouseX;
         private int _mouseY;
         private int _mouseXDelta = 0;
@@ -316,7 +317,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         #endregion
 
-        public ImagePresenterViewModel(ObservableCollection<Image> image, int viewModelID, Tools tool)
+        public ImagePresenterViewModel(ObservableCollection<Image> image, int viewModelID, Tools tool, int maxWindows)
         {
             switch (tool)
             {
@@ -343,6 +344,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     break;
             }
             ViewModelID = viewModelID;
+            MaxWindows = maxWindows;
             _imageList = new ObservableCollection<Image>();
             _imageList = image;
             ImageIndex = 0;
@@ -375,6 +377,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
             {
                 ImagePosition = region.ImagePosition;
+                if(region.PresenterID> MaxWindows)
+                {
+                    region.PresenterID = DisplayImageWindowViewModel.ImageCounter;
+                }
                 if (region.PresenterID != ViewModelID)
                     return;
 

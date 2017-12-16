@@ -110,8 +110,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
 
         #endregion
-       
-        private int _imageCounter = 0;
+        private static int _imageCounter = 0;
+        private int _maxWindows=0;
         private List<PixelInformationView> _pivList = new List<PixelInformationView>();
         public RelayCommand ClosePIVsCommand { get; set; }
         public RelayCommand ShowToolbarCommand { get; set; }
@@ -152,7 +152,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 }
             }
         }
-        public int ImageCounter
+        public static int ImageCounter
         {
             get
             {
@@ -204,15 +204,19 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             switch (GridStatus)
             {
                 case GridStatusEvent.GridStatus.OneToOne:
+                    _maxWindows = 1;
                     GetImagePresentersFor1x1();
                     break;
                 case GridStatusEvent.GridStatus.OneToTwo:
+                    _maxWindows = 2;
                     GetImagePresentersFor1x2();
                     break;
                 case GridStatusEvent.GridStatus.TwoToTwo:
+                    _maxWindows = 4;
                     GetImagePresentersFor2x2();
                     break;
                 case GridStatusEvent.GridStatus.ThreeToThree:
+                    _maxWindows = 9;
                     GetImagePresentersFor3x3();
                     break;
             }
@@ -223,31 +227,31 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             switch (_imageCounter)
             {
                 case 1:
-                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool, _maxWindows);
                     break;
                 case 2:
-                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool);
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool, _maxWindows);
                     break;
                 case 3:
-                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool);
+                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool,_maxWindows);
                     break;
                 case 4:
-                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4, Tool);
+                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4, Tool, _maxWindows);
                     break;
                 case 5:
-                    CurrentViewModel5 = new ImagePresenterViewModel(_imageList, 5, Tool);
+                    CurrentViewModel5 = new ImagePresenterViewModel(_imageList, 5, Tool, _maxWindows);
                     break;
                 case 6:
-                    CurrentViewModel6 = new ImagePresenterViewModel(_imageList, 6, Tool);
+                    CurrentViewModel6 = new ImagePresenterViewModel(_imageList, 6, Tool, _maxWindows);
                     break;
                 case 7:
-                    CurrentViewModel7 = new ImagePresenterViewModel(_imageList, 7, Tool);
+                    CurrentViewModel7 = new ImagePresenterViewModel(_imageList, 7, Tool, _maxWindows);
                     break;
                 case 8:
-                    CurrentViewModel8 = new ImagePresenterViewModel(_imageList, 8, Tool);
+                    CurrentViewModel8 = new ImagePresenterViewModel(_imageList, 8, Tool, _maxWindows);
                     break;
                 case 9:
-                    CurrentViewModel9 = new ImagePresenterViewModel(_imageList, 9, Tool);
+                    CurrentViewModel9 = new ImagePresenterViewModel(_imageList, 9, Tool, _maxWindows);
                     break;
                 default:
                     _imageCounter = 1;
@@ -261,16 +265,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             switch (_imageCounter)
             {
                 case 1:
-                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool, _maxWindows);
                     break;
                 case 2:
-                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool);
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool, _maxWindows);
                     break;
                 case 3:
-                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool);
+                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool, _maxWindows);
                     break;
                 case 4:
-                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4, Tool);
+                    CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4, Tool, _maxWindows);
                     break;
                 default:
                     _imageCounter = 1;
@@ -284,10 +288,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             switch (_imageCounter)
             {
                 case 1:
-                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
+                    CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool, _maxWindows);
                     break;
                 case 2:
-                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool);
+                    CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool, _maxWindows);
                     break;
                 default:
                     _imageCounter = 1;
@@ -298,7 +302,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void GetImagePresentersFor1x1()
         {
-           CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool);
+           CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool,_maxWindows);
             _imageCounter = 1;
         }
 
