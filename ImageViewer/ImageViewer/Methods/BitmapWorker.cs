@@ -31,7 +31,7 @@ namespace ImageViewer.Methods
             }
             catch { MessageBox.Show("failed"); return null; }
         }
-        public Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height, int offsetX, int offsetY)
+        public Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height, int offsetX, int offsetY, double scale)
         {
             try
             {
@@ -39,17 +39,20 @@ namespace ImageViewer.Methods
                 PixelFormat fmt1 = bmp1.PixelFormat;
 
                 PixelFormat fmt = PixelFormat.Format32bppArgb;
-                Bitmap bmp2 = new Bitmap(width, height, fmt);
+                Bitmap bmp2 = new Bitmap((int)(width/scale), (int)(height/scale), fmt);
                 posX = posX - offsetX;
                 posY = posY - offsetY;
 
-                if (posX >= bmp1.Width || posY >= bmp1.Height || posX + width <= 0 || posY + height <= 0)
+                if (posX >= bmp1.Width*scale || posY >= bmp1.Height*scale || posX + width <= 0 || posY + height <= 0)
                     return bmp2;
-                BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
-                int startX = posX;
-                int startY = posY;
-                int endX = posX + width;
-                int endY = posY + height;
+                BitmapData bmp2Data = bmp2.LockBits(new Rectangle(0, 0, (int)(width/scale), (int)(height/scale)), ImageLockMode.ReadWrite, fmt);
+                int startX = (int)(posX / scale);
+                int startY = (int)(posY/scale);
+                width = (int)(width / scale);
+                height = (int)(height / scale);
+                int endX = startX + width;
+                int endY = startY + height;
+                //endX = (int)(endX / scale);
                 if (posX < 0)
                 {
                     startX = 0;
@@ -74,7 +77,6 @@ namespace ImageViewer.Methods
                 }
 
                 Rectangle rect = new Rectangle(startX, startY, width, height);
-                Debug.Write($"\n\n{rect}\n\n");
                 BitmapData bmp1Data = bmp1.LockBits(rect, ImageLockMode.ReadOnly, fmt1);
 
                 byte bpp1 = 4;

@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Windows.Media;
 
 namespace ImageViewer.Methods
 {
@@ -17,7 +18,7 @@ namespace ImageViewer.Methods
     {
         public OutputSerializer() { }
 
-        public void SerializeList(ObservableCollection<ImageViewer.Model.Image> list, int regionWidth, int regionHeight, Thickness regionPosition)
+        public void SerializeList(ObservableCollection<ImageViewer.Model.Image> list, int regionWidth, int regionHeight, Thickness regionPosition, double scale)
         {
 
             if (regionWidth > 0 && regionHeight > 0)
@@ -30,19 +31,16 @@ namespace ImageViewer.Methods
                     if (result == System.Windows.Forms.DialogResult.Cancel || result == System.Windows.Forms.DialogResult.None)
                         return;
                     BitmapWorker bw = new BitmapWorker();
-                    foreach (ImageViewer.Model.Image image in list)
+                    foreach (Model.Image image in list)
                     {
-                        BitmapSource bitmapSource = new BitmapImage(new Uri(image.FilePath));
+                        BitmapSource bitmapSource = image.Bitmap;
                         Bitmap bitmap;
-                        using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-                        {
-                            int width = regionWidth;
-                            int height = regionHeight;
-                            Thickness position = regionPosition;
-                            Normalize(ref width, ref height, ref position, bitmapSource);
-                            bitmap = bw.GetBitmap(bitmapSource);
-                            bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0));
-                        }
+                        int width = regionWidth;
+                        int height = regionHeight;
+                        Thickness position = regionPosition;
+                        Normalize(ref width, ref height, ref position, bitmapSource);
+                        bitmap = bw.GetBitmap(bitmapSource);
+                        bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0), scale);
                         String fileName = $"Out_{++counter}.png";
                         String path = dialog.SelectedPath + $"\\{fileName}";
                         if (File.Exists(path))
@@ -75,23 +73,20 @@ namespace ImageViewer.Methods
                 MessageBox.Show("Region not selected.");
             }
         }
-        public void SaveByRegion(Model.Image image, int id, int regionWidth, int regionHeight, Thickness regionPosition, string path)
+        public void SaveByRegion(Model.Image image, int id, int regionWidth, int regionHeight, Thickness regionPosition, string path, double scale)
         {
 
             if (regionWidth > 0 && regionHeight > 0)
             {
                 BitmapWorker bw = new BitmapWorker();
-                BitmapSource bitmapSource = new BitmapImage(new Uri(image.FilePath));
+                BitmapSource bitmapSource = image.Bitmap;
                 Bitmap bitmap;
-                using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-                {
-                    int width = regionWidth;
-                    int height = regionHeight;
-                    Thickness position = regionPosition;
-                    Normalize(ref width, ref height, ref position, bitmapSource);
-                    bitmap = bw.GetBitmap(bitmapSource);
-                    bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0));
-                }
+                int width = regionWidth;
+                int height = regionHeight;
+                Thickness position = regionPosition;
+                Normalize(ref width, ref height, ref position, bitmapSource);
+                bitmap = bw.GetBitmap(bitmapSource);
+                bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0), scale);
                 String fileName = $"Out_{id}.png";
                 path += $"\\{fileName}";
                 if (File.Exists(path))

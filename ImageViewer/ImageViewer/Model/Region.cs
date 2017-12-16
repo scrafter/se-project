@@ -23,8 +23,9 @@ namespace ImageViewer.Model
         public ObservableCollection<Image> ImageList { get; set; }
         public Image AttachedImage { get; set; }
         public int PresenterID { get; set; }
+        public int ImageIndex { get; set; }
 
-        public Region(Point position, Size size, string name, Vector Dpi, ObservableCollection<Image> imageList, Image image, int id) 
+        public Region(Point position, Size size, string name, Vector Dpi, ObservableCollection<Image> imageList, Image image, int id, int index) 
         {
             Position = position;
             Size = size;
@@ -36,6 +37,7 @@ namespace ImageViewer.Model
             AttachedImage = image;
             PresenterID = id;
             ImagePosition = AttachedImage.Position;
+            ImageIndex = index;
         }
 
         public bool Save()

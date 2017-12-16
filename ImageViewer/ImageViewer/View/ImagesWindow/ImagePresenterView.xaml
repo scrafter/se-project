@@ -41,14 +41,13 @@
         </Border.Style>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
                 <Grid Focusable="True" ClipToBounds="True" HorizontalAlignment="Stretch">
                     <Grid.Background>
                         <ImageBrush Stretch="UniformToFill">
@@ -82,14 +81,6 @@
                                 </LinearGradientBrush>
                             </Rectangle.Stroke>
                         </Rectangle>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseEnter">
-                                <Command:EventToCommand Command="{Binding MouseOverCommand}" PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="MouseWheel">
-                                <Command:EventToCommand Command="{Binding MouseWheelCommand}" PassEventArgsToCommand="True"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
                     </Grid>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseLeftButtonUp">
@@ -101,6 +92,12 @@
                         <i:EventTrigger EventName="MouseMove">
                             <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseEnter">
+                            <Command:EventToCommand Command="{Binding MouseOverCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseWheel">
+                            <Command:EventToCommand Command="{Binding MouseWheelCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Grid>
                 <ScrollViewer.InputBindings>
@@ -110,14 +107,29 @@
                     <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
                 </ScrollViewer.InputBindings>
             </ScrollViewer>
-            <TextBlock Text="{Binding ImageIndex}" Foreground="#FF8BC34A" Grid.Row="0" Grid.Column="0" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" FontSize="22"/>
-            <TextBlock Text="{Binding DisplayedImage.FilePath}" Foreground="#FF999999" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">
-                <TextBlock.ToolTip>
-                    <ToolTip>
-                        <TextBlock Text="{Binding DisplayedImage.FilePath}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
-                    </ToolTip>
-                </TextBlock.ToolTip>
-            </TextBlock>
+            <Grid Grid.Column="0" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding ImageIndex}" Foreground="#FF8BC34A" Grid.Column="0" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" FontSize="22"/>
+                <TextBlock Text="{Binding DisplayedImage.FilePath}" Foreground="#FF999999" Grid.Column="1" Margin="8, 2, 2, 2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">
+                    <TextBlock.ToolTip>
+                        <ToolTip>
+                            <TextBlock Text="{Binding DisplayedImage.FilePath}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+                <TextBlock Text="{Binding ImageSize}" Foreground="#FF999999" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold" Margin="8, 2, 2, 2">
+                    <TextBlock.ToolTip>
+                        <ToolTip>
+                            <TextBlock Text="{Binding ImageSize}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+
+            </Grid>
         </Grid>
         <i:Interaction.Behaviors>
             <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />

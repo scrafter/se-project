@@ -15,12 +15,15 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
+using System.Threading;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
     public class ImagePresenterViewModel : BaseViewModel
     {
         #region Variables
+        private String _imageSize;
+        private Thread _regionThread;
         private Dictionary<Type, SubscriptionToken> _subscriptionTokens = new Dictionary<Type, SubscriptionToken>();
         private bool _isSaving = false;
         private bool _isSynchronized = true;
@@ -108,7 +111,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     {
                         token = _aggregator.GetEvent<NextPreviousImageEvent>().Subscribe(arg =>
                         {
-                            if(arg.PresenterID != ViewModelID)
+                            if (arg.PresenterID != ViewModelID)
                             {
                                 if (arg.ToNext)
                                 {
@@ -165,7 +168,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-
+        public String ImageSize
+        {
+            get
+            {
+                return _imageSize;
+            }
+            set
+            {
+                _imageSize = value;
+                NotifyPropertyChanged();
+            }
+        }
 
 
         public Image DisplayedImage
@@ -181,33 +195,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 {
                     ImageSource = DisplayedImage.Bitmap;
                     ImagePosition = DisplayedImage.Position;
-                    int top = (int)RegionLocation.Top, left = (int)RegionLocation.Left;
-                    int width = RegionWidth, height = RegionHeight;
-                    if (left >= ImageSource.Width || top >= ImageSource.Height)
-                    {
-                        RegionLocation = new Thickness(0, 0, 0, 0);
-                        RegionWidth = 0;
-                        RegionHeight = 0;
-                    }
-                    else
-                    {
-                        if (top + height < 0)
-                        {
-                            top = 0;
-                        }
-                        if (left + width < 0)
-                        {
-                            left = 0;
-                        }
-                        if (top + height > ImageSource.Height)
-                            height = (int)ImageSource.Height - top;
-                        if (left + width > ImageSource.Width)
-                            width = (int)ImageSource.Width - left;
-
-                        RegionLocation = new Thickness(left, top, 0, 0);
-                        RegionWidth = width;
-                        RegionHeight = height;
-                    }
+                    ImageSize = $"{ImageSource.PixelWidth} x {ImageSource.PixelHeight}";
                 }
                 else
                 {
@@ -216,6 +204,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     RegionWidth = 0;
                     RegionHeight = 0;
                 }
+
+                Debug.Write("\nDisplayedImage\n");
+                CalculateRegionProperties();
                 NotifyPropertyChanged();
                 NotifyPropertyChanged("ImagePosition");
             }
@@ -351,7 +342,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             DisplayedImage = _imageList[_imageIndex];
             IsSynchronized = true;
             Scale = 1;
-
             _aggregator.GetEvent<SerializeOutputEvent>().Subscribe(SerializeOutputFromPresenters);
             _aggregator.GetEvent<SynchronizationEvent>().Subscribe(i =>
             {
@@ -367,7 +357,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     ImagePosition = new Thickness(ImagePosition.Left + item.OffsetX, ImagePosition.Top + item.OffsetY, -(ImagePosition.Left + item.OffsetX), -(ImagePosition.Top + item.OffsetY));
                 }
                 if (item.DoProcessing)
+                {
+                    Debug.Write("\nSendDisplayedImage\n");
                     CalculateRegionProperties();
+                }
+                    
             });
             _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
             {
@@ -377,7 +371,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
             {
                 ImagePosition = region.ImagePosition;
-                if(region.PresenterID> MaxWindows)
+                if (region.PresenterID > MaxWindows)
                 {
                     region.PresenterID = DisplayImageWindowViewModel.ImageCounter;
                 }
@@ -392,6 +386,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionLocation = new Thickness(region.Position.X * 96.0 / region.DpiX, region.Position.Y * 96.0 / region.DpiY, 0, 0);
                 RegionWidth = (int)(region.Size.Width * 96.0 / region.DpiX);
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
+                ImageIndex = region.ImageIndex;
                 if (IsSynchronized)
                 {
                     SynchronizeRegions sr = new SynchronizeRegions();
@@ -402,6 +397,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     sr.DoProcessing = true;
                     _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                 }
+                Debug.Write("\nLoadRegion\n");
                 CalculateRegionProperties();
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
@@ -500,27 +496,22 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void MouseEnter(RoutedEventArgs e)
         {
+            Debug.Write("\nMouseEnter\n");
+            CalculateRegionProperties();
             _aggregator.GetEvent<SendPresenterIDEvent>().Publish(ViewModelID);
         }
 
         private void SynchronizeZoom(ZoomEvent ze)
         {
-            if (ze.ViewModelID == this.ViewModelID)
-            {
-                return;
-            }
-            else
+            if (ze.ViewModelID != this.ViewModelID)
             {
                 this.Scale = ze.Zoom;
                 ImagePosition = new Thickness(ImagePosition.Left, ImagePosition.Top, ImagePosition.Right / Scale, ImagePosition.Bottom / Scale);
-
-
             }
         }
 
         private void SynchronizeRegion(SynchronizeRegions sr)
         {
-            Debug.Write($"{ViewModelID}: {ImagePosition}\n");
             if (sr.PresenterID != ViewModelID)
             {
                 RegionWidth = sr.Width;
@@ -548,12 +539,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void SerializeOutputFromPresenters(string path)
         {
             OutputSerializer os = new OutputSerializer();
-            os.SaveByRegion(DisplayedImage, ViewModelID, RegionWidth, RegionHeight, RegionLocation, path);
+            os.SaveByRegion(DisplayedImage, ViewModelID, RegionWidth, RegionHeight, RegionLocation, path, Scale);
         }
         private void SerializeOutputFromList(Object obj)
         {
             OutputSerializer serializer = new OutputSerializer();
-            serializer.SerializeList(_imageList, RegionWidth, RegionHeight, RegionLocation);
+            serializer.SerializeList(_imageList, RegionWidth, RegionHeight, RegionLocation, Scale);
         }
         private void SelectAll(Object obj)
         {
@@ -586,7 +577,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 return;
 
             Point point = new Point(RegionLocation.Left * ImageSource.DpiY / 96.0, RegionLocation.Top * ImageSource.DpiY / 96.0);
-            Region region = new Region(point, new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage, ViewModelID);
+            Region region = new Region(point, new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage, ViewModelID, ImageIndex);
             _aggregator.GetEvent<SendRegionEvent>().Publish(region);
             _isSaving = false;
         }
@@ -802,12 +793,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         }
                         try
                         {
-                            App.Current.Dispatcher.Invoke(new Action(() =>
+                            _tool.AffectImage(parameters);
+                            if (ToolType == Tools.ImagePan)
                             {
-                                _tool.AffectImage(parameters);
-                                if (ToolType == Tools.ImagePan)
-                                    CalculateRegionProperties();
-                            }));
+                                Debug.Write("\nImageClick\n");
+                                CalculateRegionProperties();
+                            }
+                                
                         }
                         catch (Exception e)
                         {

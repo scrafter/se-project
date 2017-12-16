@@ -51,7 +51,7 @@ namespace ImageViewer.Model
                 using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
                 {
                     bitmap = bw.GetBitmap(bitmapSource);
-                    bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY);
+                    bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY, 1);
                 }
 
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp" + ID.ToString() + ".png", ImageFormat.Png);
@@ -110,8 +110,8 @@ namespace ImageViewer.Model
                 regionInformation.Add("Averages", averages);
                 regionInformation.Add("Mins", mins);
                 regionInformation.Add("Maxs", maxs);
-                regionInformation.Add("Width", bitmap.Width);
-                regionInformation.Add("Height", bitmap.Height);
+                regionInformation.Add("Width", (int)(bitmap.Width/scale));
+                regionInformation.Add("Height", (int)(bitmap.Height/scale));
                 regionInformation.Add("Variances", variances);
                 regionInformation.Add("Deviations", deviations);
                 regionInformation.Add("PresenterID", ID);

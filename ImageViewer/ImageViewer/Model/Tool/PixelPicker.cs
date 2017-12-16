@@ -63,7 +63,7 @@ namespace ImageViewer.Model
                     blue = pixels[index];
                     alpha = pixels[index + 3];
                     pixelInformation.Add("MouseX", (int)((mouseX - (int)(imagePosition.Left * bitmapSource.DpiX / 96))/scale));
-                    pixelInformation.Add("MouseY", (int)(mouseY - (int)(imagePosition.Top * bitmapSource.DpiY / 96)/scale));
+                    pixelInformation.Add("MouseY", (int)((mouseY - (int)(imagePosition.Top * bitmapSource.DpiY / 96))/scale));
                 }
                 pixelInformation.Add("Alpha", alpha);
                 pixelInformation.Add("Red", red);
