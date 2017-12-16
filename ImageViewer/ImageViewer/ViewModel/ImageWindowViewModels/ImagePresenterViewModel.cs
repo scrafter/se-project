@@ -181,7 +181,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
         }
 
-
+        public String ImagePath
+        {
+            get
+            {
+                return DisplayedImage != null ? DisplayedImage.FilePath : String.Empty;
+            }
+        }
         public Image DisplayedImage
         {
             get
@@ -196,6 +202,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     ImageSource = DisplayedImage.Bitmap;
                     ImagePosition = DisplayedImage.Position;
                     ImageSize = $"{ImageSource.PixelWidth} x {ImageSource.PixelHeight}";
+                    CalculateRegionProperties();
                 }
                 else
                 {
@@ -203,10 +210,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     RegionLocation = new Thickness(0, 0, 0, 0);
                     RegionWidth = 0;
                     RegionHeight = 0;
+                    ImageSize = String.Empty;
+                    Tool = null;
+                    ToolType = Tools.None;
                 }
-
-                Debug.Write("\nDisplayedImage\n");
-                CalculateRegionProperties();
                 NotifyPropertyChanged();
                 NotifyPropertyChanged("ImagePosition");
             }
@@ -231,6 +238,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
             set
             {
+                if (DisplayedImage == null)
+                    return;
                 DisplayedImage.Position = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged("DisplayedImage");
@@ -350,7 +359,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
             _aggregator.GetEvent<SendDisplayedImage>().Subscribe(item =>
             {
-                if (item.PresenterID == ViewModelID || item.DoReset == true)
+                if ((item.PresenterID == ViewModelID || item.DoReset == true) && item.Image != null)
                     ImagePosition = item.Image.Position;
                 else if (item.IsSynchronized == true && IsSynchronized && item.DoReset == false)
                 {
@@ -358,7 +367,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 }
                 if (item.DoProcessing)
                 {
-                    Debug.Write("\nSendDisplayedImage\n");
                     CalculateRegionProperties();
                 }
                     
@@ -397,7 +405,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     sr.DoProcessing = true;
                     _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                 }
-                Debug.Write("\nLoadRegion\n");
                 CalculateRegionProperties();
             });
             _aggregator.GetEvent<SendImageList>().Subscribe(item =>
@@ -496,7 +503,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void MouseEnter(RoutedEventArgs e)
         {
-            Debug.Write("\nMouseEnter\n");
             CalculateRegionProperties();
             _aggregator.GetEvent<SendPresenterIDEvent>().Publish(ViewModelID);
         }
@@ -548,6 +554,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void SelectAll(Object obj)
         {
+            if (DisplayedImage == null)
+                return;
             int x = (int)(ImagePosition.Left);
             int y = (int)(ImagePosition.Top);
             if (x < 0)
@@ -633,6 +641,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void MouseMove(RoutedEventArgs args)
         {
+            if (DisplayedImage == null)
+                return;
             if (!_escapeClicked)
                 if (_isDragged)
                 {
@@ -718,6 +728,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
+            if (DisplayedImage == null)
+                return;
             if (!_escapeClicked)
             {
                 if (_tool != null)
@@ -796,7 +808,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             _tool.AffectImage(parameters);
                             if (ToolType == Tools.ImagePan)
                             {
-                                Debug.Write("\nImageClick\n");
                                 CalculateRegionProperties();
                             }
                                 
@@ -815,6 +826,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void CalculateRegionProperties()
         {
+            if (DisplayedImage == null)
+                return;
             Dictionary<String, Object> parameters = new Dictionary<string, object>();
             parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
             parameters.Add("RegionWidth", RegionWidth);

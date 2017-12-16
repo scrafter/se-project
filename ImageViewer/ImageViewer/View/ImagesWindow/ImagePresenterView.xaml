@@ -117,7 +117,7 @@
                 <TextBlock Text="{Binding DisplayedImage.FilePath}" Foreground="#FF999999" Grid.Column="1" Margin="8, 2, 2, 2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">
                     <TextBlock.ToolTip>
                         <ToolTip>
-                            <TextBlock Text="{Binding DisplayedImage.FilePath}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding ImagePath}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
                         </ToolTip>
                     </TextBlock.ToolTip>
                 </TextBlock>
