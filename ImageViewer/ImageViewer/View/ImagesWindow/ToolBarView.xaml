@@ -157,6 +157,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Button  Command="{Binding CreateRegionToolCommand}"  Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Region selection">
                     <StackPanel>
