@@ -78,6 +78,7 @@
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Windows.Presentation" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -123,19 +124,26 @@
     <Compile Include="Methods\RelayCommand.cs" />
     <Compile Include="Model\Event\GridStatusEvent.cs" />
     <Compile Include="Model\Event\LoadRegionEvent.cs" />
+    <Compile Include="Model\Event\NextPreviousImageEvent.cs" />
     <Compile Include="Model\Event\SendDisplayedImage.cs" />
     <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
     <Compile Include="Methods\MouseManagement.cs" />
     <Compile Include="Model\Event\SendPixelInformationViewEvent.cs" />
+    <Compile Include="Model\Event\SendPresenterIDEvent.cs" />
     <Compile Include="Model\Event\SendRegionEvent.cs" />
     <Compile Include="Model\Event\SendRegionInformationEvent.cs" />
     <Compile Include="Model\Event\SendRegionNameEvent.cs" />
     <Compile Include="Model\Event\SendToolEvent.cs" />
-    <Compile Include="Model\Event\SendZoomEvent.cs" />
+    <Compile Include="Model\Event\SerializeOutputEvent.cs" />
+    <Compile Include="Model\Event\SizeChangedEvent.cs" />
+    <Compile Include="Model\Event\SynchronizationEvent.cs" />
+    <Compile Include="Model\Event\SynchronizeImagePositions.cs" />
     <Compile Include="Model\Event\SynchronizeRegions.cs" />
     <Compile Include="Model\RegionImage.cs" />
     <Compile Include="Model\Region.cs" />
+    <Compile Include="Model\ResizableGrid.cs" />
     <Compile Include="Model\Tools.cs" />
+    <Compile Include="Model\Tool\Rotate.cs" />
     <Compile Include="Model\Tool\ITool.cs" />
     <Compile Include="Model\Tool\CreateRegion.cs" />
     <Compile Include="Model\Tool\PanImage.cs" />
@@ -153,7 +161,6 @@
     <Compile Include="Model\Tool\MagnifyingGlass.cs" />
     <Compile Include="Model\Tool\PixelPicker.cs" />
     <Compile Include="Model\TreeViewItemImage.cs" />
-    <Compile Include="Model\ZoomingInfo.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\FileExplorerViewModel.cs" />
     <Compile Include="ViewModel\ImageWindowViewModels\DisplayImageWindowViewModel.cs" />

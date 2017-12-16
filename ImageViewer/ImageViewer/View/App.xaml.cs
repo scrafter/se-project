@@ -18,6 +18,18 @@ namespace ImageViewer.View
         {
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions"))
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions");
+
+            foreach (var file in Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions"))
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception)
+                {
+
+                }
+            }
         }
         ~App()
         {
@@ -25,6 +37,18 @@ namespace ImageViewer.View
             {
                 try
                 {
+                    File.Delete(file);
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            foreach (var file in Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer"))
+            {
+                try
+                {
+                    if(Path.GetExtension(file).ToLower() == ".png")
                     File.Delete(file);
                 }
                 catch (Exception)

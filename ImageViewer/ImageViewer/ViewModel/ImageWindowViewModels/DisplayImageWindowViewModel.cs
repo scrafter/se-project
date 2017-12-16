@@ -115,6 +115,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private List<PixelInformationView> _pivList = new List<PixelInformationView>();
         public RelayCommand ClosePIVsCommand { get; set; }
         public RelayCommand ShowToolbarCommand { get; set; }
+        public RelayCommand DesynchronizationCommand { get; set; }
         private GridStatusEvent.GridStatus _gridStatus;
         public static Tools Tool = Tools.None;
         public GridStatusEvent.GridStatus GridStatus
@@ -177,6 +178,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             ShowToolbarCommand = new RelayCommand(ShowToolbar);
             ClosePIVsCommand = new RelayCommand(ClosePIVs);
+            DesynchronizationCommand = new RelayCommand(Desynchronize);
             _aggregator.GetEvent<HideToolbarEvent>().Subscribe(HideToolbar);
             _aggregator.GetEvent<SendPixelInformationViewEvent>().Subscribe(item => { _pivList.Add(item); });
             _aggregator.GetEvent<DisplayImage>().Subscribe(item =>
@@ -192,6 +194,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
         }
 
+        private void Desynchronize(Object arg)
+        {
+            int id = Int16.Parse((string)arg);
+            _aggregator.GetEvent<SynchronizationEvent>().Publish(id);
+        }
         private void CreateMultiView(ObservableCollection<Image> _imageList)
         {
             switch (GridStatus)
