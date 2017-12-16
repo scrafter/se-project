@@ -43,7 +43,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private double _zoomStep = 0.2;
         private ITool _tool = null;
         private Tools _toolType = Tools.None;
-        private Image _scaledDisplayedImage;
 
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
@@ -147,17 +146,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
         }
 
-        public Image ScaledDisplayedImage
-        {
-            get
-            {
-                return _scaledDisplayedImage;
-            }
-            set
-            {
-                _scaledDisplayedImage = DisplayedImage;
-            }
-        }
 
 
         public Image DisplayedImage
