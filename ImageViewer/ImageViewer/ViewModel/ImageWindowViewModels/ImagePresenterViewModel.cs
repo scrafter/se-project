@@ -500,6 +500,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     parameters.Add("BitmapSource", ImageSource);
                     parameters.Add("ImagePosition", ImagePosition);
                     parameters.Add("PresenterID", ViewModelID);
+                    parameters.Add("Scale", Scale);
 
                     cr.AffectImage(parameters);
                 }
@@ -701,6 +702,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("BitmapSource", ImageSource);
                                     parameters.Add("ImagePosition", ImagePosition);
                                     parameters.Add("PresenterID", ViewModelID);
+                                    parameters.Add("Scale", Scale);
                                     if (IsSynchronized)
                                     {
                                         SynchronizeRegions sr = new SynchronizeRegions();
@@ -783,6 +785,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             parameters.Add("BitmapSource", ImageSource);
             parameters.Add("ImagePosition", ImagePosition);
             parameters.Add("PresenterID", ViewModelID);
+            parameters.Add("Scale", Scale);
             ITool tool = new CreateRegion();
             tool.AffectImage(parameters);
         }
