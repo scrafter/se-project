@@ -328,10 +328,12 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\MyComputerIcon.png" />
     <Resource Include="Resources\ImageKeeper.txt" />
     <Resource Include="ToolbarIcon.ico" />
     <Resource Include="Resources\Images\ImageIcon.png" />
     <Resource Include="Resources\Images\AlphaBackground.jpg" />
+    <Resource Include="Resources\Images\DesktopIcon.png" />
     <Content Include="Resources\Images\FolderIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

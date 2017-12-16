@@ -50,16 +50,26 @@
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </StackPanel>
+                <Button.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="Hide/Show"/>
+                    </ToolTip>
+                </Button.ToolTip>
             </Button>
             <Button Command="{Binding CollapseAllCommand}" Style="{StaticResource WhiteGreenButton}" Grid.Column="1">
                 <StackPanel>
                     <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
                         <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_section_collapse_all}"/>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_refresh}"/>
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </StackPanel>
+                <Button.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="Refresh and collapse"/>
+                    </ToolTip>
+                </Button.ToolTip>
             </Button>
         </Grid>
 

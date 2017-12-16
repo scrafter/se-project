@@ -182,7 +182,7 @@ namespace ImageViewer.View
         private void FileExplorer_Loaded(object sender, RoutedEventArgs e)
         {
             DriveInfo[] logicalDrives = DriveInfo.GetDrives().Where(x => x.DriveType != DriveType.CDRom).ToArray();
-            foreach (var drive in Directory.GetLogicalDrives().Where(x => logicalDrives.Any(d => d.Name == x)))
+            foreach (var drive in Directory.GetLogicalDrives())
             {
                 var item = new TreeViewItemImage()
                 {
@@ -198,6 +198,49 @@ namespace ImageViewer.View
                 item.Expanded += Folder_Expanded;
                 FolderTreeView.Items.Add(item);
             }
+            String path;
+            TreeViewItemImage specialItem;
+            path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            specialItem = new TreeViewItemImage()
+            {
+                Header = "Desktop",
+                Tag = path,
+                ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/MyComputerIcon.png", UriKind.Absolute))
+            };
+            if (!CheckIfEmpty(specialItem.Tag.ToString()))
+            {
+                specialItem.Items.Add(null);
+            }
+            specialItem.Expanded += Folder_Expanded;
+            FolderTreeView.Items.Add(specialItem);
+
+            path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            specialItem = new TreeViewItemImage()
+            {
+                Header = "My Documents",
+                Tag = path,
+                ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/FolderIcon.png", UriKind.Absolute))
+            };
+            if (!CheckIfEmpty(specialItem.Tag.ToString()))
+            {
+                specialItem.Items.Add(null);
+            }
+            specialItem.Expanded += Folder_Expanded;
+            FolderTreeView.Items.Add(specialItem);
+
+            path = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            specialItem = new TreeViewItemImage()
+            {
+                Header = "My Pictures",
+                Tag = path,
+                ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/FolderIcon.png", UriKind.Absolute))
+            };
+            if (!CheckIfEmpty(specialItem.Tag.ToString()))
+            {
+                specialItem.Items.Add(null);
+            }
+            specialItem.Expanded += Folder_Expanded;
+            FolderTreeView.Items.Add(specialItem);
         }
         public void TreeView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
