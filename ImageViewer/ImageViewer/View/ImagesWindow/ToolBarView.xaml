@@ -194,12 +194,12 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Command="{Binding CreateMagnifyingGlassToolCommand}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Magnifier">
+                <Button Command="{Binding SerializeOutputFromPresenters}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Magnifier">
                     <StackPanel>
                         <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">
                             <Rectangle.OpacityMask>
-                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_magnify}"/>
+                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_save}"/>
                             </Rectangle.OpacityMask>
                         </Rectangle>
                     </StackPanel>
@@ -214,19 +214,6 @@
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Tool}" Value="Magnifier">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border CornerRadius="6" Background="#FFF3FFE4" BorderThickness="2" BorderBrush="#FF8BC34A">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </Style.Triggers>
                         </Style>
                     </Button.Style>
                 </Button>

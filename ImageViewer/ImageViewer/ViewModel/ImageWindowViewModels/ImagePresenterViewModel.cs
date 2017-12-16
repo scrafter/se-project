@@ -297,6 +297,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             DisplayedImage = _imageList[_imageIndex];
             IsSynchronized = true;
 
+            _aggregator.GetEvent<SerializeOutputEvent>().Subscribe(SerializeOutputFromPresenters);
             _aggregator.GetEvent<SynchronizationEvent>().Subscribe(i =>
             {
                 if (ViewModelID == i)
@@ -438,6 +439,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     cr.AffectImage(parameters);
                 }
             }
+        }
+        private void SerializeOutputFromPresenters(string path)
+        {
+            OutputSerializer os = new OutputSerializer();
+            os.SaveByRegion(DisplayedImage, ViewModelID, RegionWidth, RegionHeight, RegionLocation, path);
         }
         private void SerializeOutputFromList(Object obj)
         {
@@ -602,15 +608,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void PreviousImage(Object obj)
         {
-            _imageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
-            DisplayedImage = _imageList[_imageIndex];
-            if(IsSynchronized)
+            if (IsSynchronized)
             _aggregator.GetEvent<NextPreviousImageEvent>().Publish(false);
         }
         private void NextImage(Object obj)
         {
-            _imageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
-            DisplayedImage = _imageList[_imageIndex];
             if(IsSynchronized)
             _aggregator.GetEvent<NextPreviousImageEvent>().Publish(true);
         }

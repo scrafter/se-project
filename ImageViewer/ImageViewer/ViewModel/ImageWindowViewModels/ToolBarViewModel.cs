@@ -23,6 +23,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand GridOneToTwoCommand { get; set; }
         public RelayCommand GridTwoToTwoCommand { get; set; }
         public RelayCommand GridThreeToTreeCommand { get; set; }
+        public RelayCommand SerializeOutputFromPresenters { get; set; }
 
         public Tools Tool 
         {
@@ -57,7 +58,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             GridOneToTwoCommand = new RelayCommand(GridOneToTwoExecute);
             GridTwoToTwoCommand = new RelayCommand(GridTwoToTwoExecute);
             GridThreeToTreeCommand = new RelayCommand(GridThreeToTreeExecute);
+            SerializeOutputFromPresenters = new RelayCommand(SerializeOutput);
             GridStatus = GridStatusEvent.GridStatus.OneToOne;
+        }
+
+        private void SerializeOutput(Object obj)
+        {
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.Cancel || result == System.Windows.Forms.DialogResult.None)
+                    return;
+                string path = dialog.SelectedPath;
+                _aggregator.GetEvent<SerializeOutputEvent>().Publish(path);
+            }
         }
 
         private void GridOneExecute(object obj)
