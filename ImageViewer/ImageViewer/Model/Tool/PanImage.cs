@@ -43,6 +43,9 @@ namespace ImageViewer.Model
                 sdi.PresenterID = presenterID;
                 sdi.IsSynchronized = (bool)args["IsSynchronized"];
                 sdi.DoProcessing = (bool)args["DoProcessing"];
+                sdi.OffsetX = offsetX - mouseXDelta;
+                sdi.OffsetY = offsetY - mouseYDelta;
+                sdi.DoReset = false;
                 aggregator.GetEvent<SendDisplayedImage>().Publish(sdi);
 
             }
