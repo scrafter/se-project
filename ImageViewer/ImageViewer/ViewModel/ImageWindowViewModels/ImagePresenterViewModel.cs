@@ -51,6 +51,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand SaveRegionCommand { get; set; }
         public RelayCommand SerializeOutputFromListCommand { get; set; }
         public RelayCommand ResetPositionCommand { get; set; }
+        public RelayCommand ResetZoomCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseMoveCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseOverCommand { get; set; }
@@ -132,6 +133,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     _subscriptionTokens.Remove(typeof(SynchronizeRegions));
                     _aggregator.GetEvent<NextPreviousImageEvent>().Unsubscribe(_subscriptionTokens[typeof(NextPreviousImageEvent)]);
                     _subscriptionTokens.Remove(typeof(NextPreviousImageEvent));
+                    _aggregator.GetEvent<ZoomEvent>().Unsubscribe(_subscriptionTokens[typeof(ZoomEvent)]);
+                    _subscriptionTokens.Remove(typeof(ZoomEvent));
                 }
                 NotifyPropertyChanged();
             }
@@ -345,6 +348,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             ImageIndex = 0;
             DisplayedImage = _imageList[_imageIndex];
             IsSynchronized = true;
+            Scale = 1;
 
             _aggregator.GetEvent<SerializeOutputEvent>().Subscribe(SerializeOutputFromPresenters);
             _aggregator.GetEvent<SynchronizationEvent>().Subscribe(i =>
@@ -426,17 +430,21 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             EscapeCommand = new RelayCommand(EscapeClicked);
             SelectAllCommand = new RelayCommand(SelectAll);
             ResetPositionCommand = new RelayCommand(ResetPosition);
+            ResetZoomCommand = new RelayCommand(ResetZoom);
             MouseLeftClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseLeftClick);
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseMove);
             MouseOverCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseEnter);
             MouseWheelCommand = new GalaSoft.MvvmLight.Command.RelayCommand<MouseWheelEventArgs>(MouseWheel);
-
-            Scale = 1;
-
         }
 
         #region Private methods
 
+        private void ResetZoom(Object arg)
+        {
+            Scale = 1;
+            if (IsSynchronized)
+                _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(Scale, ViewModelID));
+        }
         private void ResetPosition(Object arg)
         {
             ImagePosition = new Thickness(0, 0, 0, 0);
@@ -460,6 +468,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void MouseWheel(MouseWheelEventArgs e)
         {
+            e.Handled = true;
             if (e.Delta < 0)
             {
                 if (Scale > _zoomStep)
