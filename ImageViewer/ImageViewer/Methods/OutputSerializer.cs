@@ -41,25 +41,7 @@ namespace ImageViewer.Methods
                             Thickness position = regionPosition;
                             Normalize(ref width, ref height, ref position, bitmapSource);
                             bitmap = bw.GetBitmap(bitmapSource);
-                            if ((int)position.Left + width > bitmap.Width || (int)position.Top + height > bitmap.Height)
-                            {
-                                isWarned = true;
-                                if ((int)position.Left > bitmap.Width || (int)position.Top > bitmap.Height)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    if ((int)position.Left + width > bitmap.Width)
-                                        width = bitmap.Width - (int)position.Left;
-                                    if ((int)position.Top + height > bitmap.Height)
-                                        height = bitmap.Height - (int)position.Top;
-                                }
-                            }
-                            //APPLY OFFSET !!!
-                            //APPLY OFFSET !!!
-                            //APPLY OFFSET !!!
-                            bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)image.Position.Left, (int)image.Position.Top);
+                            bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0));
                         }
                         String fileName = $"Out_{++counter}.png";
                         String path = dialog.SelectedPath + $"\\{fileName}";
@@ -85,12 +67,45 @@ namespace ImageViewer.Methods
                         }
                     }
                 }
-                if(isWarned)
+                if (isWarned)
                     MessageBox.Show("Region exceeds size of one or more images. Those images will be ignored or their size will be reduced.");
             }
             else
             {
                 MessageBox.Show("Region not selected.");
+            }
+        }
+        public void SaveByRegion(Model.Image image, int id, int regionWidth, int regionHeight, Thickness regionPosition, string path)
+        {
+
+            if (regionWidth > 0 && regionHeight > 0)
+            {
+                BitmapWorker bw = new BitmapWorker();
+                BitmapSource bitmapSource = new BitmapImage(new Uri(image.FilePath));
+                Bitmap bitmap;
+                using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
+                {
+                    int width = regionWidth;
+                    int height = regionHeight;
+                    Thickness position = regionPosition;
+                    Normalize(ref width, ref height, ref position, bitmapSource);
+                    bitmap = bw.GetBitmap(bitmapSource);
+                    bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0));
+                }
+                String fileName = $"Out_{id}.png";
+                path += $"\\{fileName}";
+                if (File.Exists(path))
+                {
+                    MessageBoxResult overwriteResult = MessageBox.Show($"{fileName} already exists in this location. Do you want to overwrite it?", "Confirmation", MessageBoxButton.YesNoCancel);
+                    if (overwriteResult == MessageBoxResult.Yes)
+                        bitmap.Save(path, ImageFormat.Png);
+                    else
+                        return;
+                }
+                else
+                {
+                    bitmap.Save(path, ImageFormat.Png);
+                }
             }
         }
         private void Normalize(ref int width, ref int height, ref Thickness position, BitmapSource source)
