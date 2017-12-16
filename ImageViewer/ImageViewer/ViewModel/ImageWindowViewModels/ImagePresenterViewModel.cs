@@ -308,9 +308,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             });
             _aggregator.GetEvent<SendDisplayedImage>().Subscribe(item =>
             {
-                if (item.PresenterID != ViewModelID)
-                    return;
-                ImagePosition = item.Image.Position;
+                if (item.PresenterID == ViewModelID)
+                    ImagePosition = item.Image.Position;
+                else if (item.IsSynchronized == true)
+                    ImagePosition = item.Image.Position;
             });
             _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
             {
@@ -575,8 +576,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("DisplayedImage", DisplayedImage);
                                     parameters.Add("Position", ImagePosition);
                                     parameters.Add("PresenterID", ViewModelID);
-                                    if(IsSynchronized)
-                                    _aggregator.GetEvent<SynchronizeImagePositions>().Publish(parameters);
+                                    parameters.Add("IsSynchronized", IsSynchronized);
                                     Tool.AffectImage(parameters);
                                     _mouseXDelta = _mouseX - (int)_mouseClickPosition.X;
                                     _mouseYDelta = _mouseY - (int)_mouseClickPosition.Y;
@@ -657,6 +657,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("DisplayedImage", DisplayedImage);
                                     parameters.Add("Position", ImagePosition);
                                     parameters.Add("PresenterID", ViewModelID);
+                                    parameters.Add("IsSynchronized", IsSynchronized);
                                 }
                                 break;
                             case Tools.Rotate:

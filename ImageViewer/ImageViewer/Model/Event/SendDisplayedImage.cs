@@ -12,5 +12,6 @@ namespace ImageViewer.Model.Event
     {
         public Image Image { get; set; }
         public int PresenterID { get; set; }
+        public bool IsSynchronized { get; set; }
     }
 }
