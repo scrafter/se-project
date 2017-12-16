@@ -31,6 +31,10 @@ namespace ImageViewer.Model
                 int regionHeight = (int)((int)args["RegionHeight"] * bitmapSource.DpiY / 96.0);
                 Thickness imagePosition = (Thickness)args["ImagePosition"];
                 int ID = (int)args["PresenterID"];
+                double scale = (double)args["Scale"];
+                var targetBitmap = new TransformedBitmap(bitmapSource, new ScaleTransform(scale, scale));
+                bitmapSource = targetBitmap;
+
                 int imagePosX = (int)(imagePosition.Left * bitmapSource.DpiX / 96.0); 
                 int imagePosY = (int)(imagePosition.Top * bitmapSource.DpiY / 96.0);
                 int posX = (int)(regionLocation.X * bitmapSource.DpiX / 96.0);

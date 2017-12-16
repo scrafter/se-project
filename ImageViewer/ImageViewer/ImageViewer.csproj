@@ -139,6 +139,7 @@
     <Compile Include="Model\Event\SynchronizationEvent.cs" />
     <Compile Include="Model\Event\SynchronizeImagePositions.cs" />
     <Compile Include="Model\Event\SynchronizeRegions.cs" />
+    <Compile Include="Model\Event\ZoomEvent.cs" />
     <Compile Include="Model\RegionImage.cs" />
     <Compile Include="Model\Region.cs" />
     <Compile Include="Model\ResizableGrid.cs" />
