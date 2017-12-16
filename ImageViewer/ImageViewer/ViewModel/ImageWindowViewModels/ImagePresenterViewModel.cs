@@ -675,6 +675,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("PresenterID", ViewModelID);
                                 }
                                 break;
+                            case Tools.Rotate:
+                                {
+                                    parameters.Add("DisplayedImage", DisplayedImage);
+                                    parameters.Add("PresenterID", ViewModelID);
+                                }
+                                break;
+
                             default:
                                 return;
                         }

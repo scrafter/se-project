@@ -24,6 +24,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand GridTwoToTwoCommand { get; set; }
         public RelayCommand GridThreeToTreeCommand { get; set; }
         public RelayCommand SerializeOutputFromPresenters { get; set; }
+        public RelayCommand CreateRotateImageToolCommand { get; set; }
 
         public Tools Tool 
         {
@@ -60,6 +61,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             GridThreeToTreeCommand = new RelayCommand(GridThreeToTreeExecute);
             SerializeOutputFromPresenters = new RelayCommand(SerializeOutput);
             GridStatus = GridStatusEvent.GridStatus.OneToOne;
+            CreateRotateImageToolCommand = new RelayCommand(CreateRotateImageTool);
+
         }
 
         private void SerializeOutput(Object obj)
@@ -116,6 +119,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             Tool = Tools.ImagePan;
             DisplayImageWindowViewModel.Tool = Tool;
         }
+
+        private void CreateRotateImageTool(object obj)
+        {
+            _aggregator.GetEvent<SendToolEvent>().Publish(new Rotate());
+            Tool = Tools.Rotate;
+        }
+
 
         private void CreateRegionTool(object obj)
         {

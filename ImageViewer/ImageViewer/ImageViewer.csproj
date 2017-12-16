@@ -143,6 +143,7 @@
     <Compile Include="Model\Region.cs" />
     <Compile Include="Model\ResizableGrid.cs" />
     <Compile Include="Model\Tools.cs" />
+    <Compile Include="Model\Tool\Rotate.cs" />
     <Compile Include="Model\Tool\ITool.cs" />
     <Compile Include="Model\Tool\CreateRegion.cs" />
     <Compile Include="Model\Tool\PanImage.cs" />
