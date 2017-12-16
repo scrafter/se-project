@@ -311,7 +311,7 @@
                       </Setter.Value>
                     </Setter>
                     <Style.Triggers>
-                      <DataTrigger Binding="{Binding Tool}" Value="Magnifier">
+                                <DataTrigger Binding="{Binding Tool}" Value="Rotate">
                         <Setter Property="Template">
                           <Setter.Value>
                             <ControlTemplate TargetType="Button">

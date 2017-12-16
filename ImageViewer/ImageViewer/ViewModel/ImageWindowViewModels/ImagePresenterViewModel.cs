@@ -287,6 +287,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 case Tools.ImagePan:
                     Tool = new PanImage();
                     break;
+                case Tools.Rotate:
+                    Tool = new Rotate();
+                    break;
                 default:
                     break;
             }
@@ -400,30 +403,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if (sr.PresenterID != ViewModelID)
             {
-                //if (sr.Position.Left >= ImageSource.Width || sr.Position.Top >= ImageSource.Height)
-                //{
-                //    RegionLocation = new Thickness(0, 0, 0, 0);
-                //    RegionWidth = 0;
-                //    RegionHeight = 0;
-                //}
-
                 RegionWidth = sr.Width;
                 RegionHeight = sr.Height;
                 int top = (int)sr.Position.Top;
                 int left = (int)sr.Position.Left;
-                //if (top < 0)
-                //    top = 0;
-                //if (left < 0)
-                //    left = 0;
-                //if (left >= ImageSource.Width)
-                //    left = (int)ImageSource.Width;
-                //if (top >= ImageSource.Height)
-                //    top = (int)ImageSource.Height;
                 RegionLocation = new Thickness(left, top, 0, 0);
-                //if (left + RegionWidth >= ImageSource.Width)
-                //    RegionWidth = (int)ImageSource.Width - left;
-                //if (top + RegionHeight >= ImageSource.Height)
-                //    RegionHeight = (int)ImageSource.Height - top;
 
                 if (sr.DoProcessing)
                 {

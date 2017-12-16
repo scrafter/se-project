@@ -124,6 +124,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             _aggregator.GetEvent<SendToolEvent>().Publish(new Rotate());
             Tool = Tools.Rotate;
+            DisplayImageWindowViewModel.Tool = Tool;
         }
 
 
