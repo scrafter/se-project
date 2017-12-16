@@ -84,7 +84,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-        
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="Drop">
                 <Command:EventToCommand Command="{Binding DragEnterCommand}" PassEventArgsToCommand="True"/>
