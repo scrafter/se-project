@@ -39,6 +39,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private Image _displayedImage;
         private ObservableCollection<Image> _imageList;
         private BitmapSource _imageSource;
+        private double _scale;
+        private double _zoomStep = 0.2;
         private ITool _tool = null;
         private Tools _toolType = Tools.None;
 
@@ -53,6 +55,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseOverCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> ImageClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<MouseWheelEventArgs> MouseWheelCommand { get; set; }
+
+
         #endregion
         #region Properties
         public bool IsSynchronized
@@ -77,6 +81,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     {
                         token = _aggregator.GetEvent<SynchronizeRegions>().Subscribe(SynchronizeRegion);
                         _subscriptionTokens.Add(typeof(SynchronizeRegions), token);
+                    }
+
+                    if(!_subscriptionTokens.ContainsKey(typeof(ZoomEvent)))
+                    {
+                        token = _aggregator.GetEvent<ZoomEvent>().Subscribe(MouseWheel);
+                        _subscriptionTokens.Add(typeof(ZoomEvent), token);
                     }
 
                     if (!_subscriptionTokens.ContainsKey(typeof(NextPreviousImageEvent)))
@@ -265,6 +275,22 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
+
+        public double Scale
+        {
+            get
+            {
+                return _scale;
+            }
+            set
+            {
+                _scale = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
+
         #endregion
 
         public ImagePresenterViewModel(ObservableCollection<Image> image, int viewModelID, Tools tool)
@@ -377,6 +403,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseMove);
             MouseOverCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseEnter);
             MouseWheelCommand = new GalaSoft.MvvmLight.Command.RelayCommand<MouseWheelEventArgs>(MouseWheel);
+
+            Scale = 1;
+
         }
 
         #region Private methods
@@ -393,7 +422,24 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void MouseWheel(MouseWheelEventArgs e)
         {
-            e.Handled = true;
+            if(e.Delta<0)
+            {
+                if(Scale > _zoomStep)
+                {
+                    Scale -= _zoomStep;
+                }
+                
+            }
+            else
+            {
+                if (Scale <= 8.0)
+                {
+                    Scale += _zoomStep;
+                }
+            }
+
+
+            
         }
         private void MouseEnter(RoutedEventArgs e)
         {

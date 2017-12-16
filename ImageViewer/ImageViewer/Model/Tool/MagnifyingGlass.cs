@@ -35,7 +35,7 @@ namespace ImageViewer.Model
             try
             {
                 IEventAggregator aggregator;
-                ZoomingInfo zi;
+                //ZoomingInfo zi;
                 Image image = (Image)args["DisplayedImage"];
                 BitmapSource bitmapSource = image.OriginalBitmap;
                 int clickPositionX = (int)((int)args["ClickPositionX"] * bitmapSource.DpiX / 96.0);
@@ -47,12 +47,12 @@ namespace ImageViewer.Model
                 if (zoomValue >= 1)
                 {
                     aggregator = GlobalEvent.GetEventAggregator();
-                    zi = new ZoomingInfo();
-                    image.Bitmap = image.OriginalBitmap;
-                    zi.ZoomScale = 1;
-                    zi.ImagePositionX = 0;
-                    zi.ImagePositionY = 0;
-                    aggregator.GetEvent<SendZoomEvent>().Publish(zi);
+                    //zi = new ZoomingInfo();
+                    //image.Bitmap = image.OriginalBitmap;
+                    //zi.ZoomScale = 1;
+                    //zi.ImagePositionX = 0;
+                    //zi.ImagePositionY = 0;
+                    //aggregator.GetEvent<SendZoomEvent>().Publish(zi);
                 }
                 else
                 {
@@ -84,11 +84,11 @@ namespace ImageViewer.Model
                     //finalBitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
 
                     aggregator = GlobalEvent.GetEventAggregator();
-                    zi = new ZoomingInfo();
-                    zi.ZoomScale = 1/zoomValue;
-                    zi.ImagePositionX = zoomPositionXBeg;
-                    zi.ImagePositionY = zoomPositionYBeg;
-                    aggregator.GetEvent<SendZoomEvent>().Publish(zi);
+                    //zi = new ZoomingInfo();
+                    //zi.ZoomScale = 1/zoomValue;
+                    //zi.ImagePositionX = zoomPositionXBeg;
+                    //zi.ImagePositionY = zoomPositionYBeg;
+                    //aggregator.GetEvent<SendZoomEvent>().Publish(zi);
                 }
 
             }

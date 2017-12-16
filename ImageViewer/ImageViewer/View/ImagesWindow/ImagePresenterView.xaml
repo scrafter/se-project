@@ -52,7 +52,7 @@
                 <Grid>
                     <Image ClipToBounds="True" Focusable="False" Source="{Binding ImageSource}" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" Margin="{Binding ImagePosition}" >
                         <Image.RenderTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
                         </Image.RenderTransform>
                     </Image>
 
