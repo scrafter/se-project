@@ -31,7 +31,7 @@
     <Border x:Name="border"  BorderThickness="3">
         <Border.Style>
             <Style TargetType="Border">
-                <Setter Property="BorderBrush" Value="LightGreen"/>
+                <Setter Property="BorderBrush" Value="#FF8BC34A"/>
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding IsSynchronized}" Value="False">
                         <Setter Property="BorderBrush" Value="Red"/>
@@ -39,69 +39,86 @@
                 </Style.Triggers>
             </Style>
         </Border.Style>
-        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
-            <Grid Focusable="True"  Grid.Row="1" Grid.Column="1" ClipToBounds="True" HorizontalAlignment="Stretch">
-                <Grid.Background>
-                    <ImageBrush Stretch="UniformToFill">
-                        <ImageBrush.ImageSource>
-                            <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
-                        </ImageBrush.ImageSource>
-                    </ImageBrush>
-                </Grid.Background>
-                <Grid>
-                    <Image ClipToBounds="True" Focusable="False" Source="{Binding ImageSource}" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" Margin="{Binding ImagePosition}" >
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
-                        </Image.RenderTransform>
-                    </Image>
-
-                    <Rectangle StrokeThickness="1" Width="{Binding RegionWidth}" Height="{Binding RegionHeight}" Fill="Transparent" Margin="{Binding RegionLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
-                        <Rectangle.ToolTip>
-                            <ToolTip>
-                                <local:RegionInformationView Margin="0"/>
-                            </ToolTip>
-                        </Rectangle.ToolTip>
-                        <Rectangle.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Save region" Command="{Binding SaveRegionCommand}" CommandParameter="{Binding}"/>
-                                <MenuItem Header="Serialize output" Command="{Binding SerializeOutputFromListCommand}" CommandParameter="{Binding}"/>
-                            </ContextMenu>
-                        </Rectangle.ContextMenu>
-                        <Rectangle.Stroke>
-                            <LinearGradientBrush x:Name="StrokeColor" StartPoint="0,0" EndPoint="0.005, 0.005" SpreadMethod="Reflect">
-                                <GradientStop Color="Black" Offset="1"/>
-                                <GradientStop Color="White" Offset="0"/>
-                            </LinearGradientBrush>
-                        </Rectangle.Stroke>
-                    </Rectangle>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
+                <Grid Focusable="True" ClipToBounds="True" HorizontalAlignment="Stretch">
+                    <Grid.Background>
+                        <ImageBrush Stretch="UniformToFill">
+                            <ImageBrush.ImageSource>
+                                <BitmapImage UriSource="pack://application:,,,/Resources/Images/AlphaBackground.jpg"/>
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Grid.Background>
+                    <Grid>
+                        <Image ClipToBounds="True" Focusable="False" Source="{Binding ImageSource}" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" Margin="{Binding ImagePosition}" >
+                            <Image.RenderTransform>
+                                <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
+                            </Image.RenderTransform>
+                        </Image>
+                        <Rectangle StrokeThickness="1" Width="{Binding RegionWidth}" Height="{Binding RegionHeight}" Fill="Transparent" Margin="{Binding RegionLocation}" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTipService.ShowDuration="3600000" ToolTipService.InitialShowDelay="1500">
+                            <Rectangle.ToolTip>
+                                <ToolTip>
+                                    <local:RegionInformationView Margin="0"/>
+                                </ToolTip>
+                            </Rectangle.ToolTip>
+                            <Rectangle.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Save region" Command="{Binding SaveRegionCommand}" CommandParameter="{Binding}"/>
+                                    <MenuItem Header="Serialize output" Command="{Binding SerializeOutputFromListCommand}" CommandParameter="{Binding}"/>
+                                </ContextMenu>
+                            </Rectangle.ContextMenu>
+                            <Rectangle.Stroke>
+                                <LinearGradientBrush x:Name="StrokeColor" StartPoint="0,0" EndPoint="0.005, 0.005" SpreadMethod="Reflect">
+                                    <GradientStop Color="Black" Offset="1"/>
+                                    <GradientStop Color="White" Offset="0"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Stroke>
+                        </Rectangle>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseEnter">
+                                <Command:EventToCommand Command="{Binding MouseOverCommand}" PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="MouseWheel">
+                                <Command:EventToCommand Command="{Binding MouseWheelCommand}" PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Grid>
                     <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseEnter">
-                            <Command:EventToCommand Command="{Binding MouseOverCommand}" PassEventArgsToCommand="True"/>
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                            <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
-                        <i:EventTrigger EventName="MouseWheel">
-                            <Command:EventToCommand Command="{Binding MouseWheelCommand}" PassEventArgsToCommand="True"/>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseMove">
+                            <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Grid>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseLeftButtonUp">
-                        <Command:EventToCommand Command="{Binding ImageClickCommand}" PassEventArgsToCommand="True"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseLeftButtonDown">
-                        <Command:EventToCommand Command="{Binding MouseLeftClickCommand}" PassEventArgsToCommand="True"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseMove">
-                        <Command:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Grid>
-            <ScrollViewer.InputBindings>
-                <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
-                <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
-                <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
-                <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
-            </ScrollViewer.InputBindings>
-        </ScrollViewer>
+                <ScrollViewer.InputBindings>
+                    <KeyBinding Key="Left" Modifiers="" Command="{Binding LeftArrowCommand}"/>
+                    <KeyBinding Key="Right" Modifiers="" Command="{Binding RightArrowCommand}"/>
+                    <KeyBinding Key="Esc" Modifiers="" Command="{Binding EscapeCommand}"/>
+                    <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectAllCommand}"/>
+                </ScrollViewer.InputBindings>
+            </ScrollViewer>
+            <TextBlock Text="{Binding ImageIndex}" Foreground="#FF8BC34A" Grid.Row="0" Grid.Column="0" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" FontSize="22"/>
+            <TextBlock Text="{Binding DisplayedImage.FilePath}" Foreground="#FF999999" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">
+                <TextBlock.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="{Binding DisplayedImage.FilePath}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+                    </ToolTip>
+                </TextBlock.ToolTip>
+            </TextBlock>
+        </Grid>
         <i:Interaction.Behaviors>
             <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
         </i:Interaction.Behaviors>

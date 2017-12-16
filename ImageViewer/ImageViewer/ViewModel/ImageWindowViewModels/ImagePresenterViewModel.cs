@@ -60,6 +60,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         #endregion
         #region Properties
+        public int ImageIndex
+        {
+            get
+            {
+                return _imageIndex;
+            }
+            set
+            {
+                _imageIndex = value;
+                NotifyPropertyChanged();
+            }
+        }
         public bool IsSynchronized
         {
             get
@@ -94,15 +106,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     {
                         token = _aggregator.GetEvent<NextPreviousImageEvent>().Subscribe(arg =>
                         {
-                            if (arg)
+                            if(arg.PresenterID != ViewModelID)
                             {
-                                _imageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
-                                DisplayedImage = _imageList[_imageIndex];
-                            }
-                            else
-                            {
-                                _imageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
-                                DisplayedImage = _imageList[_imageIndex];
+                                if (arg.ToNext)
+                                {
+                                    ImageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
+                                    DisplayedImage = _imageList[_imageIndex];
+                                }
+                                else
+                                {
+                                    ImageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
+                                    DisplayedImage = _imageList[_imageIndex];
+                                }
                             }
                         });
                         _subscriptionTokens.Add(typeof(NextPreviousImageEvent), token);
@@ -327,7 +342,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             ViewModelID = viewModelID;
             _imageList = new ObservableCollection<Image>();
             _imageList = image;
-            _imageIndex = 0;
+            ImageIndex = 0;
             DisplayedImage = _imageList[_imageIndex];
             IsSynchronized = true;
 
@@ -388,7 +403,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         if (!item.Any(x => x == _imageList))
                         {
                             _imageList = item[0];
-                            _imageIndex = 0;
+                            ImageIndex = 0;
                             DisplayedImage = _imageList[0];
                         }
                     }
@@ -683,13 +698,17 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void PreviousImage(Object obj)
         {
+            ImageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
+            DisplayedImage = _imageList[_imageIndex];
             if (IsSynchronized)
-                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(false);
+                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(new NextPreviousImageEvent(false, ViewModelID));
         }
         private void NextImage(Object obj)
         {
+            ImageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
+            DisplayedImage = _imageList[_imageIndex];
             if (IsSynchronized)
-                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(true);
+                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(new NextPreviousImageEvent(true, ViewModelID));
         }
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
