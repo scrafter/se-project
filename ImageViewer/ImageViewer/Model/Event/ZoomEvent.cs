@@ -8,7 +8,17 @@ using System.Windows.Input;
 
 namespace ImageViewer.Model.Event
 {
-    class ZoomEvent : PubSubEvent<MouseWheelEventArgs>
+    public class ZoomEvent : PubSubEvent<ZoomEvent>
     {
+        public double Zoom { get; set; }
+
+        public ZoomEvent()
+        {
+
+        }
+        public ZoomEvent(double zoom)
+        {
+            Zoom = zoom;
+        }
     }
 }

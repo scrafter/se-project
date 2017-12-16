@@ -83,7 +83,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         _subscriptionTokens.Add(typeof(SynchronizeRegions), token);
                     }
 
-                    if(!_subscriptionTokens.ContainsKey(typeof(ZoomEvent)))
+                    if (!_subscriptionTokens.ContainsKey(typeof(ZoomEvent)))
                     {
                         token = _aggregator.GetEvent<ZoomEvent>().Subscribe(MouseWheel);
                         _subscriptionTokens.Add(typeof(ZoomEvent), token);
@@ -356,7 +356,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionLocation = new Thickness(region.Position.X * 96.0 / region.DpiX, region.Position.Y * 96.0 / region.DpiY, 0, 0);
                 RegionWidth = (int)(region.Size.Width * 96.0 / region.DpiX);
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
-                if(IsSynchronized)
+                if (IsSynchronized)
                 {
                     SynchronizeRegions sr = new SynchronizeRegions();
                     sr.PresenterID = ViewModelID;
@@ -422,13 +422,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
         private void MouseWheel(MouseWheelEventArgs e)
         {
-            if(e.Delta<0)
+            if (e.Delta < 0)
             {
-                if(Scale > _zoomStep)
+                if (Scale > _zoomStep)
                 {
                     Scale -= _zoomStep;
                 }
-                
+
             }
             else
             {
@@ -437,9 +437,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     Scale += _zoomStep;
                 }
             }
+            if (IsSynchronized)
+                _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(Scale, ViewModelID));
 
 
-            
         }
         private void MouseEnter(RoutedEventArgs e)
         {
@@ -535,7 +536,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         RegionWidth = 0;
                         RegionHeight = 0;
                         _isDragged = true;
-                        if(IsSynchronized)
+                        if (IsSynchronized)
                         {
                             SynchronizeRegions sr = new SynchronizeRegions();
                             sr.PresenterID = ViewModelID;
@@ -590,7 +591,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     y = _mouseY;
                                 }
                                 RegionLocation = new Thickness(x, y, 0, 0);
-                                if(IsSynchronized)
+                                if (IsSynchronized)
                                 {
                                     SynchronizeRegions sr = new SynchronizeRegions();
                                     sr.PresenterID = ViewModelID;
@@ -621,8 +622,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("DisplayedImage", DisplayedImage);
                                     parameters.Add("Position", ImagePosition);
                                     parameters.Add("PresenterID", ViewModelID);
-                                    if(IsSynchronized)
-                                    _aggregator.GetEvent<SynchronizeImagePositions>().Publish(parameters);
+                                    if (IsSynchronized)
+                                        _aggregator.GetEvent<SynchronizeImagePositions>().Publish(parameters);
                                     Tool.AffectImage(parameters);
                                     _mouseXDelta = _mouseX - (int)_mouseClickPosition.X;
                                     _mouseYDelta = _mouseY - (int)_mouseClickPosition.Y;
@@ -639,12 +640,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void PreviousImage(Object obj)
         {
             if (IsSynchronized)
-            _aggregator.GetEvent<NextPreviousImageEvent>().Publish(false);
+                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(false);
         }
         private void NextImage(Object obj)
         {
-            if(IsSynchronized)
-            _aggregator.GetEvent<NextPreviousImageEvent>().Publish(true);
+            if (IsSynchronized)
+                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(true);
         }
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
@@ -674,7 +675,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                         sr.Width = RegionWidth;
                                         sr.Height = RegionHeight;
                                         sr.DoProcessing = true;
-                                        _aggregator.GetEvent<SynchronizeRegions>().Publish(sr); 
+                                        _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                                     }
                                 }
                                 break;
