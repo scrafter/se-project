@@ -11,14 +11,16 @@ namespace ImageViewer.Model.Event
     public class ZoomEvent : PubSubEvent<ZoomEvent>
     {
         public double Zoom { get; set; }
+        public int ViewModelID { get; set; }
 
         public ZoomEvent()
         {
 
         }
-        public ZoomEvent(double zoom)
+        public ZoomEvent(double zoom, int viewModelID)
         {
             Zoom = zoom;
+            ViewModelID = viewModelID;
         }
     }
 }

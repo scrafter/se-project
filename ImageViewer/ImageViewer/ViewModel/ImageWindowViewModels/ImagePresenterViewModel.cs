@@ -43,6 +43,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private double _zoomStep = 0.2;
         private ITool _tool = null;
         private Tools _toolType = Tools.None;
+        private Image _scaledDisplayedImage;
 
         public RelayCommand LeftArrowCommand { get; set; }
         public RelayCommand RightArrowCommand { get; set; }
@@ -85,7 +86,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
                     if (!_subscriptionTokens.ContainsKey(typeof(ZoomEvent)))
                     {
-                        token = _aggregator.GetEvent<ZoomEvent>().Subscribe(MouseWheel);
+                        token = _aggregator.GetEvent<ZoomEvent>().Subscribe(SynchronizeZoom);
                         _subscriptionTokens.Add(typeof(ZoomEvent), token);
                     }
 
@@ -145,6 +146,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
+
+        public Image ScaledDisplayedImage
+        {
+            get
+            {
+                return _scaledDisplayedImage;
+            }
+            set
+            {
+                _scaledDisplayedImage = DisplayedImage;
+            }
+        }
+
+
         public Image DisplayedImage
         {
             get
@@ -437,6 +452,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     Scale += _zoomStep;
                 }
             }
+
+            ImagePosition = new Thickness(ImagePosition.Left, ImagePosition.Top, ImagePosition.Right / Scale, ImagePosition.Bottom / Scale);
+
             if (IsSynchronized)
                 _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(Scale, ViewModelID));
 
@@ -446,6 +464,22 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             _aggregator.GetEvent<SendPresenterIDEvent>().Publish(ViewModelID);
         }
+
+        private void SynchronizeZoom(ZoomEvent ze)
+        {
+            if (ze.ViewModelID == this.ViewModelID)
+            {
+                return;
+            }
+            else
+            {
+                this.Scale = ze.Zoom;
+                ImagePosition = new Thickness(ImagePosition.Left, ImagePosition.Top, ImagePosition.Right / Scale, ImagePosition.Bottom / Scale);
+
+
+            }
+        }
+
         private void SynchronizeRegion(SynchronizeRegions sr)
         {
             if (sr.PresenterID != ViewModelID)
@@ -688,6 +722,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     _aggregator.GetEvent<SendPixelInformationViewEvent>().Publish(piv);
                                     parameters.Add("MouseX", MouseX);
                                     parameters.Add("MouseY", MouseY);
+
+                                    parameters.Add("Scale", Scale);
+
                                     parameters.Add("BitmapSource", ImageSource);
                                     parameters.Add("ImagePosition", ImagePosition);
                                 }

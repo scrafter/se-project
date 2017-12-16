@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace ImageViewer.Model
@@ -21,13 +22,20 @@ namespace ImageViewer.Model
         public void AffectImage(Dictionary<String, Object> args)
         {
             BitmapSource bitmapSource = (BitmapSource)args["BitmapSource"];
+            
+
             int mouseX = (int)((int)args["MouseX"] * bitmapSource.DpiX / 96);
             int mouseY = (int)((int)args["MouseY"] * bitmapSource.DpiY / 96);
+            double scale = (double)args["Scale"];
             Thickness imagePosition = (Thickness)args["ImagePosition"];
+
+            var targetBitmap = new TransformedBitmap(bitmapSource, new ScaleTransform(scale, scale));
+            bitmapSource = targetBitmap;
+
             try
             {
-                int stride = bitmapSource.PixelWidth * 4;
-                int size = bitmapSource.PixelHeight * stride;
+                int stride = (int) (bitmapSource.PixelWidth * 4);
+                int size = (int) (bitmapSource.PixelHeight * stride);
                 byte[] pixels = new byte[size];
                 bitmapSource.CopyPixels(pixels, stride, 0);
                 int row = mouseY - (int)(imagePosition.Top * bitmapSource.DpiY / 96);
