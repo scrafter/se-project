@@ -15,6 +15,7 @@ namespace ImageViewer.Model
     public class Region
     {
         public RegionImage Image { get; set; }
+        public Thickness ImagePosition { get; set; }
         public Point Position { get; set; }
         public Size Size { get; set; }
         public int DpiX { get; set;}
@@ -34,6 +35,7 @@ namespace ImageViewer.Model
             ImageList = imageList;
             AttachedImage = image;
             PresenterID = id;
+            ImagePosition = AttachedImage.Position;
         }
 
         public bool Save()

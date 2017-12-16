@@ -42,6 +42,7 @@ namespace ImageViewer.Model
                 sdi.Image = image;
                 sdi.PresenterID = presenterID;
                 sdi.IsSynchronized = (bool)args["IsSynchronized"];
+                sdi.DoProcessing = (bool)args["DoProcessing"];
                 aggregator.GetEvent<SendDisplayedImage>().Publish(sdi);
 
             }
