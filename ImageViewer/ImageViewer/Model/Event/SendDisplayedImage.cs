@@ -12,5 +12,10 @@ namespace ImageViewer.Model.Event
     {
         public Image Image { get; set; }
         public int PresenterID { get; set; }
+        public bool IsSynchronized { get; set; }
+        public bool DoProcessing { get; set; }
+        public bool DoReset { get; set; }
+        public int OffsetX { get; set; }
+        public int OffsetY { get; set; }
     }
 }
