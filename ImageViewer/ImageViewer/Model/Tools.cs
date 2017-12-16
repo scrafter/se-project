@@ -8,6 +8,6 @@ namespace ImageViewer.Model
 {
     public enum Tools
     {
-        None, RegionSelection, Magnifier, PixelInformations, RegionTransformation, ImagePan
+        None, RegionSelection, Magnifier, PixelInformations, RegionTransformation, ImagePan,Rotate
     }
 }
