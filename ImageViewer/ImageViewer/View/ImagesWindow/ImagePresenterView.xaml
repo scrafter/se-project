@@ -125,6 +125,7 @@
         <Border.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="Reset position" Command="{Binding ResetPositionCommand}" CommandParameter="{Binding}"/>
+                <MenuItem Header="Reset zoom" Command="{Binding ResetZoomCommand}" CommandParameter="{Binding}"/>
             </ContextMenu>
         </Border.ContextMenu>
     </Border>
