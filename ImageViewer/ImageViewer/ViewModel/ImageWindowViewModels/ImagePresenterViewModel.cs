@@ -395,6 +395,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionWidth = (int)(region.Size.Width * 96.0 / region.DpiX);
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
                 ImageIndex = region.ImageIndex;
+                Scale = region.Zoom;
                 if (IsSynchronized)
                 {
                     SynchronizeRegions sr = new SynchronizeRegions();
@@ -403,6 +404,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     sr.Width = RegionWidth;
                     sr.Height = RegionHeight;
                     sr.DoProcessing = true;
+                    sr.Zoom = Scale;
                     _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                 }
                 CalculateRegionProperties();
@@ -536,6 +538,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if (sr.PresenterID != ViewModelID)
             {
+                if (sr.Zoom != -1)
+                    Scale = sr.Zoom;
                 RegionWidth = sr.Width;
                 RegionHeight = sr.Height;
                 int top = (int)sr.Position.Top;
@@ -597,7 +601,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 return;
 
             Point point = new Point(RegionLocation.Left * ImageSource.DpiY / 96.0, RegionLocation.Top * ImageSource.DpiY / 96.0);
-            Region region = new Region(point, new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage, ViewModelID, ImageIndex);
+            Region region = new Region(point, new Size(_regionWidth * ImageSource.DpiY / 96.0, _regionHeight * ImageSource.DpiY / 96.0), name, new Vector(ImageSource.DpiX, ImageSource.DpiY), _imageList, _displayedImage, ViewModelID, ImageIndex, Scale);
             _aggregator.GetEvent<SendRegionEvent>().Publish(region);
             _isSaving = false;
         }

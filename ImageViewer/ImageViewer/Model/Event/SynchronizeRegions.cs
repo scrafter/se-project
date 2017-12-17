@@ -15,5 +15,11 @@ namespace ImageViewer.Model.Event
         public int Width { get; set; }
         public int Height { get; set; }
         public bool DoProcessing { get; set; }
+        public double Zoom { get; set; }
+
+        public SynchronizeRegions()
+        {
+            Zoom = -1;
+        }
     }
 }
