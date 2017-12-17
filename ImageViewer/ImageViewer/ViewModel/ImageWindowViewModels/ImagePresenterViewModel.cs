@@ -44,7 +44,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private ObservableCollection<Image> _imageList;
         private BitmapSource _imageSource;
         private double _scale;
-        private double _zoomStep = 0.2;
+        private double _zoomStep = 1.1;
         private ITool _tool = null;
         private Tools _toolType = Tools.None;
 
@@ -480,9 +480,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             e.Handled = true;
             if (e.Delta < 0)
             {
-                if (Scale > _zoomStep)
+                if (Scale > 0.1)
                 {
-                    Scale -= _zoomStep;
+                    Scale /= _zoomStep;
                 }
 
             }
@@ -490,7 +490,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 if (Scale <= 8.0)
                 {
-                    Scale += _zoomStep;
+                    Scale *= _zoomStep;
                 }
             }
 
@@ -558,14 +558,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 return;
             int x = (int)(ImagePosition.Left);
             int y = (int)(ImagePosition.Top);
-            if (x < 0)
-                x = 0;
-            if (y < 0)
-                y = 0;
 
             RegionLocation = new Thickness(x, y, 0, 0);
-            RegionWidth = (int)ImageSource.Width;
-            RegionHeight = (int)ImageSource.Height;
+            RegionWidth = (int)(ImageSource.Width * Scale);
+            RegionHeight = (int)(ImageSource.Height * Scale);
             ITool tempTool = Tool;
             Tool = new CreateRegion();
             ImageClickExecute(null);

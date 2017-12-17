@@ -112,6 +112,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding ImageIndex}" Foreground="#FF8BC34A" Grid.Column="0" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" FontSize="22"/>
                 <TextBlock Text="{Binding DisplayedImage.FilePath}" Foreground="#FF999999" Grid.Column="1" Margin="8, 2, 2, 2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">
@@ -125,6 +126,13 @@
                     <TextBlock.ToolTip>
                         <ToolTip>
                             <TextBlock Text="{Binding ImageSize}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+                <TextBlock Text="{Binding Scale}" Foreground="#FF999999" Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold" Margin="8, 2, 2, 2">
+                    <TextBlock.ToolTip>
+                        <ToolTip>
+                            <TextBlock Text="{Binding Scale}" Background="White" Foreground="Black" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold"/>
                         </ToolTip>
                     </TextBlock.ToolTip>
                 </TextBlock>
