@@ -159,8 +159,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
-                foreach (var item in ImageList)
-                    ImageList.Remove(item);
+                ImageList.Clear();
             }));
         }
     }
