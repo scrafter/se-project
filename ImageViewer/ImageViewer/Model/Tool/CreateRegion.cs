@@ -34,32 +34,25 @@ namespace ImageViewer.Model
                 Thickness imagePosition = (Thickness)args["ImagePosition"];
                 int ID = (int)args["PresenterID"];
                 double scale = (double)args["Scale"];
-                var targetBitmap = new TransformedBitmap(bitmapSource, new ScaleTransform(scale, scale));
-                bitmapSource = targetBitmap;
 
-                int imagePosX = (int)(imagePosition.Left * bitmapSource.DpiX / 96.0); 
+                int imagePosX = (int)(imagePosition.Left * bitmapSource.DpiX / 96.0);
                 int imagePosY = (int)(imagePosition.Top * bitmapSource.DpiY / 96.0);
                 int posX = (int)(regionLocation.X * bitmapSource.DpiX / 96.0);
                 int posY = (int)(regionLocation.Y * bitmapSource.DpiY / 96.0);
                 if (regionWidth <= 0 || regionHeight <= 0)
                     return;
 
-
-
-                int stride = (regionWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
-                int size = regionHeight * stride;
-                byte[] pixels = new byte[size];
                 Bitmap bitmap;
-                using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-                {
-                    bitmap = bw.GetBitmap(bitmapSource);
-                    bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY, 1);
-                }
+                bitmap = bw.GetBitmap(bitmapSource);
+                bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY, scale);
 
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp" + ID.ToString() + ".png", ImageFormat.Png);
                 bitmapSource = bw.BitmapToSource(bitmap);
+                int stride;
+                int size;
                 stride = (bitmapSource.PixelWidth * bitmapSource.Format.BitsPerPixel + 7) / 8;
-                size = regionHeight * stride;
+                size = bitmapSource.PixelHeight * stride;
+                byte[] pixels = new byte[size];
                 bitmapSource.CopyPixels(pixels, stride, 0);
 
                 List<byte> alphas = new List<byte>();
@@ -108,12 +101,12 @@ namespace ImageViewer.Model
 
                 GetVarianceAndDeviation(ref variances, ref deviations, averages, reds, greens, blues, alphas);
 
-                Dictionary<string,Object> regionInformation = new Dictionary<string, Object>();
+                Dictionary<string, Object> regionInformation = new Dictionary<string, Object>();
                 regionInformation.Add("Averages", averages);
                 regionInformation.Add("Mins", mins);
                 regionInformation.Add("Maxs", maxs);
-                regionInformation.Add("Width", (int)(bitmap.Width/scale));
-                regionInformation.Add("Height", (int)(bitmap.Height/scale));
+                regionInformation.Add("Width", (int)(bitmap.Width));
+                regionInformation.Add("Height", (int)(bitmap.Height));
                 regionInformation.Add("Variances", variances);
                 regionInformation.Add("Deviations", deviations);
                 regionInformation.Add("PresenterID", ID);
@@ -122,7 +115,7 @@ namespace ImageViewer.Model
                 _aggregator.GetEvent<SendRegionInformationEvent>().Publish(regionInformation);
 
             }
-            catch(KeyNotFoundException)
+            catch (KeyNotFoundException)
             {
 
             }
