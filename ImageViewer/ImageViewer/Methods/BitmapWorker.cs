@@ -29,7 +29,11 @@ namespace ImageViewer.Methods
                 TransportStream.Dispose();
                 return bmp;
             }
-            catch { MessageBox.Show("failed"); return null; }
+            catch
+            {
+                MessageBox.Show("failed");
+                return null;
+            }
         }
         public Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height, int offsetX, int offsetY, double scale)
         {
@@ -119,10 +123,20 @@ namespace ImageViewer.Methods
                                 c1 = Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
                             else c1 = Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
 
-                            data2[index3 + 0] = c1.B;
-                            data2[index3 + 1] = c1.G;
-                            data2[index3 + 2] = c1.R;
-                            data2[index3 + 3] = c1.A;
+                            if(c1.A == 0)
+                            {
+                                data2[index3 + 0] = 0;
+                                data2[index3 + 1] = 0;
+                                data2[index3 + 2] = 0;
+                                data2[index3 + 3] = c1.A;
+                            }
+                            else
+                            {
+                                data2[index3 + 0] = c1.B;
+                                data2[index3 + 1] = c1.G;
+                                data2[index3 + 2] = c1.R;
+                                data2[index3 + 3] = c1.A;
+                            }
                         }
                     }
                 }
