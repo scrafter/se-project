@@ -23,6 +23,7 @@ namespace ImageViewer.Model
         {
             Image image = (Image)args["DisplayedImage"];
             int presenterID = (int)args["PresenterID"];
+            List<int> presenters = (List<int>)args["SynchronizedPresenters"];
             var transformedBitmap = new TransformedBitmap();
             transformedBitmap.BeginInit();
             transformedBitmap.Source = image.Bitmap;
@@ -30,11 +31,13 @@ namespace ImageViewer.Model
             transformedBitmap.EndInit();
             image.Bitmap = transformedBitmap;
 
-            SendDisplayedImage sdi = new SendDisplayedImage();
+            RotateImageEvent ri = new RotateImageEvent();
             IEventAggregator aggregator = GlobalEvent.GetEventAggregator();
-            sdi.Image = image;
-            sdi.PresenterID = presenterID;
-            aggregator.GetEvent<SendDisplayedImage>().Publish(sdi);
+            presenters.Add(presenterID);
+            ri.Image = image;
+            ri.PresenterID = presenterID;
+            ri.SynchronizedPresenters = presenters;
+            aggregator.GetEvent<RotateImageEvent>().Publish(ri);
 
         }
 

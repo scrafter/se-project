@@ -126,6 +126,7 @@
     <Compile Include="Model\Event\GridStatusEvent.cs" />
     <Compile Include="Model\Event\LoadRegionEvent.cs" />
     <Compile Include="Model\Event\NextPreviousImageEvent.cs" />
+    <Compile Include="Model\Event\RotateEventEvent.cs" />
     <Compile Include="Model\Event\SendDisplayedImage.cs" />
     <Compile Include="Model\Event\SendPixelInformationEvent.cs" />
     <Compile Include="Methods\MouseManagement.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Model\Event\SynchronizationEvent.cs" />
     <Compile Include="Model\Event\SynchronizeImagePositions.cs" />
     <Compile Include="Model\Event\SynchronizeRegions.cs" />
+    <Compile Include="Model\Event\SynchronizeRotationEvent.cs" />
     <Compile Include="Model\Event\ZoomEvent.cs" />
     <Compile Include="Model\RegionImage.cs" />
     <Compile Include="Model\Region.cs" />

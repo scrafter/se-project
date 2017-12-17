@@ -21,19 +21,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     {
 
         #region currentViewModels
+        List<ImagePresenterViewModel> _presentersList = new List<ImagePresenterViewModel>();
         private Dictionary<Type, SubscriptionToken> _subscriptionTokens = new Dictionary<Type, SubscriptionToken>();
         private bool disposedValue = false;
-        private BaseViewModel _currentViewModel1;
-        private BaseViewModel _currentViewModel2;
-        private BaseViewModel _currentViewModel3;
-        private BaseViewModel _currentViewModel4;
-        private BaseViewModel _currentViewModel5;
-        private BaseViewModel _currentViewModel6;
-        private BaseViewModel _currentViewModel7;
-        private BaseViewModel _currentViewModel8;
-        private BaseViewModel _currentViewModel9;
+        private ImagePresenterViewModel _currentViewModel1;
+        private ImagePresenterViewModel _currentViewModel2;
+        private ImagePresenterViewModel _currentViewModel3;
+        private ImagePresenterViewModel _currentViewModel4;
+        private ImagePresenterViewModel _currentViewModel5;
+        private ImagePresenterViewModel _currentViewModel6;
+        private ImagePresenterViewModel _currentViewModel7;
+        private ImagePresenterViewModel _currentViewModel8;
+        private ImagePresenterViewModel _currentViewModel9;
 
-        public BaseViewModel CurrentViewModel1
+        public ImagePresenterViewModel CurrentViewModel1
         {
             get { return _currentViewModel1; }
             set
@@ -42,7 +43,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel2
+        public ImagePresenterViewModel CurrentViewModel2
         {
             get { return _currentViewModel2; }
             set
@@ -51,7 +52,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel3
+        public ImagePresenterViewModel CurrentViewModel3
         {
             get { return _currentViewModel3; }
             set
@@ -60,7 +61,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel4
+        public ImagePresenterViewModel CurrentViewModel4
         {
             get { return _currentViewModel4; }
             set
@@ -69,7 +70,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel5
+        public ImagePresenterViewModel CurrentViewModel5
         {
             get { return _currentViewModel5; }
             set
@@ -78,7 +79,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel6
+        public ImagePresenterViewModel CurrentViewModel6
         {
             get { return _currentViewModel6; }
             set
@@ -87,7 +88,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel7
+        public ImagePresenterViewModel CurrentViewModel7
         {
             get { return _currentViewModel7; }
             set
@@ -96,7 +97,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel8
+        public ImagePresenterViewModel CurrentViewModel8
         {
             get { return _currentViewModel8; }
             set
@@ -105,7 +106,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 NotifyPropertyChanged();
             }
         }
-        public BaseViewModel CurrentViewModel9
+        public ImagePresenterViewModel CurrentViewModel9
         {
             get { return _currentViewModel9; }
             set
@@ -182,6 +183,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         public DisplayImageWindowViewModel()
         {
+            _presentersList.Add(CurrentViewModel1);
+            _presentersList.Add(CurrentViewModel2);
+            _presentersList.Add(CurrentViewModel3);
+            _presentersList.Add(CurrentViewModel4);
+            _presentersList.Add(CurrentViewModel5);
+            _presentersList.Add(CurrentViewModel6);
+            _presentersList.Add(CurrentViewModel7);
+            _presentersList.Add(CurrentViewModel8);
+            _presentersList.Add(CurrentViewModel9);
+
             GridStatus = GridStatusEvent.GridStatus.OneToOne;
             ShowToolbarCommand = new RelayCommand(ShowToolbar, x =>
             {
@@ -204,6 +215,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _subscriptionTokens.Add(typeof(SendPixelInformationViewEvent), subscriptionToken);
             subscriptionToken = _aggregator.GetEvent<DisplayImage>().Subscribe(item =>
             {
+                foreach (var presenter in _presentersList)
+                {
+                //if (presenter != null)
+                //    if (presenter.ImageList == item)
+                //    {
+                //        MessageBox.Show($"This list is already loaded to the window with ID: {presenter.PresenterID}", "Warning", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                //        return;
+                //    }
+                }
                 _imageList = item;
                 _imageCounter++;
                 CreateMultiView(_imageList);

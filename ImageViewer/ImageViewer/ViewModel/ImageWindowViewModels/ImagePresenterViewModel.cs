@@ -65,6 +65,21 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         #endregion
         #region Properties
+        public ObservableCollection<Image> ImageList
+        {
+            get
+            {
+                return _imageList;
+            }
+        }
+
+        public int PresenterID
+        {
+            get
+            {
+                return ViewModelID;
+            }
+        }
         public int ImageIndex
         {
             get
@@ -106,6 +121,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         token = _aggregator.GetEvent<ZoomEvent>().Subscribe(SynchronizeZoom);
                         _subscriptionTokens.Add(typeof(ZoomEvent), token);
                     }
+                    if (!_subscriptionTokens.ContainsKey(typeof(SynchronizeRotationEvent)))
+                    {
+                        token = _aggregator.GetEvent<SynchronizeRotationEvent>().Subscribe(SynchronizeRotation);
+                        _subscriptionTokens.Add(typeof(SynchronizeRotationEvent), token);
+                    }
 
                     if (!_subscriptionTokens.ContainsKey(typeof(NextPreviousImageEvent)))
                     {
@@ -139,6 +159,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     _subscriptionTokens.Remove(typeof(NextPreviousImageEvent));
                     _aggregator.GetEvent<ZoomEvent>().Unsubscribe(_subscriptionTokens[typeof(ZoomEvent)]);
                     _subscriptionTokens.Remove(typeof(ZoomEvent));
+                    _aggregator.GetEvent<SynchronizeRotationEvent>().Unsubscribe(_subscriptionTokens[typeof(SynchronizeRotationEvent)]);
+                    _subscriptionTokens.Remove(typeof(SynchronizeRotationEvent));
                 }
                 NotifyPropertyChanged();
             }
@@ -352,6 +374,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             IsSynchronized = true;
             Scale = 1;
             _aggregator.GetEvent<SerializeOutputEvent>().Subscribe(SerializeOutputFromPresenters);
+            _aggregator.GetEvent<RotateImageEvent>().Subscribe(RotateImage);
             _aggregator.GetEvent<SynchronizationEvent>().Subscribe(i =>
             {
                 if (ViewModelID == i)
@@ -449,7 +472,28 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         }
 
         #region Private methods
-
+        private void SynchronizeRotation(RotateImageEvent ri)
+        {
+            if (ri.SynchronizedPresenters.Contains(ViewModelID))
+                return;
+            Rotate rotate = new Rotate();
+            Dictionary<String, Object> parameters = new Dictionary<String, Object>();
+            parameters.Add("DisplayedImage", DisplayedImage);
+            parameters.Add("PresenterID", ViewModelID);
+            parameters.Add("SynchronizedPresenters", ri.SynchronizedPresenters);
+            rotate.AffectImage(parameters);
+        }
+        private void RotateImage(RotateImageEvent ri)
+        {
+            if (ri.PresenterID == ViewModelID)
+            {
+                DisplayedImage = ri.Image;
+                if(IsSynchronized)
+                {
+                    _aggregator.GetEvent<SynchronizeRotationEvent>().Publish(ri);
+                }
+            }
+        }
         private void ResetZoom(Object arg)
         {
             Scale = 1;
@@ -522,14 +566,14 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if (ze.ViewModelID != this.ViewModelID)
             {
-                if(ze.ZoomReset)
+                if (ze.ZoomReset)
                 {
                     Scale = 1;
                     return;
                 }
                 this.Scale *= ze.ScaleDelta;
                 int left = (int)(ze.MouseX - (ze.MouseX - ImagePosition.Left) * ze.ScaleDelta);
-                int top = (int)(ze.MouseY - (ze.MouseY - ImagePosition.Top)* ze.ScaleDelta);
+                int top = (int)(ze.MouseY - (ze.MouseY - ImagePosition.Top) * ze.ScaleDelta);
                 ImagePosition = new Thickness(left, top, -left, -top);
             }
         }
@@ -811,8 +855,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                 break;
                             case Tools.Rotate:
                                 {
+                                    List<int> presenters = new List<int>();
                                     parameters.Add("DisplayedImage", DisplayedImage);
                                     parameters.Add("PresenterID", ViewModelID);
+                                    parameters.Add("SynchronizedPresenters", presenters);
                                 }
                                 break;
 
