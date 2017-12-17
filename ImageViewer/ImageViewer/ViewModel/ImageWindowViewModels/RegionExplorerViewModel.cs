@@ -55,7 +55,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if (_regionList.Any(x => x.Image.FileName == region.Image.FileName))
             {
-                if(MessageBox.Show("A region with this name already exists. Do you want to overwrite it?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if(MessageBox.Show("A region with this name already exists. Do you want to overwrite it?", "Question", MessageBoxButton.OK, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
                 {
                     try
                     {
