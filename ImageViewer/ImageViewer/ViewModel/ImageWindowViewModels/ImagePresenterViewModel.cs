@@ -97,6 +97,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 _imageIndex = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("IncrementedIndex");
             }
         }
         public bool IsSynchronized
