@@ -29,6 +29,8 @@ namespace ImageViewer.Model
                 System.Windows.Point regionLocation = (System.Windows.Point)args["RegionLocation"];
                 int regionWidth = (int)((int)args["RegionWidth"] * bitmapSource.DpiX / 96.0);
                 int regionHeight = (int)((int)args["RegionHeight"] * bitmapSource.DpiY / 96.0);
+                if (regionWidth <= 0 || regionHeight <= 0)
+                    return;
                 Thickness imagePosition = (Thickness)args["ImagePosition"];
                 int ID = (int)args["PresenterID"];
                 double scale = (double)args["Scale"];
