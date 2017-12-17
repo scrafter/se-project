@@ -28,7 +28,6 @@
         </Style>
     </UserControl.Style>
 
-    <!--<Border BorderThickness="1" BorderBrush="LightGreen" ClipToBounds="True">-->
     <Border x:Name="border"  BorderThickness="3">
         <Border.Style>
             <Style TargetType="Border">
@@ -106,6 +105,10 @@
         <i:Interaction.Behaviors>
             <mouse:MouseManagement MouseX="{Binding MouseX, Mode=OneWayToSource}" MouseY="{Binding MouseY, Mode=OneWayToSource}" />
         </i:Interaction.Behaviors>
+        <Border.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Reset position" Command="{Binding ResetPositionCommand}" CommandParameter="{Binding}"/>
+            </ContextMenu>
+        </Border.ContextMenu>
     </Border>
-    <!--</Border>-->
 </UserControl>
