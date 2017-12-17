@@ -12,6 +12,8 @@ using ImageViewer.View.ImagesWindow;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using Prism.Events;
+using System.Diagnostics;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -19,6 +21,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     {
 
         #region currentViewModels
+        private Dictionary<Type, SubscriptionToken> _subscriptionTokens = new Dictionary<Type, SubscriptionToken>();
         private bool disposedValue = false;
         private BaseViewModel _currentViewModel1;
         private BaseViewModel _currentViewModel2;
@@ -179,6 +182,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         public DisplayImageWindowViewModel()
         {
+            GridStatus = GridStatusEvent.GridStatus.OneToOne;
             ShowToolbarCommand = new RelayCommand(ShowToolbar, x =>
             {
                 return !disposedValue;
@@ -191,20 +195,26 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 return !disposedValue;
             });
-            _aggregator.GetEvent<HideToolbarEvent>().Subscribe(HideToolbar);
-            _aggregator.GetEvent<DisposeEvent>().Subscribe(Dispose);
-            _aggregator.GetEvent<SendPixelInformationViewEvent>().Subscribe(item => { _pivList.Add(item); });
-            _aggregator.GetEvent<DisplayImage>().Subscribe(item =>
+            SubscriptionToken subscriptionToken;
+            subscriptionToken = _aggregator.GetEvent<HideToolbarEvent>().Subscribe(HideToolbar);
+            _subscriptionTokens.Add(typeof(HideToolbarEvent), subscriptionToken);
+            subscriptionToken = _aggregator.GetEvent<DisposeEvent>().Subscribe(Dispose);
+            _subscriptionTokens.Add(typeof(DisposeEvent), subscriptionToken);
+            subscriptionToken = _aggregator.GetEvent<SendPixelInformationViewEvent>().Subscribe(item => { _pivList.Add(item); });
+            _subscriptionTokens.Add(typeof(SendPixelInformationViewEvent), subscriptionToken);
+            subscriptionToken = _aggregator.GetEvent<DisplayImage>().Subscribe(item =>
             {
                 _imageList = item;
                 _imageCounter++;
                 CreateMultiView(_imageList);
             });
-            GridStatus = GridStatusEvent.GridStatus.OneToOne;
-            _aggregator.GetEvent<GridStatusEvent>().Subscribe((item) =>
+            _subscriptionTokens.Add(typeof(DisplayImage), subscriptionToken);
+            
+            subscriptionToken = _aggregator.GetEvent<GridStatusEvent>().Subscribe((item) =>
             {
                 GridStatus = item;
             });
+            _subscriptionTokens.Add(typeof(GridStatusEvent), subscriptionToken);
         }
 
         private void Desynchronize(Object arg)
@@ -395,6 +405,27 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public void Dispose()
         {
             Dispose(true);
+            _currentViewModel1 = null;
+            _currentViewModel2 = null;
+            _currentViewModel3 = null;
+            _currentViewModel4 = null;
+            _currentViewModel5 = null;
+            _currentViewModel6 = null;
+            _currentViewModel7 = null;
+            _currentViewModel8 = null;
+            _currentViewModel9 = null;
+
+            _aggregator.GetEvent<HideToolbarEvent>().Unsubscribe(_subscriptionTokens[typeof(HideToolbarEvent)]);
+            _subscriptionTokens.Remove(typeof(HideToolbarEvent));
+            _aggregator.GetEvent<DisposeEvent>().Unsubscribe(_subscriptionTokens[typeof(DisposeEvent)]);
+            _subscriptionTokens.Remove(typeof(DisposeEvent));
+            _aggregator.GetEvent<SendPixelInformationViewEvent>().Unsubscribe(_subscriptionTokens[typeof(SendPixelInformationViewEvent)]);
+            _subscriptionTokens.Remove(typeof(SendPixelInformationViewEvent));
+            _aggregator.GetEvent<DisplayImage>().Unsubscribe(_subscriptionTokens[typeof(DisplayImage)]);
+            _subscriptionTokens.Remove(typeof(DisplayImage));
+            _aggregator.GetEvent<GridStatusEvent>().Unsubscribe(_subscriptionTokens[typeof(GridStatusEvent)]);
+            _subscriptionTokens.Remove(typeof(GridStatusEvent));
+
             GC.SuppressFinalize(this);
         }
         #endregion
