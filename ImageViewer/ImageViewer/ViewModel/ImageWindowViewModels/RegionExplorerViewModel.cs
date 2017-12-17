@@ -55,26 +55,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if (_regionList.Any(x => x.Image.FileName == region.Image.FileName))
             {
-                if(MessageBox.Show("A region with this name already exists. Do you want to overwrite it?", "Question", MessageBoxButton.OK, MessageBoxImage.Asterisk) == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        RegionList.Remove(RegionList.First(x => x.Image.FileName == region.Image.FileName));
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                        NotifyPropertyChanged("RegionList");
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                    if (region.Save())
-                    {
-                        RegionList.Add(region);
-                        NotifyPropertyChanged("RegionList");
-                        SaveRegionWindow.Instance.Close();
-                    }
-                }
+                MessageBox.Show("A region with this name already exists. Use a different name or delete the existing region to save it.", "Warning", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                SaveRegionWindow.Instance.Close();
+                return;
             }
             else
             {
