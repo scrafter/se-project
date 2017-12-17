@@ -599,7 +599,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     Scale = 1;
                     return;
                 }
-                if (Scale > 8 || Scale < _zoomStep - 1)
+                if ((Scale > 8 && ze.ScaleDelta > 1) || (Scale < _zoomStep - 1 && ze.ScaleDelta < 1))
                     return;
                 this.Scale *= ze.ScaleDelta;
                 int left = (int)(ze.MouseX - (ze.MouseX - ImagePosition.Left) * ze.ScaleDelta);
