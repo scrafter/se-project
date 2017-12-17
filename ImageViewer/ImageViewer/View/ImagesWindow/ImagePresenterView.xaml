@@ -115,7 +115,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding ImageIndex}" Foreground="#FF8BC34A" Grid.Column="0" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" FontSize="22"/>
+                <TextBlock Text="{Binding IncrementedIndex}" Foreground="#FF8BC34A" Grid.Column="0" Margin="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontWeight="Bold" FontSize="22"/>
                 <TextBlock Text="{Binding DisplayedImage.FilePath}" Foreground="#FF999999" Grid.Column="1" Margin="8, 2, 2, 2" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">
                     <TextBlock.ToolTip>
                         <ToolTip>

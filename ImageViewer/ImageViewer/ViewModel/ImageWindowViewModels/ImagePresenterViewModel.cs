@@ -80,6 +80,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 return ViewModelID;
             }
         }
+        public int IncrementedIndex
+        {
+            get
+            {
+                return ImageIndex + 1;
+            }
+        }
         public int ImageIndex
         {
             get
