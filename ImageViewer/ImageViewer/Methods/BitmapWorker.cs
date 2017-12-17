@@ -163,6 +163,11 @@ namespace ImageViewer.Methods
                 PixelFormat fmt1 = bmp1.PixelFormat;
 
                 PixelFormat fmt = PixelFormat.Format32bppArgb;
+                if((int)(width / scale) <= 0 || (int)(height / scale) <= 0)
+                {
+                    isOutside = true;
+                    return null;
+                }
                 Bitmap bmp2 = new Bitmap((int)(width / scale), (int)(height / scale), fmt);
                 posX = posX - offsetX;
                 posY = posY - offsetY;

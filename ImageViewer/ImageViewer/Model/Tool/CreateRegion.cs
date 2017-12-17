@@ -24,6 +24,7 @@ namespace ImageViewer.Model
         {
             try
             {
+                IEventAggregator aggregator = GlobalEvent.GetEventAggregator();
                 BitmapWorker bw = new BitmapWorker();
                 BitmapSource bitmapSource = (BitmapSource)args["BitmapSource"];
                 System.Windows.Point regionLocation = (System.Windows.Point)args["RegionLocation"];
@@ -44,7 +45,15 @@ namespace ImageViewer.Model
 
                 Bitmap bitmap;
                 bitmap = bw.GetBitmap(bitmapSource);
-                bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY, scale);
+                bool isOutside = false;
+                bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY, scale, out isOutside);
+
+                if(isOutside)
+                {
+                    MessageBox.Show("Witdth or height of a region is less than 1 pixel.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    aggregator.GetEvent<ResetRegionsEvent>().Publish();
+                    return;
+                }
 
                 bitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp" + ID.ToString() + ".png", ImageFormat.Png);
                 bitmapSource = bw.BitmapToSource(bitmap);
@@ -111,8 +120,7 @@ namespace ImageViewer.Model
                 regionInformation.Add("Deviations", deviations);
                 regionInformation.Add("PresenterID", ID);
 
-                IEventAggregator _aggregator = GlobalEvent.GetEventAggregator();
-                _aggregator.GetEvent<SendRegionInformationEvent>().Publish(regionInformation);
+                aggregator.GetEvent<SendRegionInformationEvent>().Publish(regionInformation);
 
             }
             catch (KeyNotFoundException)

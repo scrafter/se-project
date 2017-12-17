@@ -473,6 +473,13 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 }
             });
             _subscriptionTokens.Add(typeof(SendImageList), token);
+            token = _aggregator.GetEvent<ResetRegionsEvent>().Subscribe(() =>
+           {
+               RegionHeight = 0;
+               RegionWidth = 0;
+               RegionLocation = new Thickness(0, 0, 0, 0);
+           });
+            _subscriptionTokens.Add(typeof(ResetRegionsEvent), token);
 
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
@@ -554,7 +561,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 else return;
 
             }
-            else
+            else if (e.Delta > 0)
             {
                 if (Scale <= 8.0)
                 {
@@ -562,6 +569,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 }
                 else return;
             }
+            else
+                return;
             double relX = MouseX - ImagePosition.Left;
             double relY = MouseY - ImagePosition.Top;
             int left = (int)(MouseX - relX * scaleChange);
@@ -590,6 +599,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     Scale = 1;
                     return;
                 }
+                if (Scale * ze.ScaleDelta > 8 || Scale * ze.ScaleDelta < _zoomStep)
+                    return;
                 this.Scale *= ze.ScaleDelta;
                 int left = (int)(ze.MouseX - (ze.MouseX - ImagePosition.Left) * ze.ScaleDelta);
                 int top = (int)(ze.MouseY - (ze.MouseY - ImagePosition.Top) * ze.ScaleDelta);
@@ -940,6 +951,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _subscriptionTokens.Remove(typeof(LoadRegionEvent));
             _aggregator.GetEvent<SendImageList>().Unsubscribe(_subscriptionTokens[typeof(SendImageList)]);
             _subscriptionTokens.Remove(typeof(SendImageList));
+            _aggregator.GetEvent<ResetRegionsEvent>().Unsubscribe(_subscriptionTokens[typeof(ResetRegionsEvent)]);
+            _subscriptionTokens.Remove(typeof(ResetRegionsEvent));
 
         }
         #endregion
