@@ -416,7 +416,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _subscriptionTokens.Add(typeof(SendRegionNameEvent), token);
             token = _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
             {
-                ImagePosition = region.ImagePosition;
                 if (region.PresenterID > MaxWindows)
                 {
                     region.PresenterID = DisplayImageWindowViewModel.ImageCounter;
@@ -434,6 +433,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 RegionHeight = (int)(region.Size.Height * 96.0 / region.DpiY);
                 ImageIndex = region.ImageIndex;
                 Scale = region.Zoom;
+                ImagePosition = region.ImagePosition;
                 if (IsSynchronized)
                 {
                     SynchronizeRegions sr = new SynchronizeRegions();

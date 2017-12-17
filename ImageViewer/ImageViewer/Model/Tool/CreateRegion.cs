@@ -46,9 +46,10 @@ namespace ImageViewer.Model
                 Bitmap bitmap;
                 bitmap = bw.GetBitmap(bitmapSource);
                 bool isOutside = false;
-                bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY, scale, out isOutside);
+                bool isTooSmall = false;
+                bitmap = bw.GetBitmapFragment(bitmap, posX, posY, regionWidth, regionHeight, imagePosX, imagePosY, scale, out isOutside, out isTooSmall);
 
-                if(isOutside)
+                if(isTooSmall)
                 {
                     MessageBox.Show("Witdth or height of a region is less than 1 pixel.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     aggregator.GetEvent<ResetRegionsEvent>().Publish();
