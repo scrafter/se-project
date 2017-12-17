@@ -62,7 +62,7 @@ namespace ImageViewer.View
             }
             catch (Exception)
             {
-                throw;
+                CollapseAll();
             }
 
             directories.ForEach(directoryPath =>
@@ -87,7 +87,7 @@ namespace ImageViewer.View
             GetFiles(treeViewItem);
         }
 
-        public static string GetPath(string path)
+        public string GetPath(string path)
         {
             if(string.IsNullOrEmpty(path))
             {
@@ -102,14 +102,14 @@ namespace ImageViewer.View
             return path.Substring(index + 1);
         }
 
-        private static List<string> GetImages(string path)
+        private List<string> GetImages(string path)
         {
             return Directory.GetFiles(path).Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
                    || Path.GetExtension(x) == ".bmp" || Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".PNG"
                     || Path.GetExtension(x) == ".tiff" || Path.GetExtension(x) == ".TIFF").ToList();
         }
 
-        private static void GetFiles(TreeViewItemImage item)
+        private void GetFiles(TreeViewItemImage item)
         {
             List<string> files = new List<string>();
             string folderName = (string)item.Tag;
@@ -125,7 +125,7 @@ namespace ImageViewer.View
             }
             catch (Exception)
             {
-                throw;
+                CollapseAll();
             }
 
             files.ForEach(directoryPath =>
@@ -139,7 +139,7 @@ namespace ImageViewer.View
             });
         }
 
-        private static bool CheckIfEmpty(string folderPath)
+        private bool CheckIfEmpty(string folderPath)
         {
             try
             {
@@ -160,11 +160,6 @@ namespace ImageViewer.View
             return images.Count == 0 ? true : false;
         }
 
-        private static List<string> GetSpecialFolders()
-        {
-            
-            return null;
-        }
         #endregion
 
 #region Events
@@ -266,8 +261,7 @@ namespace ImageViewer.View
                 }
                 catch (Exception)
                 {
-
-                    throw;
+                    CollapseAll();
                 }
             }
         }
