@@ -33,6 +33,7 @@ namespace ImageViewer.Methods
                     BitmapWorker bw = new BitmapWorker();
                     foreach (Model.Image image in list)
                     {
+                        bool isOutside;
                         BitmapSource bitmapSource = image.Bitmap;
                         Bitmap bitmap;
                         int width = regionWidth;
@@ -40,9 +41,13 @@ namespace ImageViewer.Methods
                         Thickness position = regionPosition;
                         Normalize(ref width, ref height, ref position, bitmapSource);
                         bitmap = bw.GetBitmap(bitmapSource);
-                        bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0), scale);
+                        bitmap = bw.GetBitmapFragment(bitmap, (int)position.Left, (int)position.Top, (int)width, (int)height, (int)(image.Position.Left * bitmapSource.DpiX / 96.0), (int)(image.Position.Top * bitmapSource.DpiY / 96.0), scale, out isOutside);
                         String fileName = $"Out_{++counter}.png";
                         String path = dialog.SelectedPath + $"\\{fileName}";
+                        if (isWarned == false && isOutside)
+                            isWarned = true;
+                        if (isOutside)
+                            continue;
                         if (File.Exists(path))
                         {
                             MessageBoxResult overwriteResult = MessageBox.Show($"{fileName} already exists in this location. Do you want to overwrite it?", "Confirmation", MessageBoxButton.YesNoCancel);
@@ -66,7 +71,7 @@ namespace ImageViewer.Methods
                     }
                 }
                 if (isWarned)
-                    MessageBox.Show("Region exceeds size of one or more images. Those images will be ignored or their size will be reduced.");
+                    MessageBox.Show("Region exceeds size of one or more images or at least one image's pixel format is less than 24bits. Those images will be ignored or their size will be reduced.");
             }
             else
             {
