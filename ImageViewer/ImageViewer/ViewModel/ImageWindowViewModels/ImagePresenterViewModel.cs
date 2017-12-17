@@ -369,7 +369,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 {
                     CalculateRegionProperties();
                 }
-                    
+
             });
             _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
             {
@@ -452,7 +452,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             Scale = 1;
             if (IsSynchronized)
-                _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(Scale, ViewModelID));
+                _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(true, ViewModelID, 0, 0, 0));
         }
         private void ResetPosition(Object arg)
         {
@@ -478,12 +478,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void MouseWheel(MouseWheelEventArgs e)
         {
             e.Handled = true;
+            double scaleChange = _zoomStep;
             if (e.Delta < 0)
             {
                 if (Scale > 0.1)
                 {
                     Scale /= _zoomStep;
+                    scaleChange = 1 / _zoomStep;
                 }
+                else return;
 
             }
             else
@@ -492,12 +495,18 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 {
                     Scale *= _zoomStep;
                 }
+                else return;
             }
-
-            ImagePosition = new Thickness(ImagePosition.Left, ImagePosition.Top, ImagePosition.Right / Scale, ImagePosition.Bottom / Scale);
+            double relX = MouseX - ImagePosition.Left;
+            double relY = MouseY - ImagePosition.Top;
+            int left = (int)(MouseX - relX * scaleChange);
+            int top = (int)(MouseY - relY * scaleChange);
+            int posXDelta = (int)ImagePosition.Left - left;
+            int posYDelta = (int)ImagePosition.Top - top;
+            ImagePosition = new Thickness(left, top, -left, -top);
 
             if (IsSynchronized)
-                _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(Scale, ViewModelID));
+                _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(false, ViewModelID, scaleChange, MouseX, MouseY));
 
 
         }
@@ -511,8 +520,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         {
             if (ze.ViewModelID != this.ViewModelID)
             {
-                this.Scale = ze.Zoom;
-                ImagePosition = new Thickness(ImagePosition.Left, ImagePosition.Top, ImagePosition.Right / Scale, ImagePosition.Bottom / Scale);
+                if(ze.ZoomReset)
+                {
+                    Scale = 1;
+                    return;
+                }
+                this.Scale *= ze.ScaleDelta;
+                int left = (int)(ze.MouseX - (ze.MouseX - ImagePosition.Left) * ze.ScaleDelta);
+                int top = (int)(ze.MouseY - (ze.MouseY - ImagePosition.Top)* ze.ScaleDelta);
+                ImagePosition = new Thickness(left, top, -left, -top);
             }
         }
 
@@ -806,7 +822,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             {
                                 CalculateRegionProperties();
                             }
-                                
+
                         }
                         catch (Exception e)
                         {

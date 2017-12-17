@@ -10,17 +10,22 @@ namespace ImageViewer.Model.Event
 {
     public class ZoomEvent : PubSubEvent<ZoomEvent>
     {
-        public double Zoom { get; set; }
+        public bool ZoomReset { get; set; }
         public int ViewModelID { get; set; }
-
+        public double ScaleDelta { get; set; }
+        public double MouseX { get; set; }
+        public double MouseY { get; set; }
         public ZoomEvent()
         {
 
         }
-        public ZoomEvent(double zoom, int viewModelID)
+        public ZoomEvent(bool zoomReset, int viewModelID, double scaleDelta, double x, double y)
         {
-            Zoom = zoom;
+            ZoomReset = zoomReset;
             ViewModelID = viewModelID;
+            ScaleDelta = scaleDelta;
+            MouseX = x;
+            MouseY = y;
         }
     }
 }
