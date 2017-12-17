@@ -40,6 +40,26 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             RemoveRegionCommand = new RelayCommand(RemoveRegion);
             _aggregator.GetEvent<SendRegionEvent>().Subscribe(AddRegion);
             _aggregator.GetEvent<SendImageList>().Subscribe(RemoveRegionBasingOnLoadedLists);
+            _aggregator.GetEvent<DisposeEvent>().Subscribe(ClearList);
+        }
+        private void ClearList()
+        {
+            for (int i = _regionList.Count - 1; i >= 0; i--)
+            {
+                _regionList[i] = null;
+                _regionList.Remove(_regionList[i]);
+            }
+            foreach (var file in Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\Regions"))
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception)
+                {
+
+                }
+            }
         }
         private void RemoveRegionBasingOnLoadedLists(ObservableCollection<ObservableCollection<Image>> imageList)
         {

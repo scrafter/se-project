@@ -76,5 +76,8 @@ namespace ImageViewer.Model
                 return false;
             }
         }
+        public void Dispose()
+        {
+        }
     }
 }
