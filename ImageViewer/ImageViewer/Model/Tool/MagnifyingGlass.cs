@@ -46,13 +46,6 @@ namespace ImageViewer.Model
 
                 if (zoomValue >= 1)
                 {
-                    aggregator = GlobalEvent.GetEventAggregator();
-                    //zi = new ZoomingInfo();
-                    //image.Bitmap = image.OriginalBitmap;
-                    //zi.ZoomScale = 1;
-                    //zi.ImagePositionX = 0;
-                    //zi.ImagePositionY = 0;
-                    //aggregator.GetEvent<SendZoomEvent>().Publish(zi);
                 }
                 else
                 {
@@ -66,29 +59,14 @@ namespace ImageViewer.Model
                     int width = zoomPositionXEnd - zoomPositionXBeg;
                     int height = zoomPositionYEnd - zoomPositionYBeg;
 
-
                     Bitmap bitmap;
-
+                    BitmapWorker bw = new BitmapWorker();
                     bitmap = GetBitmap(bitmapSource);
-                    bitmap = GetBitmapFragment(bitmap, zoomPositionXBeg, zoomPositionYBeg, width, height, 0, 0);
-
+                    bitmap = bw.GetBitmapFragment(bitmap, zoomPositionXBeg, zoomPositionYBeg, width, height, 0, 0, zoomValue);
 
                     Bitmap finalBitmap = new Bitmap(bitmap, new System.Drawing.Size( imageWidth, imageHeight));
-
-                    BitmapWorker bw = new BitmapWorker();
-
                     bitmapSource = bw.BitmapToSource(finalBitmap);
-
                     image.Bitmap = bitmapSource;
-
-                    //finalBitmap.Save(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ImageViewer\temp.png", ImageFormat.Png);
-
-                    aggregator = GlobalEvent.GetEventAggregator();
-                    //zi = new ZoomingInfo();
-                    //zi.ZoomScale = 1/zoomValue;
-                    //zi.ImagePositionX = zoomPositionXBeg;
-                    //zi.ImagePositionY = zoomPositionYBeg;
-                    //aggregator.GetEvent<SendZoomEvent>().Publish(zi);
                 }
 
             }
@@ -132,58 +110,6 @@ namespace ImageViewer.Model
 
         }
 
-        //public static Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height)
-        //{
-        //    System.Drawing.Size s1 = bmp1.Size;
-        //    System.Drawing.Imaging.PixelFormat fmt1 = bmp1.PixelFormat;
-
-        //    System.Drawing.Imaging.PixelFormat fmt = new System.Drawing.Imaging.PixelFormat();
-        //    fmt = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-        //    Bitmap bmp3 = new Bitmap(width, height, fmt);
-
-        //    Rectangle rect = new Rectangle(posX, posY, width, height);
-
-        //    BitmapData bmp1Data = bmp1.LockBits(rect, ImageLockMode.ReadOnly, fmt1);
-        //    BitmapData bmp3Data = bmp3.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, fmt);
-
-        //    byte bpp1 = 4;
-        //    byte bpp3 = 4;
-
-        //    if (fmt1 == System.Drawing.Imaging.PixelFormat.Format24bppRgb) bpp1 = 3;
-        //    else if (fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppPArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppArgb || fmt1 == System.Drawing.Imaging.PixelFormat.Format32bppRgb) bpp1 = 4; else return null;
-
-        //    int size1 = bmp1Data.Stride * bmp1Data.Height;
-        //    int size3 = bmp3Data.Stride * bmp3Data.Height;
-        //    byte[] data1 = new byte[size1];
-        //    byte[] data3 = new byte[size3];
-        //    System.Runtime.InteropServices.Marshal.Copy(bmp1Data.Scan0, data1, 0, size1);
-        //    System.Runtime.InteropServices.Marshal.Copy(bmp3Data.Scan0, data3, 0, size3);
-
-        //    for (int y = 0; y < height; y++)
-        //    {
-        //        for (int x = 0; x < width; x++)
-        //        {
-        //            int index1 = y * bmp1Data.Stride + x * bpp1;
-        //            int index3 = y * bmp3Data.Stride + x * bpp3;
-        //            System.Drawing.Color c1, c2;
-
-        //            if (bpp1 == 4)
-        //                c1 = System.Drawing.Color.FromArgb(data1[index1 + 3], data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
-        //            else c1 = System.Drawing.Color.FromArgb(255, data1[index1 + 2], data1[index1 + 1], data1[index1 + 0]);
-
-        //            byte A = (byte)(255 * c1.GetBrightness());
-        //            data3[index3 + 0] = c1.B;
-        //            data3[index3 + 1] = c1.G;
-        //            data3[index3 + 2] = c1.R;
-        //            data3[index3 + 3] = c1.A;
-        //        }
-        //    }
-
-        //    System.Runtime.InteropServices.Marshal.Copy(data3, 0, bmp3Data.Scan0, data3.Length);
-        //    bmp1.UnlockBits(bmp1Data);
-        //    bmp3.UnlockBits(bmp3Data);
-        //    return bmp3;
-        //}
         public Bitmap GetBitmapFragment(Bitmap bmp1, int posX, int posY, int width, int height, int offsetX, int offsetY)
         {
             System.Drawing.Size s1 = bmp1.Size;
@@ -284,7 +210,11 @@ namespace ImageViewer.Model
                 TransportStream.Dispose();
                 return bmp;
             }
-            catch { MessageBox.Show("failed"); return null; }
+            catch
+            {
+                MessageBox.Show("failed");
+                return null;
+            }
         }
 
         public Tools GetToolEnum()
