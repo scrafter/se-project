@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using Prism.Events;
 using System.Diagnostics;
+using System.IO;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
@@ -39,7 +40,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel1; }
             set
             {
+                if (value == null && _currentViewModel1 != null)
+                    _currentViewModel1.Dispose();
                 _currentViewModel1 = value;
+                _presentersList[0] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -48,7 +52,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel2; }
             set
             {
+                if (value == null && _currentViewModel2 != null)
+                    _currentViewModel2.Dispose();
                 _currentViewModel2 = value;
+                _presentersList[1] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -57,7 +64,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel3; }
             set
             {
+                if (value == null && _currentViewModel3 != null)
+                    _currentViewModel3.Dispose();
                 _currentViewModel3 = value;
+                _presentersList[2] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -66,7 +76,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel4; }
             set
             {
+                if (value == null && _currentViewModel4 != null)
+                    _currentViewModel4.Dispose();
                 _currentViewModel4 = value;
+                _presentersList[3] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -75,7 +88,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel5; }
             set
             {
+                if (value == null && _currentViewModel5 != null)
+                    _currentViewModel5.Dispose();
                 _currentViewModel5 = value;
+                _presentersList[4] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -84,7 +100,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel6; }
             set
             {
+                if (value == null && _currentViewModel6 != null)
+                    _currentViewModel6.Dispose();
                 _currentViewModel6 = value;
+                _presentersList[5] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -93,7 +112,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel7; }
             set
             {
+                if (value == null && _currentViewModel7 != null)
+                    _currentViewModel7.Dispose();
                 _currentViewModel7 = value;
+                _presentersList[6] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -102,7 +124,10 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel8; }
             set
             {
+                if (value == null && _currentViewModel8 != null)
+                    _currentViewModel8.Dispose();
                 _currentViewModel8 = value;
+                _presentersList[7] = value;
                 NotifyPropertyChanged();
             }
         }
@@ -111,14 +136,17 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get { return _currentViewModel9; }
             set
             {
+                if (value == null && _currentViewModel9 != null)
+                    _currentViewModel9.Dispose();
                 _currentViewModel9 = value;
+                _presentersList[8] = value;
                 NotifyPropertyChanged();
             }
         }
 
         #endregion
         private static int _imageCounter = 0;
-        private int _maxWindows=0;
+        private int _maxWindows = 0;
         private List<PixelInformationView> _pivList = new List<PixelInformationView>();
         public RelayCommand ClosePIVsCommand { get; set; }
         public RelayCommand ShowToolbarCommand { get; set; }
@@ -132,7 +160,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 _gridStatus = value;
                 NotifyPropertyChanged();
-                if(_gridStatus == GridStatusEvent.GridStatus.OneToOne)
+                if (_gridStatus == GridStatusEvent.GridStatus.OneToOne)
                 {
                     CurrentViewModel2 = null;
                     CurrentViewModel3 = null;
@@ -194,18 +222,9 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _presentersList.Add(CurrentViewModel9);
 
             GridStatus = GridStatusEvent.GridStatus.OneToOne;
-            ShowToolbarCommand = new RelayCommand(ShowToolbar, x =>
-            {
-                return !disposedValue;
-            });
-            ClosePIVsCommand = new RelayCommand(ClosePIVs, x =>
-            {
-                return !disposedValue;
-            });
-            DesynchronizationCommand = new RelayCommand(Desynchronize, x =>
-            {
-                return !disposedValue;
-            });
+            ShowToolbarCommand = new RelayCommand(ShowToolbar);
+            ClosePIVsCommand = new RelayCommand(ClosePIVs);
+            DesynchronizationCommand = new RelayCommand(Desynchronize);
             SubscriptionToken subscriptionToken;
             subscriptionToken = _aggregator.GetEvent<HideToolbarEvent>().Subscribe(HideToolbar);
             _subscriptionTokens.Add(typeof(HideToolbarEvent), subscriptionToken);
@@ -217,19 +236,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             {
                 foreach (var presenter in _presentersList)
                 {
-                //if (presenter != null)
-                //    if (presenter.ImageList == item)
-                //    {
-                //        MessageBox.Show($"This list is already loaded to the window with ID: {presenter.PresenterID}", "Warning", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                //        return;
-                //    }
+                    if (presenter == null)
+                        continue;
+                    if (presenter.ImageList == item)
+                    {
+                        MessageBox.Show($"This list is already loaded to the window with ID: {presenter.PresenterID}", "Warning", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        return;
+                    }
                 }
                 _imageList = item;
                 _imageCounter++;
                 CreateMultiView(_imageList);
             });
             _subscriptionTokens.Add(typeof(DisplayImage), subscriptionToken);
-            
+
             subscriptionToken = _aggregator.GetEvent<GridStatusEvent>().Subscribe((item) =>
             {
                 GridStatus = item;
@@ -239,15 +259,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void Desynchronize(Object arg)
         {
-            if (disposedValue)
-                return;
             int id = Int16.Parse((string)arg);
             _aggregator.GetEvent<SynchronizationEvent>().Publish(id);
         }
         private void CreateMultiView(ObservableCollection<Image> _imageList)
         {
-            if (disposedValue)
-                return;
             switch (GridStatus)
             {
                 case GridStatusEvent.GridStatus.OneToOne:
@@ -271,8 +287,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void GetImagePresentersFor3x3()
         {
-            if (disposedValue)
-                return;
             switch (_imageCounter)
             {
                 case 1:
@@ -282,7 +296,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     CurrentViewModel2 = new ImagePresenterViewModel(_imageList, 2, Tool, _maxWindows);
                     break;
                 case 3:
-                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool,_maxWindows);
+                    CurrentViewModel3 = new ImagePresenterViewModel(_imageList, 3, Tool, _maxWindows);
                     break;
                 case 4:
                     CurrentViewModel4 = new ImagePresenterViewModel(_imageList, 4, Tool, _maxWindows);
@@ -311,8 +325,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void GetImagePresentersFor2x2()
         {
-            if (disposedValue)
-                return;
             switch (_imageCounter)
             {
                 case 1:
@@ -331,13 +343,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     _imageCounter = 1;
                     GetImagePresentersFor2x2();
                     break;
-            }         
+            }
         }
 
         private void GetImagePresentersFor1x2()
         {
-            if (disposedValue)
-                return;
             switch (_imageCounter)
             {
                 case 1:
@@ -355,20 +365,16 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void GetImagePresentersFor1x1()
         {
-            if (disposedValue)
-                return;
-            CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool,_maxWindows);
+            CurrentViewModel1 = new ImagePresenterViewModel(_imageList, 1, Tool, _maxWindows);
             _imageCounter = 1;
         }
 
         private void ClearImagePresenterList(int startingIndex)
         {
-            
+
         }
         public void ClosePIVs(object obj)
         {
-            if (disposedValue)
-                return;
             App.Current.Dispatcher.Invoke(new Action(() =>
             {
                 foreach (var item in _pivList)
@@ -380,21 +386,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         private void HideToolbar()
         {
-            if (disposedValue)
-                return;
             ToolbarVisibility = Visibility.Collapsed;
         }
         private void ShowToolbar(object obj)
         {
-            if (disposedValue)
-                return;
             ToolbarVisibility = Visibility.Visible;
         }
-    
+
         private void ClearImagePresenter()
         {
-            if (disposedValue)
-                return;
             CurrentViewModel5 = null;
             CurrentViewModel6 = null;
             CurrentViewModel7 = null;
@@ -417,7 +417,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             }
         }
 
-         ~DisplayImageWindowViewModel()
+        ~DisplayImageWindowViewModel()
         {
             Dispose(false);
         }

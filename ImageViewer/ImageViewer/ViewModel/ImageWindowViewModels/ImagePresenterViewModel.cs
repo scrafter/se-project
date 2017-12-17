@@ -19,7 +19,7 @@ using System.Threading;
 
 namespace ImageViewer.ViewModel.ImageWindowViewModels
 {
-    public class ImagePresenterViewModel : BaseViewModel
+    public class ImagePresenterViewModel : BaseViewModel, IDisposable
     {
         #region Variables
         private String _imageSize;
@@ -373,16 +373,20 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             DisplayedImage = _imageList[_imageIndex];
             IsSynchronized = true;
             Scale = 1;
-            _aggregator.GetEvent<SerializeOutputEvent>().Subscribe(SerializeOutputFromPresenters);
-            _aggregator.GetEvent<RotateImageEvent>().Subscribe(RotateImage);
-            _aggregator.GetEvent<SynchronizationEvent>().Subscribe(i =>
+            SubscriptionToken token;
+            token = _aggregator.GetEvent<SerializeOutputEvent>().Subscribe(SerializeOutputFromPresenters);
+            _subscriptionTokens.Add(typeof(SerializeOutputEvent), token);
+            token = _aggregator.GetEvent<RotateImageEvent>().Subscribe(RotateImage);
+            _subscriptionTokens.Add(typeof(RotateImageEvent), token);
+            token = _aggregator.GetEvent<SynchronizationEvent>().Subscribe(i =>
             {
                 if (ViewModelID == i)
                     IsSynchronized = !IsSynchronized;
             });
-            _aggregator.GetEvent<SendDisplayedImage>().Subscribe(item =>
+            _subscriptionTokens.Add(typeof(SynchronizationEvent), token);
+            token = _aggregator.GetEvent<SendDisplayedImage>().Subscribe(item =>
             {
-                if ((item.PresenterID == ViewModelID || item.DoReset == true) && item.Image != null)
+                if ((item.PresenterID == ViewModelID || (item.DoReset == true && item.IsSynchronized && IsSynchronized)) && item.Image != null)
                     ImagePosition = item.Image.Position;
                 else if (item.IsSynchronized == true && IsSynchronized && item.DoReset == false)
                 {
@@ -394,12 +398,15 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 }
 
             });
-            _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
+            _subscriptionTokens.Add(typeof(SendDisplayedImage), token);
+            token = _aggregator.GetEvent<SendToolEvent>().Subscribe(item =>
             {
                 Tool = item;
             });
-            _aggregator.GetEvent<SendRegionNameEvent>().Subscribe(SaveRegion);
-            _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
+            _subscriptionTokens.Add(typeof(SendToolEvent), token);
+            token = _aggregator.GetEvent<SendRegionNameEvent>().Subscribe(SaveRegion);
+            _subscriptionTokens.Add(typeof(SendRegionNameEvent), token);
+            token = _aggregator.GetEvent<LoadRegionEvent>().Subscribe(region =>
             {
                 ImagePosition = region.ImagePosition;
                 if (region.PresenterID > MaxWindows)
@@ -432,7 +439,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                 }
                 CalculateRegionProperties();
             });
-            _aggregator.GetEvent<SendImageList>().Subscribe(item =>
+            _subscriptionTokens.Add(typeof(LoadRegionEvent), token);
+            token = _aggregator.GetEvent<SendImageList>().Subscribe(item =>
             {
                 try
                 {
@@ -456,6 +464,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
                 }
             });
+            _subscriptionTokens.Add(typeof(SendImageList), token);
+
             ImageClickCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(ImageClickExecute);
             LeftArrowCommand = new RelayCommand(PreviousImage);
             RightArrowCommand = new RelayCommand(NextImage);
@@ -470,6 +480,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             MouseOverCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseEnter);
             MouseWheelCommand = new GalaSoft.MvvmLight.Command.RelayCommand<MouseWheelEventArgs>(MouseWheel);
         }
+   
 
         #region Private methods
         private void SynchronizeRotation(RotateImageEvent ri)
@@ -901,7 +912,31 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             ITool tool = new CreateRegion();
             tool.AffectImage(parameters);
         }
+
+        public void Dispose()
+        {
+            IsSynchronized = false;
+            _aggregator.GetEvent<SerializeOutputEvent>().Unsubscribe(_subscriptionTokens[typeof(SerializeOutputEvent)]);
+            _subscriptionTokens.Remove(typeof(SerializeOutputEvent));
+            _aggregator.GetEvent<RotateImageEvent>().Unsubscribe(_subscriptionTokens[typeof(RotateImageEvent)]);
+            _subscriptionTokens.Remove(typeof(RotateImageEvent));
+            _aggregator.GetEvent<SynchronizationEvent>().Unsubscribe(_subscriptionTokens[typeof(SynchronizationEvent)]);
+            _subscriptionTokens.Remove(typeof(SynchronizationEvent));
+            _aggregator.GetEvent<SendDisplayedImage>().Unsubscribe(_subscriptionTokens[typeof(SendDisplayedImage)]);
+            _subscriptionTokens.Remove(typeof(SendDisplayedImage));
+            _aggregator.GetEvent<SendToolEvent>().Unsubscribe(_subscriptionTokens[typeof(SendToolEvent)]);
+            _subscriptionTokens.Remove(typeof(SendToolEvent));
+            _aggregator.GetEvent<SendRegionNameEvent>().Unsubscribe(_subscriptionTokens[typeof(SendRegionNameEvent)]);
+            _subscriptionTokens.Remove(typeof(SendRegionNameEvent));
+            _aggregator.GetEvent<LoadRegionEvent>().Unsubscribe(_subscriptionTokens[typeof(LoadRegionEvent)]);
+            _subscriptionTokens.Remove(typeof(LoadRegionEvent));
+            _aggregator.GetEvent<SendImageList>().Unsubscribe(_subscriptionTokens[typeof(SendImageList)]);
+            _subscriptionTokens.Remove(typeof(SendImageList));
+
+        }
         #endregion
+
+
     }
 }
 

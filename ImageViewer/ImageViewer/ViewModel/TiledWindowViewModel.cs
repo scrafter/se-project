@@ -145,14 +145,17 @@ namespace ImageViewer.ViewModel
 
         private void FileDragFromWindows(DragEventArgs obj)
         {
+
             string[] files = (string[])obj.Data.GetData(System.Windows.DataFormats.FileDrop);
-            ObservableCollection<Image> temp = new ObservableCollection<Image>();   
+
+            ObservableCollection<Image> temp = new ObservableCollection<Image>();
             if (files == null)
             {
 
                 TreeViewItemImage tr = (TreeViewItemImage)obj.Data.GetData("ImageViewer.Model.TreeViewItemImage");
                 if (Path.GetExtension(tr.Header.ToString()) != String.Empty)
                 {
+
                     Image image = new Image();
                     image.FilePath = tr.Tag.ToString();
                     image.FileName = System.Text.RegularExpressions.Regex.Match(tr.Tag.ToString(), @".*\\([^\\]+$)").Groups[1].Value;
@@ -171,22 +174,8 @@ namespace ImageViewer.ViewModel
             }
             else
             {
-                ObservableCollection<Image> tempOfSingleImages = new ObservableCollection<Image>();
-                foreach (var s in (string[])obj.Data.GetData(DataFormats.FileDrop, false))
-                {
-                    if (Directory.Exists(s))
-                    {
-                        temp = new ObservableCollection<Image>();
-                        foreach (string path in Directory.GetFiles(s))
-                        {
-                            LoadFiles(temp, path.ToString());
-                        }
-                    }
-                    else
-                    { 
-                        LoadFiles(tempOfSingleImages, s.ToString()); 
-                    }
-                }
+                foreach (string path in files)
+                    LoadFiles(temp, path);
             }
             NotifyPropertyChanged("TiledViewRows");
         }
@@ -201,6 +190,8 @@ namespace ImageViewer.ViewModel
                     image.FilePath = path;
                     image.FileName = System.Text.RegularExpressions.Regex.Match(path, @".*\\([^\\]+$)").Groups[1].Value;
                     image.Extension = Path.GetExtension(path);
+
+
                     temp.Add(image);
                     _aggregator.GetEvent<SendImage>().Publish(temp);
                 }

@@ -49,5 +49,10 @@ namespace ImageViewer.View.ImagesWindow
             _instance = null;
             _aggregator.GetEvent<DisposeEvent>().Publish();
         }
+        public void Dispose()
+        {
+            _instance = null;
+            this.Close();
+        }
     }
 }
