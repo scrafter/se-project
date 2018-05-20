@@ -22,7 +22,7 @@ public static class ImageSaver
         {
             System.IO.File.WriteAllBytes(path, new byte[0]);
         }
-        catch (DirectoryNotFoundException e)
+        catch (DirectoryNotFoundException)
         {
             Directory.CreateDirectory(directory);
             if (!File.Exists(path))
@@ -84,11 +84,11 @@ public static class ImageSaver
                     list.Add(imageList);
             }
         }
-        catch (FileNotFoundException e)
+        catch (FileNotFoundException)
         {
             return;
         }
-        catch (DirectoryNotFoundException e)
+        catch (DirectoryNotFoundException)
         {
             return;
         }

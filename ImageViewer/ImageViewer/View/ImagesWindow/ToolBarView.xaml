@@ -36,7 +36,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Content="1x1" FontWeight="Bold" Command="{Binding GridOneCommand}"  Grid.Column="0" ToolTip="Region selection" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Button Content="1x1" FontWeight="Bold" Command="{Binding GridOneCommand}"  Grid.Column="0" ToolTip="1x1 window" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
                             <Setter Property="Template">
@@ -64,7 +64,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Content="1x2" FontWeight="Bold" Command="{Binding GridOneToTwoCommand}"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Region selection">
+                <Button Content="1x2" FontWeight="Bold" Command="{Binding GridOneToTwoCommand}"  Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="1x2 window">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
                             <Setter Property="Template">
@@ -92,7 +92,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Content="2x2" FontWeight="Bold" Command="{Binding GridTwoToTwoCommand}"  Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Region selection">
+                <Button Content="2x2" FontWeight="Bold" Command="{Binding GridTwoToTwoCommand}"  Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="2x2 window">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
                             <Setter Property="Template">
@@ -120,7 +120,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Content="3x3" FontWeight="Bold" Command="{Binding GridThreeToTreeCommand}"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Region selection">
+                <Button Content="3x3" FontWeight="Bold" Command="{Binding GridThreeToTreeCommand}"  Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="3x3 window">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource WhiteGreenButton}">
                             <Setter Property="Template">
@@ -195,7 +195,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <Button Command="{Binding SerializeOutputFromPresenters}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Magnifier">
+                <Button Command="{Binding SerializeOutputFromPresenters}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Save region images of each window">
                     <StackPanel>
                         <Rectangle Width="16" Height="16"
                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}" HorizontalAlignment="Left">

@@ -168,6 +168,15 @@
             <ContextMenu>
                 <MenuItem Header="Reset position" Command="{Binding ResetPositionCommand}" CommandParameter="{Binding}"/>
                 <MenuItem Header="Reset zoom" Command="{Binding ResetZoomCommand}" CommandParameter="{Binding}"/>
+                <MenuItem Header="Filters">
+                        <MenuItem Header="Contrast" Command="{Binding Filter_ContrastCommand}" CommandParameter="{x:Static model:Filter+Filters.Contrast}"/>
+                    <MenuItem Header="Brightness" Command="{Binding Filter_BrightnessCommand}" CommandParameter="{x:Static model:Filter+Filters.Brightness}"/>
+                    <MenuItem Header="Grey Scale" Command="{Binding Filter_GreyScaleCommand}" CommandParameter="{x:Static model:Filter+Filters.GreyScale}"/>
+                    <MenuItem Header="Sepia" Command="{Binding Filter_SepiaCommand}" CommandParameter="{x:Static model:Filter+Filters.Sepia}"/>
+                    <MenuItem Header="Negative" Command="{Binding Filter_NegativeCommand}" CommandParameter="{x:Static model:Filter+Filters.Negative}"/>
+                        <Separator/>
+                    <MenuItem Header="Reset filters" Command="{Binding Filter_ResetCommand}" CommandParameter="{x:Static model:Filter+Filters.None}"/>
+                </MenuItem>
             </ContextMenu>
         </Border.ContextMenu>
     </Border>

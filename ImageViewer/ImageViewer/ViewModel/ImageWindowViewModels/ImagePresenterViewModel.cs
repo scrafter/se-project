@@ -23,7 +23,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
     {
         #region Variables
         private String _imageSize;
-        private Thread _regionThread;
         private Dictionary<Type, SubscriptionToken> _subscriptionTokens = new Dictionary<Type, SubscriptionToken>();
         private bool _isSaving = false;
         private bool _isSynchronized = true;
@@ -56,6 +55,12 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public RelayCommand SerializeOutputFromListCommand { get; set; }
         public RelayCommand ResetPositionCommand { get; set; }
         public RelayCommand ResetZoomCommand { get; set; }
+        public RelayCommand Filter_ContrastCommand { get; set; }
+        public RelayCommand Filter_BrightnessCommand { get; set; }
+        public RelayCommand Filter_GreyScaleCommand { get; set; }
+        public RelayCommand Filter_SepiaCommand { get; set; }
+        public RelayCommand Filter_NegativeCommand { get; set; }
+        public RelayCommand Filter_ResetCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseLeftClickCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseMoveCommand { get; set; }
         public GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs> MouseOverCommand { get; set; }
@@ -65,6 +70,36 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
         #endregion
         #region Properties
+        public Image DisplayedImage
+        {
+            get
+            {
+                return _displayedImage;
+            }
+            set
+            {
+                _displayedImage = value;
+                if (_displayedImage != null)
+                {
+                    ImageSource = DisplayedImage.Bitmap;
+                    ImagePosition = DisplayedImage.Position;
+                    ImageSize = $"{ImageSource.PixelWidth} x {ImageSource.PixelHeight}";
+                    CalculateRegionProperties();
+                }
+                else
+                {
+                    ImageSource = null;
+                    RegionLocation = new Thickness(0, 0, 0, 0);
+                    RegionWidth = 0;
+                    RegionHeight = 0;
+                    ImageSize = String.Empty;
+                    Tool = null;
+                    ToolType = Tools.None;
+                }
+                NotifyPropertyChanged();
+                NotifyPropertyChanged("ImagePosition");
+            }
+        }
         public ObservableCollection<Image> ImageList
         {
             get
@@ -155,7 +190,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                         });
                         _subscriptionTokens.Add(typeof(NextPreviousImageEvent), token);
                     }
-
+                    if (!_subscriptionTokens.ContainsKey(typeof(FilterEvent)))
+                    {
+                        token = _aggregator.GetEvent<FilterEvent>().Subscribe(ApplyFilter);
+                        _subscriptionTokens.Add(typeof(FilterEvent), token);
+                    }
                 }
                 else
                 {
@@ -169,6 +208,8 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     _subscriptionTokens.Remove(typeof(ZoomEvent));
                     _aggregator.GetEvent<SynchronizeRotationEvent>().Unsubscribe(_subscriptionTokens[typeof(SynchronizeRotationEvent)]);
                     _subscriptionTokens.Remove(typeof(SynchronizeRotationEvent));
+                    _aggregator.GetEvent<FilterEvent>().Unsubscribe(_subscriptionTokens[typeof(FilterEvent)]);
+                    _subscriptionTokens.Remove(typeof(FilterEvent));
                 }
                 NotifyPropertyChanged();
             }
@@ -216,36 +257,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             get
             {
                 return DisplayedImage != null ? DisplayedImage.FilePath : String.Empty;
-            }
-        }
-        public Image DisplayedImage
-        {
-            get
-            {
-                return _displayedImage;
-            }
-            set
-            {
-                _displayedImage = value;
-                if (_displayedImage != null)
-                {
-                    ImageSource = DisplayedImage.Bitmap;
-                    ImagePosition = DisplayedImage.Position;
-                    ImageSize = $"{ImageSource.PixelWidth} x {ImageSource.PixelHeight}";
-                    CalculateRegionProperties();
-                }
-                else
-                {
-                    ImageSource = null;
-                    RegionLocation = new Thickness(0, 0, 0, 0);
-                    RegionWidth = 0;
-                    RegionHeight = 0;
-                    ImageSize = String.Empty;
-                    Tool = null;
-                    ToolType = Tools.None;
-                }
-                NotifyPropertyChanged();
-                NotifyPropertyChanged("ImagePosition");
             }
         }
         public BitmapSource ImageSource
@@ -355,9 +366,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                     break;
                 case Tools.RegionSelection:
                     Tool = new CreateRegion();
-                    break;
-                case Tools.Magnifier:
-                    Tool = new MagnifyingGlass();
                     break;
                 case Tools.PixelInformations:
                     Tool = new PixelPicker();
@@ -494,31 +502,84 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             MouseMoveCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseMove);
             MouseOverCommand = new GalaSoft.MvvmLight.Command.RelayCommand<RoutedEventArgs>(MouseEnter);
             MouseWheelCommand = new GalaSoft.MvvmLight.Command.RelayCommand<MouseWheelEventArgs>(MouseWheel);
+            Filter_BrightnessCommand = new RelayCommand(FilterChoose);
+            Filter_ContrastCommand = new RelayCommand(FilterChoose);
+            Filter_GreyScaleCommand= new RelayCommand(FilterChoose);
+            Filter_NegativeCommand= new RelayCommand(FilterChoose);
+            Filter_SepiaCommand = new RelayCommand(FilterChoose);
+            Filter_ResetCommand = new RelayCommand(FilterChoose);
         }
-   
+
 
         #region Private methods
-        private void SynchronizeRotation(RotateImageEvent ri)
+
+        private void ApplyFilter(FilterEvent fe)
         {
-            if (ri.SynchronizedPresenters.Contains(ViewModelID))
+            if (!IsSynchronized && fe.PresenterID != PresenterID)
                 return;
-            Rotate rotate = new Rotate();
-            Dictionary<String, Object> parameters = new Dictionary<String, Object>();
-            parameters.Add("DisplayedImage", DisplayedImage);
-            parameters.Add("PresenterID", ViewModelID);
-            parameters.Add("SynchronizedPresenters", ri.SynchronizedPresenters);
-            rotate.AffectImage(parameters);
-        }
-        private void RotateImage(RotateImageEvent ri)
-        {
-            if (ri.PresenterID == ViewModelID)
+            switch (fe.Filter)
             {
-                DisplayedImage = ri.Image;
-                if(IsSynchronized)
-                {
-                    _aggregator.GetEvent<SynchronizeRotationEvent>().Publish(ri);
-                }
+                case Filter.Filters.None:
+                    {
+                        Image temp = DisplayedImage;
+                        temp.Bitmap = new Rotate().SingleBitmapRotation((int)temp.Rotation * 90, temp.OriginalBitmap);
+                        DisplayedImage = temp;
+
+                    }
+                    break;
+                case Filter.Filters.Brightness:
+                    {
+                        Image temp = DisplayedImage;
+                        temp.Bitmap = Filter.Negative(temp.Bitmap);
+                        DisplayedImage = temp;
+                    }
+                    break;
+                case Filter.Filters.Contrast:
+                    {
+                        Image temp = DisplayedImage;
+                        temp.Bitmap = Filter.Negative(temp.Bitmap);
+                        DisplayedImage = temp;
+                    }
+                    break;
+                case Filter.Filters.Sepia:
+                    {
+                        Image temp = DisplayedImage;
+                        temp.Bitmap = Filter.Negative(temp.Bitmap);
+                        DisplayedImage = temp;
+                    }
+                    break;
+                case Filter.Filters.Negative:
+                    {
+                        Image temp = DisplayedImage;
+                        temp.Bitmap = Filter.Negative(temp.Bitmap);
+                        DisplayedImage = temp;
+                    }
+                    break;
+                case Filter.Filters.GreyScale:
+                    {
+                        Image temp = DisplayedImage;
+                        temp.Bitmap = Filter.Negative(temp.Bitmap);
+                        DisplayedImage = temp;
+                    }
+                    break;
+                default:
+                    break;
             }
+        }
+
+#region Commands
+        private void FilterChoose(Object filter)
+        {
+            FilterEvent fe = new FilterEvent();
+            fe.Filter = (Filter.Filters)filter;
+            fe.PresenterID = this.PresenterID;
+
+            if (IsSynchronized)
+            {
+                _aggregator.GetEvent<FilterEvent>().Publish(fe);
+            }
+            else
+                ApplyFilter(fe);
         }
         private void ResetZoom(Object arg)
         {
@@ -536,17 +597,21 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             sdi.DoReset = true;
             _aggregator.GetEvent<SendDisplayedImage>().Publish(sdi);
         }
-        private void SynchronizeImagePosition(Dictionary<String, Object> parameters)
+        private void PreviousImage(Object obj)
         {
-            if ((int)parameters["PresenterID"] == ViewModelID)
-                return;
-            Dictionary<String, Object> args = new Dictionary<String, Object>(parameters);
-            args["DisplayedImage"] = DisplayedImage;
-            args["Position"] = ImagePosition;
-            args["PresenterID"] = ViewModelID;
-            PanImage pi = new PanImage();
-            pi.AffectImage(args);
+            ImageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
+            DisplayedImage = _imageList[_imageIndex];
+            if (IsSynchronized)
+                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(new NextPreviousImageEvent(false, ViewModelID));
         }
+        private void NextImage(Object obj)
+        {
+            ImageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
+            DisplayedImage = _imageList[_imageIndex];
+            if (IsSynchronized)
+                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(new NextPreviousImageEvent(true, ViewModelID));
+        }
+
         private void MouseWheel(MouseWheelEventArgs e)
         {
             e.Handled = true;
@@ -581,65 +646,11 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
 
             if (IsSynchronized)
                 _aggregator.GetEvent<ZoomEvent>().Publish(new ZoomEvent(false, ViewModelID, scaleChange, MouseX, MouseY));
-
-
         }
         private void MouseEnter(RoutedEventArgs e)
         {
             CalculateRegionProperties();
             _aggregator.GetEvent<SendPresenterIDEvent>().Publish(ViewModelID);
-        }
-
-        private void SynchronizeZoom(ZoomEvent ze)
-        {
-            if (ze.ViewModelID != this.ViewModelID)
-            {
-                if (ze.ZoomReset)
-                {
-                    Scale = 1;
-                    return;
-                }
-                if ((Scale > 8 && ze.ScaleDelta > 1) || (Scale < _zoomStep - 1 && ze.ScaleDelta < 1))
-                    return;
-                this.Scale *= ze.ScaleDelta;
-                int left = (int)(ze.MouseX - (ze.MouseX - ImagePosition.Left) * ze.ScaleDelta);
-                int top = (int)(ze.MouseY - (ze.MouseY - ImagePosition.Top) * ze.ScaleDelta);
-                ImagePosition = new Thickness(left, top, -left, -top);
-            }
-        }
-
-        private void SynchronizeRegion(SynchronizeRegions sr)
-        {
-            if (sr.PresenterID != ViewModelID)
-            {
-                if (sr.Zoom != -1)
-                    Scale = sr.Zoom;
-                RegionWidth = sr.Width;
-                RegionHeight = sr.Height;
-                int top = (int)sr.Position.Top;
-                int left = (int)sr.Position.Left;
-                RegionLocation = new Thickness(left, top, 0, 0);
-
-                if (sr.DoProcessing)
-                {
-                    CreateRegion cr = new CreateRegion();
-                    Dictionary<String, Object> parameters = new Dictionary<string, object>();
-                    parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
-                    parameters.Add("RegionWidth", RegionWidth);
-                    parameters.Add("RegionHeight", RegionHeight);
-                    parameters.Add("BitmapSource", ImageSource);
-                    parameters.Add("ImagePosition", ImagePosition);
-                    parameters.Add("PresenterID", ViewModelID);
-                    parameters.Add("Scale", Scale);
-
-                    cr.AffectImage(parameters);
-                }
-            }
-        }
-        private void SerializeOutputFromPresenters(string path)
-        {
-            OutputSerializer os = new OutputSerializer();
-            os.SaveByRegion(DisplayedImage, ViewModelID, RegionWidth, RegionHeight, RegionLocation, path, Scale);
         }
         private void SerializeOutputFromList(Object obj)
         {
@@ -669,6 +680,100 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             RegionHeight = 0;
             RegionWidth = 0;
         }
+        private void OpenSaveRegionWindow(Object obj)
+        {
+            _isSaving = true;
+            SaveRegionWindow.Instance.Show();
+        }
+        #endregion
+
+        #region Events
+        private void SynchronizeRotation(RotateImageEvent ri)
+        {
+            if (ri.SynchronizedPresenters.Contains(ViewModelID))
+                return;
+            Rotate rotate = new Rotate();
+            Dictionary<String, Object> parameters = new Dictionary<String, Object>();
+            parameters.Add("DisplayedImage", DisplayedImage);
+            parameters.Add("PresenterID", ViewModelID);
+            parameters.Add("SynchronizedPresenters", ri.SynchronizedPresenters);
+            parameters.Add("Angle", ri.Angle);
+            rotate.AffectImage(parameters);
+        }
+        private void RotateImage(RotateImageEvent ri)
+        {
+            if (ri.PresenterID == ViewModelID)
+            {
+                DisplayedImage = ri.Image;
+                if(IsSynchronized)
+                {
+                    _aggregator.GetEvent<SynchronizeRotationEvent>().Publish(ri);
+                }
+            }
+        }
+        private void SynchronizeImagePosition(Dictionary<String, Object> parameters)
+        {
+            if ((int)parameters["PresenterID"] == ViewModelID)
+                return;
+            Dictionary<String, Object> args = new Dictionary<String, Object>(parameters);
+            args["DisplayedImage"] = DisplayedImage;
+            args["Position"] = ImagePosition;
+            args["PresenterID"] = ViewModelID;
+            PanImage pi = new PanImage();
+            pi.AffectImage(args);
+        }
+        private void SynchronizeZoom(ZoomEvent ze)
+        {
+            if (ze.ViewModelID != this.ViewModelID)
+            {
+                if (ze.ZoomReset)
+                {
+                    Scale = 1;
+                    return;
+                }
+                if ((Scale > 8 && ze.ScaleDelta > 1) || (Scale < _zoomStep - 1 && ze.ScaleDelta < 1))
+                    return;
+                this.Scale *= ze.ScaleDelta;
+                int left = (int)(ze.MouseX - (ze.MouseX - ImagePosition.Left) * ze.ScaleDelta);
+                int top = (int)(ze.MouseY - (ze.MouseY - ImagePosition.Top) * ze.ScaleDelta);
+                ImagePosition = new Thickness(left, top, -left, -top);
+            }
+        }
+        private void SynchronizeRegion(SynchronizeRegions sr)
+        {
+            if (sr.PresenterID != ViewModelID)
+            {
+                if (sr.Zoom != -1)
+                    Scale = sr.Zoom;
+                RegionWidth = sr.Width;
+                RegionHeight = sr.Height;
+                int top = (int)sr.Position.Top;
+                int left = (int)sr.Position.Left;
+                RegionLocation = new Thickness(left, top, 0, 0);
+
+                if (sr.DoProcessing)
+                {
+                    CreateRegion cr = new CreateRegion();
+                    Dictionary<String, Object> parameters = new Dictionary<string, object>();
+                    parameters.Add("RegionLocation", new Point(RegionLocation.Left, RegionLocation.Top));
+                    parameters.Add("RegionWidth", RegionWidth);
+                    parameters.Add("RegionHeight", RegionHeight);
+                    parameters.Add("BitmapSource", ImageSource);
+                    parameters.Add("ImagePosition", ImagePosition);
+                    parameters.Add("PresenterID", ViewModelID);
+                    parameters.Add("Scale", Scale);
+
+                    cr.AffectImage(parameters);
+                }
+            }
+        }
+        #endregion
+        private void SerializeOutputFromPresenters(string path)
+        {
+            OutputSerializer os = new OutputSerializer();
+            os.SaveByRegion(DisplayedImage, ViewModelID, RegionWidth, RegionHeight, RegionLocation, path, Scale);
+        }
+
         private void SaveRegion(String name)
         {
             if (!_isSaving)
@@ -679,11 +784,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
             _aggregator.GetEvent<SendRegionEvent>().Publish(region);
             _isSaving = false;
         }
-        private void OpenSaveRegionWindow(Object obj)
-        {
-            _isSaving = true;
-            SaveRegionWindow.Instance.Show();
-        }
+
         private void MouseLeftClick(System.Windows.RoutedEventArgs args)
         {
             _mouseClickPosition.X = _mouseX;
@@ -710,8 +811,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             _aggregator.GetEvent<SynchronizeRegions>().Publish(sr);
                         }
                     }
-                    break;
-                case Tools.Magnifier:
                     break;
                 case Tools.PixelInformations:
                     break;
@@ -768,8 +867,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                 }
                             }
                             break;
-                        case Tools.Magnifier:
-                            break;
                         case Tools.PixelInformations:
                             break;
                         case Tools.RegionTransformation:
@@ -801,20 +898,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                             break;
                     }
                 }
-        }
-        private void PreviousImage(Object obj)
-        {
-            ImageIndex = _imageIndex == 0 ? (_imageList.Count - 1) : (_imageIndex - 1);
-            DisplayedImage = _imageList[_imageIndex];
-            if (IsSynchronized)
-                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(new NextPreviousImageEvent(false, ViewModelID));
-        }
-        private void NextImage(Object obj)
-        {
-            ImageIndex = _imageIndex == (_imageList.Count - 1) ? 0 : (_imageIndex + 1);
-            DisplayedImage = _imageList[_imageIndex];
-            if (IsSynchronized)
-                _aggregator.GetEvent<NextPreviousImageEvent>().Publish(new NextPreviousImageEvent(true, ViewModelID));
         }
         private void ImageClickExecute(System.Windows.RoutedEventArgs args)
         {
@@ -851,8 +934,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     }
                                 }
                                 break;
-                            case Tools.Magnifier:
-                                break;
                             case Tools.PixelInformations:
                                 {
                                     PixelInformationView piv = new PixelInformationView();
@@ -860,9 +941,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     _aggregator.GetEvent<SendPixelInformationViewEvent>().Publish(piv);
                                     parameters.Add("MouseX", MouseX);
                                     parameters.Add("MouseY", MouseY);
-
                                     parameters.Add("Scale", Scale);
-
                                     parameters.Add("BitmapSource", ImageSource);
                                     parameters.Add("ImagePosition", ImagePosition);
                                 }
@@ -889,6 +968,7 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
                                     parameters.Add("DisplayedImage", DisplayedImage);
                                     parameters.Add("PresenterID", ViewModelID);
                                     parameters.Add("SynchronizedPresenters", presenters);
+                                    parameters.Add("Angle", 90);
                                 }
                                 break;
 

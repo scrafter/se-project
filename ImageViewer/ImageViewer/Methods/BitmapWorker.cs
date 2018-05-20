@@ -404,7 +404,7 @@ namespace ImageViewer.Methods
                 bitmap.UnlockBits(bitmapData);
                 return bitmapSource;
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
                 return null;

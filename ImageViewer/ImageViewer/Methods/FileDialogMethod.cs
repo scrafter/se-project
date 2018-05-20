@@ -15,7 +15,6 @@ namespace ImageViewer.Methods
     {
         public void ReturnFilesFromDialog(ObservableCollection<Image> list)
         {
-            bool contains;
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = true;
             fileDialog.Filter = "JPG / PNG / BMP / TIFF (*.jpg; *.png; *.bmp; *.tiff)|*.jpg; *.png; *.bmp; *.tiff| JPG|*.jpg|PNG|*.png|BMP|*.bmpf|TIFF|*.tiff";

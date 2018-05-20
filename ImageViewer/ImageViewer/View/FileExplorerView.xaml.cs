@@ -104,9 +104,8 @@ namespace ImageViewer.View
 
         private List<string> GetImages(string path)
         {
-            return Directory.GetFiles(path).Where(x => Path.GetExtension(x) == ".jpg" || Path.GetExtension(x) == ".JPG" || Path.GetExtension(x) == ".BMP"
-                   || Path.GetExtension(x) == ".bmp" || Path.GetExtension(x) == ".png" || Path.GetExtension(x) == ".PNG"
-                    || Path.GetExtension(x) == ".tiff" || Path.GetExtension(x) == ".TIFF").ToList();
+            return Directory.GetFiles(path).Where(x => Path.GetExtension(x).ToLower() == ".jpg" || Path.GetExtension(x).ToLower() == ".bmp" || Path.GetExtension(x).ToLower() == ".png"
+                    || Path.GetExtension(x).ToLower() == ".tiff" || Path.GetExtension(x).ToLower() == ".jpeg").ToList();
         }
 
         private void GetFiles(TreeViewItemImage item)

@@ -74,7 +74,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         public ToolBarViewModel()
         {
             HideToolBarCommand = new RelayCommand(HideToolBarExecute);
-            CreateMagnifyingGlassToolCommand = new RelayCommand(CreateMagnifyingGlassTool);
             PanImageToolCommand = new RelayCommand(PanImageTool);
             CreateRegionToolCommand = new RelayCommand(CreateRegionTool);
             CreatePixelPickerToolCommand = new RelayCommand(CreatePixelPickerTool);
@@ -127,11 +126,6 @@ namespace ImageViewer.ViewModel.ImageWindowViewModels
         private void HideToolBarExecute(object obj)
         {
             _aggregator.GetEvent<HideToolbarEvent>().Publish();
-        }
-
-        private void CreateMagnifyingGlassTool(object obj)
-        {
-            Tool = Tools.Magnifier;
         }
 
         private void PanImageTool(object obj)

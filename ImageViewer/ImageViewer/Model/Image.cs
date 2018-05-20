@@ -34,10 +34,12 @@ namespace ImageViewer.Model
         public BitmapSource Bitmap { get; set; }
         public BitmapSource OriginalBitmap { get; set; }
         public Thickness Position { get; set; }
+        public Rotation Rotation { get; set; }
 
         public Image()
         {
             Position = new Thickness(0, 0, 0, 0);
+            Rotation = Rotation.Rotate0;
         }
     }
 }

@@ -34,8 +34,6 @@ namespace ImageViewer.Model
 
             try
             {
-                IEventAggregator aggregator;
-                //ZoomingInfo zi;
                 Image image = (Image)args["DisplayedImage"];
                 BitmapSource bitmapSource = image.OriginalBitmap;
                 int clickPositionX = (int)((int)args["ClickPositionX"] * bitmapSource.DpiX / 96.0);
@@ -219,7 +217,7 @@ namespace ImageViewer.Model
 
         public Tools GetToolEnum()
         {
-            return Tools.Magnifier;
+            return Tools.None;
         }
     }
 }

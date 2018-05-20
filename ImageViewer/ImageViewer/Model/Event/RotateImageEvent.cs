@@ -8,5 +8,6 @@ namespace ImageViewer.Model.Event
         public Image Image { get; set; }
         public int PresenterID { get; set; }
         public List<int> SynchronizedPresenters { get; set; }
+        public int Angle { get; set; }
     }
 }
